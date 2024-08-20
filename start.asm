@@ -12,6 +12,10 @@ Entry:
 	mov es, ax
 	mov ss, ax
 
+	; temporary location for drive index
+	mov di, 700h
+	mov ds:[di], dl
+
 	; relocate to 500h
 	mov si, 7c00h
 	mov di, 500h
@@ -34,11 +38,14 @@ Bootstrap:
 	mov ss, ax
 
 	; read partition 1
-	xor ax, ax
-	mov al, 30h
-	xor cx, cx
+	mov ah, 2 ; read sectors
+	mov al, 30h ; 30 sectors
+	mov ch, 0 ; 0th cylinder
 	mov cl, 2 ; 2nd sector
-	; dl is still the drive index
+	mov dh, 0 ; 0th head
+	; read drive index
+	mov si, 200h
+	mov dl, ds:[si]
 	int 13h
 
 	; check if the read failed
