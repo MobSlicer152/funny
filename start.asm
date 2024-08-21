@@ -1,40 +1,22 @@
 BITS 16
-ORG 500h
+ORG 7c00h
 
 ; Runs at 7c00h
 Entry:
-	; no interrupts
-	cli
-
-	; zero segments
+	; zero segments, except DS
 	xor ax, ax
-	mov ds, ax
 	mov es, ax
 	mov ss, ax
 
-	; temporary location for drive index
-	mov di, 700h
-	mov ds:[di], dl
-
-	; relocate to 500h
-	mov si, 7c00h
-	mov di, 500h
-	mov cx, 200h
-	rep movsb
-
-	; jump to bootstrap code
-	jmp 0:Bootstrap
-
-; Runs at 500h
-Bootstrap:
-	; re-enable interrupts
-	sti
+	mov ax, 50h
+	mov ds, ax
 
 	; data 500h-6700h
-	mov ax, 500h
+	mov ax, 50h
 	mov ds, ax
+	mov es, ax
 	; stack 6700h-7100h
-	mov ax, 6700h
+	mov ax, 670h
 	mov ss, ax
 
 	; read partition 1
@@ -43,9 +25,7 @@ Bootstrap:
 	mov ch, 0 ; 0th cylinder
 	mov cl, 2 ; 2nd sector
 	mov dh, 0 ; 0th head
-	; read drive index
-	mov si, 200h
-	mov dl, ds:[si]
+	xor bx, bx ; ES:BX is 0500:0000
 	int 13h
 
 	; check if the read failed
