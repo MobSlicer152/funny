@@ -33,8 +33,8 @@ Entry:
 	cmp al, 30h
 	jne .exit
 
-	; enter the main binary at 0500:0000
-	jmp 0500h:0000h
+	; enter the main binary at 50:0000
+	jmp 50h:0000h
 
 	jmp .exit
 
