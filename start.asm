@@ -11,12 +11,12 @@ Entry:
 	mov ax, 50h
 	mov ds, ax
 
-	; data 500h-6700h
+	; data 500h-6500h
 	mov ax, 50h
 	mov ds, ax
 	mov es, ax
-	; stack 6700h-7100h
-	mov ax, 670h
+	; stack 6500h-7900h
+	mov ax, 650h
 	mov ss, ax
 
 	; read partition 1
@@ -33,8 +33,8 @@ Entry:
 	cmp al, 30h
 	jne .exit
 
-	; enter the main binary at 0500:0200
-	jmp 0500h:0200h
+	; enter the main binary at 0500:0000
+	jmp 0500h:0000h
 
 	jmp .exit
 

@@ -1,17 +1,17 @@
 BITS 16
-ORG 200h
+ORG 0000h
 
 Main:
 	; set mode 0
-	;mov ah, 0
-	;mov al, 0
-	;int 10h
+	mov ah, 0
+	mov al, 0
+	int 10h
 
 	; set cursor to page 0 at (0, 0)
-	;mov ah, 2
-	;mov bh, 0
-	;xor dx, dx
-	;int 10h
+	mov ah, 2
+	mov bh, 0
+	xor dx, dx
+	int 10h
 
 	; print message
 	mov si, startMsg
@@ -21,12 +21,12 @@ Main:
 	hlt
 	jmp .exit
 
-; print C string in SI
+; print C string in DS:SI
 PrintStr:
 	mov ah, 0eh ; teletype
 	mov bx, 000fh ; page 0, white
 .printLoop:
-	lodsb
+	lodsb ; DS:SI
 	cmp al, 0 ; check for NUL
 	je .printEnd
 	int 10h

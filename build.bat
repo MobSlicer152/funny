@@ -1,3 +1,3 @@
-nasm -f bin -o start.bin start.asm
-nasm -f bin -o main.bin main.asm
-copy start.bin+main.bin funny.img
+nasm -f bin -o %~dp0start.bin %~dp0start.asm
+nasm -f bin -o %~dp0main.bin %~dp0main.asm
+copy %~dp0start.bin+%~dp0main.bin %~dp0funny.img
