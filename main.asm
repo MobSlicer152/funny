@@ -1,7 +1,16 @@
 BITS 16
 ORG 0000h
 
-jmp Main
+STRUC GDT_DESCRIPTOR
+	.size: resw 1
+	.offset: resd 1
+ENDSTRUC
+
+STRUC GDT_SEGMENT_DESCRIPTOR
+	
+ENDSTRUC
+
+	jmp Main
 
 	SECTION .code
 Main:
@@ -113,6 +122,8 @@ enableA20Msg:
 	DB 'Enabling A20 line', 0dh, 0ah, 0
 A20EnabledMsg:
 	DB 'A20 line enabled', 0dh, 0ah, 0
+gdtLoadMsg:
+	DB 'Loading GDT', 0dh, 0ah, 0
 
 TIMES 6000h - ($ - $$) DB 0
 

@@ -21,7 +21,7 @@ Entry:
 
 	; read partition 1
 	mov ah, 2 ; read sectors
-	mov al, 30h ; 30 sectors
+	mov al, 30h ; 48 sectors
 	mov ch, 0 ; 0th cylinder
 	mov cl, 2 ; 2nd sector
 	mov dh, 0 ; 0th head
@@ -56,12 +56,12 @@ Entry:
 	DB 80h ; active
 	; start offset in CHS
 	DB 0 ; head 0
-	DB 00001000b ; sector 2 (start from sector 1 since sector numbering starts from 1)
+	DB 00001000b ; sector 2
 	DB 0 ; cylinder 0
 	DB 0c2h ; hidden Linux
-	; end offset in CHS (estimated to be cylinder 0, head 0, sector 49)
+	; end offset in CHS
 	DB 0 ; head 0
-	DB 01100100b ; sector 49 (end at sector 48)
+	DB 01100100b ; sector 49
 	DB 0 ; cylinder 0
 	DD 1 ; starting LBA offset
 	DD 30h ; total sectors (48 sectors = 24KB)
