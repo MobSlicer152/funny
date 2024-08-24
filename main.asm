@@ -1,5 +1,8 @@
-BITS 16
-ORG 0000h
+; Real mode non-boot sector startup code, sets video mode with BIOS calls,
+; checks and enables the A20 line, sets up a GDT, and enters protected mode.
+
+	BITS 16
+	ORG 0000h
 
 STRUC GDT_DESCRIPTOR
 	.size: resw 1
@@ -14,9 +17,9 @@ ENDSTRUC
 
 	SECTION .code
 Main:
-	; set mode 0
+	; set mode 2
 	mov ah, 0
-	mov al, 0
+	mov al, 2
 	int 10h
 
 	; set cursor to page 0 at (0, 0)
@@ -41,7 +44,8 @@ Main:
 	mov si, A20EnabledMsg
 	call PrintStr
 
-	
+	; load the GDT
+	call LoadGDT
 
 .exit:
 	hlt
@@ -104,6 +108,9 @@ CheckA20:
 
 ; enable A20 line, using Fast A20
 EnableA20:
+	mov si, enableA20Msg
+	call PrintStr
+
 	in al, 92h
 	test al, 2
 	jnz .done
@@ -111,6 +118,15 @@ EnableA20:
 	and al, 0feh
 	out 92h, al
 .done:
+	ret
+
+; GDT
+LoadGDT:
+	mov si, gdtLoadMsg
+	call PrintStr
+
+	
+
 	ret
 
 	SECTION .data

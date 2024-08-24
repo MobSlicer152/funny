@@ -1,5 +1,5 @@
-BITS 16
-ORG 7c00h
+	BITS 16
+	ORG 7c00h
 
 ; Runs at 7c00h
 Entry:
