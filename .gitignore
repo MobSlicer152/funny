@@ -2,3 +2,8 @@
 *.img
 *.o
 *.elf
+*.obj
+*.exe
+*.pdb
+*.ilk
+.vs/
