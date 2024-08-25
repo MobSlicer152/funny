@@ -2,16 +2,7 @@
 ; checks and enables the A20 line, sets up a GDT, and enters protected mode.
 
 	BITS 16
-	ORG 0000h
-
-STRUC GDT_DESCRIPTOR
-	.size: resw 1
-	.offset: resd 1
-ENDSTRUC
-
-STRUC GDT_SEGMENT_DESCRIPTOR
-	
-ENDSTRUC
+	ORG 500h
 
 	jmp Main
 
@@ -46,6 +37,9 @@ Main:
 
 	; load the GDT
 	call LoadGDT
+
+	mov si, protectedMsg
+	call PrintStr
 
 .exit:
 	hlt
@@ -125,8 +119,25 @@ LoadGDT:
 	mov si, gdtLoadMsg
 	call PrintStr
 
-	
+	xor eax, eax
+	mov ax, ds
+	shl eax, 4
+	add eax, gdt
+	mov ds:[gdtr + GDT_DESCRIPTOR.offset], eax
+	mov eax, gdtEnd
+	sub eax, gdt
+	mov ds:[gdtr + GDT_DESCRIPTOR.size], ax
+	lgdt ds:[gdtr]
 
+	jmp 08h:.reloadCS
+.reloadCS:
+	mov ax, 10h
+	mov ds, ax
+	mov es, ax
+	mov fs, ax
+	mov gs, ax
+	mov ss, ax
+	
 	ret
 
 	SECTION .data
@@ -140,6 +151,50 @@ A20EnabledMsg:
 	DB 'A20 line enabled', 0dh, 0ah, 0
 gdtLoadMsg:
 	DB 'Loading GDT', 0dh, 0ah, 0
+protectedMsg:
+	DB 'Entering protected mode', 0dh, 0ah, 0
 
-TIMES 6000h - ($ - $$) DB 0
+STRUC GDT_DESCRIPTOR
+	.size: RESW 1
+	.offset: RESD 1
+ENDSTRUC
+
+STRUC GDT_SEGMENT_DESCRIPTOR
+	.limit: RESW 1
+	.base: RESB 3
+	.access: RESB 1
+	.limitEx: ; these share a byte
+	.flags: RESB 1
+	.baseEx: RESB 1
+ENDSTRUC
+
+gdtr:
+	RESB GDT_DESCRIPTOR_size
+
+gdt:
+	; null descriptor
+	ISTRUC GDT_SEGMENT_DESCRIPTOR
+		AT .limit, DW 0
+		AT .base, DB 0, 0, 0
+		AT .access, DB 0
+		AT .limitEx, DB 0
+		AT .baseEx, DB 0
+	IEND
+	; code descriptor
+	ISTRUC GDT_SEGMENT_DESCRIPTOR
+		AT .limit, DW 0ffffh
+		AT .base, DB 00h, 00h, 00h
+		AT .access, DB 0b10011011
+		AT .limitEx, DB 0cfh
+		AT .baseEx, DB 00h
+	IEND
+	; data descriptor
+	ISTRUC GDT_SEGMENT_DESCRIPTOR
+		AT .limit, DW 0ffffh
+		AT .base, DB 00h, 00h, 00h
+		AT .access, DB 0b10010011
+		AT .limitEx, DB 0cfh
+		AT .baseEx, DB 00h
+	IEND
+gdtEnd:
 

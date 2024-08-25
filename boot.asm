@@ -1,18 +1,13 @@
 	BITS 16
 	ORG 7c00h
 
+	; just in case loaded at 7c00:0000 instead of 0000:7c00
+	jmp 0:Entry
+
 ; Runs at 7c00h
 Entry:
-	; zero segments, except DS
-	xor ax, ax
-	mov es, ax
-	mov ss, ax
-
-	mov ax, 50h
-	mov ds, ax
-
 	; data 500h-6500h
-	mov ax, 50h
+	xor ax, ax
 	mov ds, ax
 	mov es, ax
 	; stack 6500h-7900h
@@ -25,7 +20,7 @@ Entry:
 	mov ch, 0 ; 0th cylinder
 	mov cl, 2 ; 2nd sector
 	mov dh, 0 ; 0th head
-	xor bx, bx ; ES:BX is 0500:0000
+	mov bx, 500h ; ES:BX is 0000:0500
 	int 13h
 
 	; check if the read failed
@@ -33,8 +28,8 @@ Entry:
 	cmp al, 30h
 	jne .exit
 
-	; enter the main binary at 50:0000
-	jmp 50h:0000h
+	; enter the main binary at 500h
+	jmp 0:500h
 
 	jmp .exit
 
