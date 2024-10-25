@@ -1,0 +1,9 @@
+// Configuration template
+
+#once
+
+.LLVMDir = 'C:\Program Files\LLVM'
+.ClangVersion = '18'
+
+.NASM = 'C:\Program Files\NASM\nasm.exe'
+

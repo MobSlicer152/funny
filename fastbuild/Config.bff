@@ -1,0 +1,9 @@
+// Configuration template
+
+#once
+
+.LLVMDir = 'C:\Program Files\LLVM'
+.ClangVersion = '18'
+
+.NASM = 'C:\Strawberry\c\bin\nasm.exe'
+

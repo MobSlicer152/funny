@@ -1,0 +1,133 @@
+#once
+
+#include "Config.bff"
+
+#if __WINDOWS__
+.ExeExtension = '.exe'
+#else
+.ExeExtension = ''
+#endif
+
+.Clang_Common = 
+[
+	.CompilerName = 'Clang'
+
+	.Compiler = '$LLVMDir$/bin/clang$ExeExtension$'
+	.Linker = '$LLVMDir$/bin/lld-link$ExeExtension$'
+	.Librarian = '$LLVMDir$/bin/llvm-ar$ExeExtension$'
+
+	.CompilerOptions = ' "%1"' // Input
+					 + ' -o"%2"' // Output
+					 + ' -c' // Compile only
+					 + ' -std=c23' // C23
+					 + ' -ffreestanding' // Disable libc
+					 + ' -fms-extensions' // These are nice to have
+					 + ' -fno-exceptions' // No exceptions
+					 + ' -Wall' // Most warnings
+					 + ' -Wextra' // More warnings
+					 + ' -Werror' // Warnings as errors
+
+					 + ' -Wno-#pragma-messages'
+					 + ' -Wno-macro-redefined' // This is avoided in any scenario where it matters
+					 + ' -Wno-unused-function' // I don't care, that's the linker's problem
+
+	ForEach(.IncludeDir in .IncludeDirs)
+	{
+		^CompilerOptions + ' -I "$_WORKING_DIR_$/$IncludeDir$"'
+	}
+
+	ForEach(.IncludeDir in .ExternalIncludeDirs)
+	{
+		^CompilerOptions + ' -isystem "$_WORKING_DIR_$/$IncludeDir$"'
+	}
+
+	.CompilerOptionsC = .CompilerOptions
+
+	.LinkerOptions = ' /OUT:"%2"' // Output
+				   + ' "%1"' // Input
+				   + ' /NOLOGO' // No logo on MSVC link.exe
+				   + ' /NODEFAULTLIB' // Disable automatically linking to CRT and others
+				   + ' /SAFESEH:NO'
+	
+	.LibrarianOptions = ' rc' // Replace/insert, create
+					  + ' "%2"' // Output
+					  + ' "%1"' // Input
+
+	.NASMOptions = ' -o "%2"' // Output
+				 + ' "%1"' // Input
+]
+
+.Clang_Debug =
+[
+	.ConfigName = 'Debug'
+
+	.CompilerOptions = ' -g' // Debug info
+					 + ' -O0' // Disable optimization
+					 
+					 + ' -DDEBUG'
+	
+	.LinkerOptions = ' /DEBUG' // Debug info
+]
+
+.Clang_Release =
+[
+	.ConfigName = 'Release'
+	
+	.CompilerOptions = ' -O2' // Optimize a bit
+					 + ' -Og' // Improve debugging
+					 + ' -ffast-math' // 2 plus 2 is 4
+					 + ' -flto=thin' // Faster incremental builds
+
+					 + ' -DRELEASE'
+]
+
+.Clang_Retail =
+[
+	Using(.Clang_Release)
+
+	.ConfigName = 'Retail'
+
+	.CompilerOptions + ' -O3' // Even higher optimization
+					 - ' -O2'
+					 - ' -Og' // No debuggability, logging and other stuff is the only way
+
+					 + ' -DRETAIL'
+]
+
+.Clang_AMD64 =
+[
+	.ArchName = 'AMD64'
+
+	.CompilerOptions = ' -DX86 -DAMD64 -DSIMD128 -DSIMD256'
+					 + ' -mno-sse' // No SSE in codegen (unless it's explicitly used)
+					 + ' -msse4.2' // Allow using SSE
+]
+
+.Clang_AMD64_Debug = .Clang_Common + .Clang_AMD64 + .Clang_Debug
+.Clang_AMD64_Release = .Clang_Common + .Clang_AMD64 + .Clang_Release
+.Clang_AMD64_Retail = .Clang_Common + .Clang_AMD64 + .Clang_Retail
+
+.Clang_ARM64 =
+[
+	.ArchName = 'ARM64'
+
+	.CompilerOptions = ' -DARM64 -DSIMD128 -DSIMD256'
+]
+
+.Clang_ARM64_Debug = .Clang_Common + .Clang_ARM64 + .Clang_Debug
+.Clang_ARM64_Release = .Clang_Common + .Clang_ARM64 + .Clang_Release
+.Clang_ARM64_Retail = .Clang_Common + .Clang_ARM64 + .Clang_Retail
+
+.Clang_x86 =
+[
+	.ArchName = 'x86'
+
+	.CompilerOptions = ' -DX86 -DIA32 -DSIMD128 -DSIMD256'
+					 + ' -mno-sse' // No SSE in codegen (unless it's explicitly used)
+					 + ' -msse4.2' // Allow using SSE
+]
+
+.Clang_x86_Debug = .Clang_Common + .Clang_x86 + .Clang_Debug
+.Clang_x86_Release = .Clang_Common + .Clang_x86 + .Clang_Release
+.Clang_x86_Retail = .Clang_Common + .Clang_x86 + .Clang_Retail
+

@@ -1,0 +1,72 @@
+#include "fastbuild/Config.bff"
+
+.IncludeDirs = {}
+.ExternalIncludeDirs = {}
+
+#include "fastbuild/Clang.bff"
+
+.BuildConfigs =
+{
+	.Clang_x86_Debug,
+	.Clang_x86_Release
+}
+
+#include "fastbuild/Targets.bff"
+
+#include "boot/Boot.bff"
+#include "kernel/Kernel.bff"
+
+ForEach(.BuildConfig in .BuildConfigs)
+{
+	Using(.BuildConfig)
+
+	Alias('All-$CompilerName$-$ArchName$-$ConfigName$') {.Targets = .'Targets_$CompilerName$_$ArchName$_$ConfigName$'}
+}
+
+.Compilers =
+{
+	'Clang'
+}
+
+.Configs =
+{
+	'Debug',
+	'Release'
+}
+
+.CompilerArchs_Clang =
+{
+	'x86'
+}
+
+.AllTargets = {}
+ForEach(.Compiler in .Compilers)
+{
+	.Targets = {}
+	ForEach(.Arch in .'CompilerArchs_$Compiler$')
+	{
+		Alias('All-$Compiler$-$Arch$')
+		{
+			.Targets = {}
+			ForEach(.Config in .Configs)
+			{
+				^Targets + {'All-$Compiler$-$Arch$-$Config$'}
+			}
+		}
+
+		^Targets + {'All-$Compiler$-$Arch$'}
+	}
+
+	Alias('All-$Compiler$')
+	{
+		.Targets = .Targets
+	}
+
+	^AllTargets + {'All-$Compiler$'}
+}
+
+Alias('All')
+{
+	.Targets = .AllTargets
+}
+
