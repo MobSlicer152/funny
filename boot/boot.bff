@@ -17,6 +17,7 @@
 			.ExecInput = '$ProjectPath$/boot.asm'
 			.ExecOutput = '$OutputDir$/$ProjectName$.bin'
 			.ExecArguments = .NASMOptions + ' -fbin'
+			.ExecWorkingDir = '$ProjectPath$'
 		}
 
 		// This is the main target
