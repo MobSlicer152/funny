@@ -1,4 +1,4 @@
-_Noreturn void _start(void)
+_Noreturn void KernelMain(void)
 {
 	while (1) {}
 }

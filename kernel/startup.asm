@@ -3,6 +3,8 @@
 
 	BITS 16
 
+	EXTERN KernelMain
+
 	SECTION .startup
 Main:
 	; set mode 2
@@ -35,8 +37,12 @@ Main:
 	; load the GDT
 	call LoadGDT
 
-	mov si, protectedMsg
+	;mov si, protectedMsg
+	;call PrintStr
+
+	mov si, kernelMsg
 	call PrintStr
+	call KernelMain
 
 .exit:
 	hlt
@@ -149,6 +155,8 @@ gdtLoadMsg:
 	DB 'Loading GDT', 0dh, 0ah, 0
 protectedMsg:
 	DB 'Entering protected mode', 0dh, 0ah, 0
+kernelMsg:
+	DB 'Entering C code', 0dh, 0ah, 0
 
 %include "gdt.inc"
 
