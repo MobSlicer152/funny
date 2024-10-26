@@ -1,0 +1,62 @@
+#once
+
+{
+	.ProjectName = 'kernel'
+	.ProjectPath = 'kernel'
+	
+	ForEach(.BuildConfig in .BuildConfigs)
+	{
+		Using(.BuildConfig)
+
+		.ObjectDir = 'obj/$CompilerName$/$ArchName$/$ConfigName$'
+		.OutputDir = 'out/$CompilerName$/$ArchName$/$ConfigName$'
+
+		Exec('$ProjectName$-ASM-$CompilerName$-$ArchName$-$ConfigName$')
+		{
+			.ExecExecutable = .NASM
+			.ExecInput = '$ProjectPath$/startup.asm'
+			.ExecOutput = '$ObjectDir$/$ProjectPath$/startup.o'
+			.ExecArguments = .NASMOptions + ' -felf'
+			.ExecWorkingDir = '$ProjectPath$'
+		}
+		
+		ObjectList('$ProjectName$-Objs-$CompilerName$-$ArchName$-$ConfigName$')
+		{
+			.CompilerInputFiles =
+			{
+				'$ProjectPath$/main.c'
+			}
+
+			.CompilerOutputPath = '$ObjectDir$/$ProjectPath$'
+		}
+
+		Executable('$ProjectName$-ELF-$CompilerName$-$ArchName$-$ConfigName$')
+		{
+			.Libraries =
+			{
+				'$ProjectName$-Objs-$CompilerName$-$ArchName$-$ConfigName$',
+				'$ObjectDir$/$ProjectPath$/startup.o'
+			}
+
+			.LinkerOptions + ' -T $ProjectPath$/kernel.ld'
+
+			.LinkerOutput = '$OutputDir$/$ProjectName$.elf'
+		}
+
+		Exec('$ProjectName$-Flat-$CompilerName$-$ArchName$-$ConfigName$')
+		{
+			.ExecExecutable = .ObjCopy
+			.ExecInput = '$OutputDir$/$ProjectName$.elf'
+			.ExecOutput = '$OutputDir$/$ProjectName$.bin'
+			.ExecArguments = '"%1" -O binary "%2"'
+		}
+
+		// This is the main target
+		Alias('$ProjectName$-$CompilerName$-$ArchName$-$ConfigName$')
+		{
+			.Targets = '$ProjectName$-Flat-$CompilerName$-$ArchName$-$ConfigName$'
+		}
+		^'Targets_$CompilerName$_$ArchName$_$ConfigName$' + {'$ProjectName$-$CompilerName$-$ArchName$-$ConfigName$'}
+	}
+}
+

@@ -1,0 +1,24 @@
+#once
+
+{
+	.ProjectName = 'funny'
+	.ProjectPath = 'kernel'
+	
+	ForEach(.BuildConfig in .BuildConfigs)
+	{
+		Using(.BuildConfig)
+
+		.ObjectDir = 'obj/$CompilerName$/$ArchName$/$ConfigName$'
+		.OutputDir = 'out/$CompilerName$/$ArchName$/$ConfigName$'
+
+		Exec('$ProjectName$-$CompilerName$-$ArchName$-$ConfigName$')
+		{
+			.ExecExecutable = .Python
+			.ExecInput = 'scripts/bootimg.py'
+			.ExecOutput = '$OutputDir$/$ProjectName$.img'
+			.ExecArguments = '"%1" "$OutputDir$" "%2"'
+		}
+		^'Targets_$CompilerName$_$ArchName$_$ConfigName$' + {'$ProjectName$-$CompilerName$-$ArchName$-$ConfigName$'}
+	}
+}
+

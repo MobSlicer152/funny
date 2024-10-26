@@ -15,6 +15,7 @@
 
 #include "boot/Boot.bff"
 #include "kernel/Kernel.bff"
+#include "fastbuild/BootImage.bff"
 
 ForEach(.BuildConfig in .BuildConfigs)
 {

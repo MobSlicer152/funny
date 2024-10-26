@@ -7,3 +7,5 @@
 
 .NASM = 'C:\Program Files\NASM\nasm.exe'
 
+.Python = 'python.exe'
+

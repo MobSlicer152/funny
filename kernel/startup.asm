@@ -2,11 +2,8 @@
 ; checks and enables the A20 line, sets up a GDT, and enters protected mode.
 
 	BITS 16
-	ORG 500h
 
-	jmp Main
-
-	SECTION .code
+	SECTION .startup
 Main:
 	; set mode 2
 	mov ah, 0

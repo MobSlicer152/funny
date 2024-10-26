@@ -7,3 +7,5 @@
 
 .NASM = 'C:\Strawberry\c\bin\nasm.exe'
 
+.Python = 'C:\Users\MobSlicer152\AppData\Local\Programs\Python\Python313\python.exe'
+
