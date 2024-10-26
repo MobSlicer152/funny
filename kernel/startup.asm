@@ -137,7 +137,6 @@ LoadGDT:
 	
 	ret
 
-	SECTION .data
 startMsg:
 	DB 'Doing a funny', 0dh, 0ah, 0
 checkA20Msg:

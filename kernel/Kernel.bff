@@ -48,7 +48,10 @@
 			.ExecExecutable = .ObjCopy
 			.ExecInput = '$OutputDir$/$ProjectName$.elf'
 			.ExecOutput = '$OutputDir$/$ProjectName$.bin'
-			.ExecArguments = '"%1" -O binary "%2"'
+			.ExecArguments = '"%1"'
+						   + ' "%2"'
+						   + ' -O binary'
+						   + ' --set-start=0x500'
 		}
 
 		// This is the main target

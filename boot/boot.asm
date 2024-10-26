@@ -29,6 +29,7 @@ Entry:
 	jne .exit
 
 	; enter the main binary at 500h
+	; load CS with 0000h
 	jmp 0:500h
 
 	jmp .exit

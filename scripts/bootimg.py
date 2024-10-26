@@ -17,6 +17,8 @@ def main(argc, argv):
     with open(os.path.join(outdir, "kernel.bin"), "rb") as kernelbin:
         image += kernelbin.read()
 
+    image += b"\x00" * (0x6200 - len(image))
+
     with open(imagefile, "wb") as output:
         output.write(image)
 
