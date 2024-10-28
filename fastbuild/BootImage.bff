@@ -14,10 +14,15 @@
 		Exec('$ProjectName$-$CompilerName$-$ArchName$-$ConfigName$')
 		{
 			.ExecExecutable = .Python
-			.ExecInput = 'scripts/bootimg.py'
+			.ExecInput =
+			{
+				'scripts/bootimg.py',
+				'$OutputDir$/boot.bin',
+				'$OutputDir$/kernel.bin'
+			}
 			.ExecOutput = '$OutputDir$/$ProjectName$.img'
-			.ExecArguments = '"%1" "$OutputDir$" "%2"'
-			.PreBuildDependencies = 'kernel-$CompilerName$-$ArchName$-$ConfigName$'
+			.ExecArguments = '"%1" "%2"'
+			.PreBuildDependencies = '$OutputDir$/kernel.bin'
 		}
 		^'Targets_$CompilerName$_$ArchName$_$ConfigName$' + {'$ProjectName$-$CompilerName$-$ArchName$-$ConfigName$'}
 	}

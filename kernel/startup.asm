@@ -35,19 +35,42 @@ Main:
 	call PrintStr
 
 	; load the GDT
-	call LoadGDT
+	mov si, protectedModeMsg
+	call PrintStr
+
+	xor eax, eax
+	add eax, gdt
+	mov ds:[gdtr + GDT_DESCRIPTOR.offset], eax
+	mov eax, gdtEnd
+	sub eax, gdt
+	mov ds:[gdtr + GDT_DESCRIPTOR.size], ax
+
+	; no interrupts during this
+	cli
+
+	jmp .flush
+.flush:
+	lgdt ds:[gdtr]
 
 	; enable protected mode
-	mov si, protectedMsg
-	call PrintStr
 	mov eax, cr0
 	or eax, 1
 	mov cr0, eax
 
+	jmp 08h:.protectedMode ; far jump into protected mode code to set CS to a GDT selector
+
+.protectedMode:
 	BITS 32
 
-	mov si, kernelMsg
-	call PrintStr
+	mov ax, 10h
+	mov ds, ax
+	mov es, ax
+	mov fs, ax
+	mov gs, ax
+	mov ss, ax
+	
+	add esp, 6500h
+
 	call KernelMain
 
 	BITS 16
@@ -125,36 +148,6 @@ EnableA20:
 .done:
 	ret
 
-; GDT
-LoadGDT:
-	mov si, gdtLoadMsg
-	call PrintStr
-
-	xor eax, eax
-	;mov ax, ds ; DS is 0000h
-	;shl eax, 4
-	add eax, gdt
-	mov ds:[gdtr + GDT_DESCRIPTOR.offset], eax
-	mov eax, gdtEnd
-	sub eax, gdt
-	mov ds:[gdtr + GDT_DESCRIPTOR.size], ax
-
-	jmp .flush
-.flush:
-	lgdt ds:[gdtr]
-
-	jmp 08h:.reloadCS
-.reloadCS:
-	mov ax, 10h
-	mov ds, ax
-	mov es, ax
-	mov ss, ax
-
-	; fix stack pointer
-	add sp, 6500h
-	
-	ret
-
 startMsg:
 	DB 'Doing a funny', 0dh, 0ah, 0
 checkA20Msg:
@@ -163,12 +156,8 @@ enableA20Msg:
 	DB 'Enabling A20 line', 0dh, 0ah, 0
 A20EnabledMsg:
 	DB 'A20 line enabled', 0dh, 0ah, 0
-gdtLoadMsg:
-	DB 'Loading GDT', 0dh, 0ah, 0
-protectedMsg:
-	DB 'Entering protected mode', 0dh, 0ah, 0
-kernelMsg:
-	DB 'Entering C code', 0dh, 0ah, 0
+protectedModeMsg:
+	DB 'Loading GDT and entering protected mode', 0dh, 0ah, 0
 
 %include "gdt.inc"
 

@@ -3,18 +3,19 @@ import sys
 
 def main(argc, argv):
     if argc < 3:
-        print(f"Usage: {argv[0]} <output dir> <output image>")
+        print(f"Usage: {argv[0]} <bootsector> <kernel binary> <output image>")
         exit(1)
 
-    outdir = argv[1]
-    imagefile = argv[2]
+    boot = argv[1]
+    kernel = argv[2]
+    imagefile = argv[3]
 
     image = b""
 
-    with open(os.path.join(outdir, "boot.bin"), "rb") as bootbin:
+    with open(boot, "rb") as bootbin:
         image += bootbin.read()
 
-    with open(os.path.join(outdir, "kernel.bin"), "rb") as kernelbin:
+    with open(kernel, "rb") as kernelbin:
         image += kernelbin.read()
 
     image += b"\x00" * (0x6200 - len(image))
