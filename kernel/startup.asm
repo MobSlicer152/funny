@@ -37,12 +37,20 @@ Main:
 	; load the GDT
 	call LoadGDT
 
-	;mov si, protectedMsg
-	;call PrintStr
+	; enable protected mode
+	mov si, protectedMsg
+	call PrintStr
+	mov eax, cr0
+	or eax, 1
+	mov cr0, eax
+
+	BITS 32
 
 	mov si, kernelMsg
 	call PrintStr
 	call KernelMain
+
+	BITS 16
 
 .exit:
 	hlt
@@ -123,13 +131,16 @@ LoadGDT:
 	call PrintStr
 
 	xor eax, eax
-	mov ax, ds
-	shl eax, 4
+	;mov ax, ds ; DS is 0000h
+	;shl eax, 4
 	add eax, gdt
 	mov ds:[gdtr + GDT_DESCRIPTOR.offset], eax
 	mov eax, gdtEnd
 	sub eax, gdt
 	mov ds:[gdtr + GDT_DESCRIPTOR.size], ax
+
+	jmp .flush
+.flush:
 	lgdt ds:[gdtr]
 
 	jmp 08h:.reloadCS

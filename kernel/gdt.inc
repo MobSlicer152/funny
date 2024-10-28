@@ -21,7 +21,7 @@ gdt:
 		AT .limit, DW 0
 		AT .base, DB 0, 0, 0
 		AT .access, DB 0
-		AT .limitEx, DB 0
+		AT .flags, DB 0
 		AT .baseEx, DB 0
 	IEND
 	; code descriptor
@@ -29,7 +29,7 @@ gdt:
 		AT .limit, DW 0ffffh
 		AT .base, DB 00h, 00h, 00h
 		AT .access, DB 0b10011011
-		AT .limitEx, DB 0cfh
+		AT .flags, DB 0cfh
 		AT .baseEx, DB 00h
 	IEND
 	; data descriptor
@@ -37,7 +37,7 @@ gdt:
 		AT .limit, DW 0ffffh
 		AT .base, DB 00h, 00h, 00h
 		AT .access, DB 0b10010011
-		AT .limitEx, DB 0cfh
+		AT .flags, DB 0cfh
 		AT .baseEx, DB 00h
 	IEND
 gdtEnd:

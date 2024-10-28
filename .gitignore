@@ -6,5 +6,8 @@
 *.exe
 *.pdb
 *.ilk
+*.lst
 .vs/
 *.fdb
+out/
+obj/

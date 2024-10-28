@@ -13,6 +13,7 @@ Entry:
 	; stack 6500h-7900h
 	mov ax, 650h
 	mov ss, ax
+	mov sp, 1400h
 
 	; read partition 1
 	mov ah, 2 ; read sectors

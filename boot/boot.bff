@@ -8,15 +8,15 @@
 	{
 		Using(.BuildConfig)
 
-		.ObjectDir = 'obj/$CompilerName$/$ArchName$/$ConfigName$'
-		.OutputDir = 'out/$CompilerName$/$ArchName$/$ConfigName$'
+		.ObjectDir = '$Root$/obj/$CompilerName$/$ArchName$/$ConfigName$'
+		.OutputDir = '$Root$/out/$CompilerName$/$ArchName$/$ConfigName$'
 		
 		Exec('$ProjectName$-Flat-$CompilerName$-$ArchName$-$ConfigName$')
 		{
 			.ExecExecutable = .NASM
 			.ExecInput = '$ProjectPath$/boot.asm'
 			.ExecOutput = '$OutputDir$/$ProjectName$.bin'
-			.ExecArguments = .NASMOptions + ' -fbin'
+			.ExecArguments = .NASMOptions + ' -fbin -l $OutputDir$/$ProjectName$.lst'
 			.ExecWorkingDir = '$ProjectPath$'
 		}
 

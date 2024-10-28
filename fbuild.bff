@@ -1,5 +1,7 @@
 #include "fastbuild/Config.bff"
 
+.Root = ._WORKING_DIR_
+
 .IncludeDirs = {}
 .ExternalIncludeDirs = {}
 
