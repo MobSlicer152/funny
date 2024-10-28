@@ -11,3 +11,4 @@
 *.fdb
 out/
 obj/
+fastbuild/Config.bff

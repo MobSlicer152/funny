@@ -20,7 +20,7 @@
 	.CompilerOptions = ' "%1"' // Input
 					 + ' -o"%2"' // Output
 					 + ' -c' // Compile only
-					 + ' -std=c23' // C23
+					 + ' -std=c2x' // C23
 					 + ' -ffreestanding' // Disable libc
 					 + ' -fms-extensions' // These are nice to have
 					 + ' -fno-exceptions' // No exceptions

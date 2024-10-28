@@ -8,8 +8,8 @@
 	{
 		Using(.BuildConfig)
 
-		.ObjectDir = 'obj/$CompilerName$/$ArchName$/$ConfigName$'
-		.OutputDir = 'out/$CompilerName$/$ArchName$/$ConfigName$'
+		.ObjectDir = '$Root$/obj/$CompilerName$/$ArchName$/$ConfigName$'
+		.OutputDir = '$Root$/out/$CompilerName$/$ArchName$/$ConfigName$'
 
 		Exec('$ProjectName$-$CompilerName$-$ArchName$-$ConfigName$')
 		{
@@ -17,6 +17,7 @@
 			.ExecInput = 'scripts/bootimg.py'
 			.ExecOutput = '$OutputDir$/$ProjectName$.img'
 			.ExecArguments = '"%1" "$OutputDir$" "%2"'
+			.PreBuildDependencies = 'kernel-$CompilerName$-$ArchName$-$ConfigName$'
 		}
 		^'Targets_$CompilerName$_$ArchName$_$ConfigName$' + {'$ProjectName$-$CompilerName$-$ArchName$-$ConfigName$'}
 	}

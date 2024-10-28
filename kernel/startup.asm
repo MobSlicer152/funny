@@ -148,9 +148,10 @@ LoadGDT:
 	mov ax, 10h
 	mov ds, ax
 	mov es, ax
-	mov fs, ax
-	mov gs, ax
 	mov ss, ax
+
+	; fix stack pointer
+	add sp, 6500h
 	
 	ret
 
