@@ -62,6 +62,7 @@ Main:
 .protectedMode:
 	BITS 32
 
+	; load other segments with GDT selector for "data" segment
 	mov ax, 10h
 	mov ds, ax
 	mov es, ax
@@ -69,7 +70,8 @@ Main:
 	mov gs, ax
 	mov ss, ax
 	
-	add esp, 6500h
+	; SS is now mapped to 00000h, have to adjust ESP
+	add esp, 17e00h
 
 	call KernelMain
 

@@ -1,6 +1,9 @@
 import os
 import sys
 
+# 512B for boot sector + 100kB for kernel
+IMAGE_SIZE = 0x19200
+
 def main(argc, argv):
     if argc < 3:
         print(f"Usage: {argv[0]} <bootsector> <kernel binary> <output image>")
@@ -18,7 +21,7 @@ def main(argc, argv):
     with open(kernel, "rb") as kernelbin:
         image += kernelbin.read()
 
-    image += b"\x00" * (0x6200 - len(image))
+    image += b"\x00" * (IMAGE_SIZE - len(image))
 
     with open(imagefile, "wb") as output:
         output.write(image)

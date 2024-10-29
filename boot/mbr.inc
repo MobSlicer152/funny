@@ -13,11 +13,12 @@
 	DB 0 ; cylinder 0
 	DB 0c2h ; hidden Linux
 	; end offset in CHS
-	DB 0 ; head 0
-	DB 01100100b ; sector 49
+	DB 3 ; head 3
+	DB 00110100b ; sector 13
 	DB 0 ; cylinder 0
 	DD 1 ; starting LBA offset
-	DD 30h ; total sectors (48 sectors = 24KB)
+kernelSize:
+	DD 0c8h ; total sectors (C8h/200 sectors = 100kB)
 
 	; partitions 2-4 are unused
 	TIMES 3 * 16 DB 0
