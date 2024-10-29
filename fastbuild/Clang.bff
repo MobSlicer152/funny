@@ -22,7 +22,6 @@
 					 + ' -c' // Compile only
 					 + ' -std=c2x' // C23
 					 + ' -ffreestanding' // Disable libc
-					 + ' -fms-extensions' // These are nice to have
 					 + ' -fno-exceptions' // No exceptions
 					 + ' -Wall' // Most warnings
 					 + ' -Wextra' // More warnings
