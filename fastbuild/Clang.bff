@@ -64,6 +64,8 @@
 					 + ' -O0' // Disable optimization
 					 
 					 + ' -DDEBUG'
+
+	.NASMOptions = ' -g' // Debug info
 	
 	.LinkerOptions = ' -g' // Debug info
 ]

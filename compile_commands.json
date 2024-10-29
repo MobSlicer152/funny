@@ -1,0 +1,14 @@
+[
+  {
+    "directory": "C:\\Users\\MobSlicer152\\source\\repos\\funny",
+    "file": "C:\\Users\\MobSlicer152\\source\\repos\\funny\\kernel\\main.c",
+    "output": "C:\\Users\\MobSlicer152\\source\\repos\\funny\\obj\\Clang\\x86\\Debug\\kernel\\main.obj",
+    "arguments": ["C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\Llvm\\x64\\bin\\clang.exe", "C:\\Users\\MobSlicer152\\source\\repos\\funny\\kernel\\main.c", "-oC:\\Users\\MobSlicer152\\source\\repos\\funny\\obj\\Clang\\x86\\Debug\\kernel\\main.obj", "-c", "-std=c2x", "-ffreestanding", "-fms-extensions", "-fno-exceptions", "-Wall", "-Wextra", "-Werror", "-Wno-#pragma-messages", "-Wno-macro-redefined", "-Wno-unused-function", "-DX86", "-DIA32", "-DSIMD128", "-DSIMD256", "--target=i386-none-elf", "-mno-sse", "-msse4.2", "-g", "-O0", "-DDEBUG"]
+  },
+  {
+    "directory": "C:\\Users\\MobSlicer152\\source\\repos\\funny",
+    "file": "C:\\Users\\MobSlicer152\\source\\repos\\funny\\kernel\\main.c",
+    "output": "C:\\Users\\MobSlicer152\\source\\repos\\funny\\obj\\Clang\\x86\\Release\\kernel\\main.obj",
+    "arguments": ["C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\Llvm\\x64\\bin\\clang.exe", "C:\\Users\\MobSlicer152\\source\\repos\\funny\\kernel\\main.c", "-oC:\\Users\\MobSlicer152\\source\\repos\\funny\\obj\\Clang\\x86\\Release\\kernel\\main.obj", "-c", "-std=c2x", "-ffreestanding", "-fms-extensions", "-fno-exceptions", "-Wall", "-Wextra", "-Werror", "-Wno-#pragma-messages", "-Wno-macro-redefined", "-Wno-unused-function", "-DX86", "-DIA32", "-DSIMD128", "-DSIMD256", "--target=i386-none-elf", "-mno-sse", "-msse4.2", "-O2", "-Og", "-ffast-math", "-flto=thin", "-DRELEASE"]
+  }
+]

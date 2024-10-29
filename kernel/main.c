@@ -1,5 +1,6 @@
-//#include "interrupt.h"
-//#include "vga.h"
+#include "kernel.h"
+
+#include "vga.h"
 
 _Noreturn void KernelMain(void)
 {

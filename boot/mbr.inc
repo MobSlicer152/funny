@@ -17,8 +17,7 @@
 	DB 00110100b ; sector 13
 	DB 0 ; cylinder 0
 	DD 1 ; starting LBA offset
-kernelSize:
-	DD 0c8h ; total sectors (C8h/200 sectors = 100kB)
+	DD kernelSize
 
 	; partitions 2-4 are unused
 	TIMES 3 * 16 DB 0

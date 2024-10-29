@@ -1,8 +1,8 @@
 import os
 import sys
 
-# 512B for boot sector + 100kB for kernel
-IMAGE_SIZE = 0x19200
+# 1 sector for boot, 80h for kernel
+IMAGE_SIZE = 0x200 * 0x81
 
 def main(argc, argv):
     if argc < 3:
