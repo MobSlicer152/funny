@@ -15,7 +15,7 @@
 		{
 			.ExecExecutable = .NASM
 			.ExecInput = '$ProjectPath$/startup.asm'
-			.ExecOutput = '$ObjectDir$/$ProjectPath$/startup.o'
+			.ExecOutput = '$ObjectDir$/$ProjectPath$/startup.obj'
 			.ExecArguments = .NASMOptions + ' -felf -l $ObjectDir$/$ProjectPath$/startup.lst'
 			.ExecWorkingDir = '$ProjectPath$'
 		}
@@ -35,7 +35,7 @@
 			.Libraries =
 			{
 				'$ProjectName$-Objs-$CompilerName$-$ArchName$-$ConfigName$',
-				'$ObjectDir$/$ProjectPath$/startup.o'
+				'$ObjectDir$/$ProjectPath$/startup.obj'
 			}
 
 			.LinkerOptions + ' -T $ProjectPath$/kernel.ld'
