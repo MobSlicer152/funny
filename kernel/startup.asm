@@ -8,19 +8,24 @@
 	SECTION .startup
 Main:
 	; set mode 2
-	mov ah, 0
-	mov al, 2
-	int 10h
+	;mov ah, 0
+	;mov al, 2
+	;int 10h
 
 	; set cursor to page 0 at (0, 0)
-	mov ah, 2
-	mov bh, 0
-	xor dx, dx
+	;mov ah, 2
+	;mov bh, 0
+	;xor dx, dx
+	;int 10h
+
+	; change video mode to 320x200 256-colour
+	mov al, 0
+	mov ah, 13h
 	int 10h
 
 	; print message
-	mov si, startMsg
-	call PrintStr
+	;mov si, startMsg
+	;call PrintStr
 
 	; check A20
 	call CheckA20
@@ -31,12 +36,12 @@ Main:
 	call EnableA20
 
 .A20Enabled:
-	mov si, A20EnabledMsg
-	call PrintStr
+	;mov si, A20EnabledMsg
+	;call PrintStr
 
 	; load the GDT
-	mov si, protectedModeMsg
-	call PrintStr
+	;mov si, protectedModeMsg
+	;call PrintStr
 
 	xor eax, eax
 	add eax, gdt
@@ -96,8 +101,8 @@ PrintStr:
 
 ; check A20 line, return in AL
 CheckA20:
-	mov si, checkA20Msg
-	call PrintStr
+	;mov si, checkA20Msg
+	;call PrintStr
 
 	push es
 	push ds
@@ -138,8 +143,8 @@ CheckA20:
 
 ; enable A20 line, using Fast A20
 EnableA20:
-	mov si, enableA20Msg
-	call PrintStr
+	;mov si, enableA20Msg
+	;call PrintStr
 
 	in al, 92h
 	test al, 2
