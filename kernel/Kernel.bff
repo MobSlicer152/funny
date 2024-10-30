@@ -51,7 +51,6 @@
 			.ExecArguments = '"%1"'
 						   + ' "%2"'
 						   + ' -O binary'
-						   + ' --set-start=0x500'
 		}
 
 		// This is the main target
