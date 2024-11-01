@@ -19,8 +19,8 @@ Main:
 	;int 10h
 
 	; change video mode to 320x200 256-colour
-	mov al, 0
-	mov ah, 13h
+	mov ah, 0
+	mov al, 13h
 	int 10h
 
 	; print message
