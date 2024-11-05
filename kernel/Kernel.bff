@@ -11,7 +11,7 @@
 		.ObjectDir = '$Root$/obj/$CompilerName$/$ArchName$/$ConfigName$'
 		.OutputDir = '$Root$/out/$CompilerName$/$ArchName$/$ConfigName$'
 
-		Exec('$ProjectName$-ASM-$CompilerName$-$ArchName$-$ConfigName$')
+		Exec('$ProjectName$-startup-$CompilerName$-$ArchName$-$ConfigName$')
 		{
 			.ExecExecutable = .NASM
 			.ExecInput = '$ProjectPath$/startup.asm'
@@ -24,6 +24,7 @@
 		{
 			.CompilerInputFiles =
 			{
+				'$ProjectPath$/idt.c'
 				'$ProjectPath$/main.c'
 			}
 

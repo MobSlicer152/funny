@@ -4,9 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#ifdef X86
 #include <x86intrin.h>
-#endif
 
 typedef uint8_t u8;
 typedef uint16_t u16;
@@ -26,3 +24,6 @@ typedef uptr usize;
 
 typedef const char* cstr;
 typedef char* dstr;
+
+#define KERNEL_CODE_SELECTOR 0x8
+#define KERNEL_DATA_SELECTOR 0x10
