@@ -1,5 +1,3 @@
-ENTRY(0x7e00)
-
 SECTIONS
 {
 	.startup 0x7e00 : {
@@ -9,4 +7,3 @@ SECTIONS
 	.data : { *(.data) }
 	.bss : { *(.bss) }
 }
-

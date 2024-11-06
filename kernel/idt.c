@@ -7,10 +7,10 @@ static void RegisterGate(Isr_t handler, InterruptType_t type, IdtGateType_t gate
 {
 	s_idt[type].offsetLower = (uptr)handler & 0xFFFF;
 	s_idt[type].offsetUpper = (uptr)handler >> 16;
-    
-    s_idt[type].gateType = gateType;
 
-    // these fields are always the same
+	s_idt[type].gateType = gateType;
+
+	// these fields are always the same
 	s_idt[type].selector = KERNEL_CODE_SELECTOR << 3;
 	s_idt[type].dpl = 0;
 	s_idt[type].present = true;
@@ -18,10 +18,10 @@ static void RegisterGate(Isr_t handler, InterruptType_t type, IdtGateType_t gate
 
 void ATTRIBUTE(no_caller_saved_registers) IsrCommon(InterruptType_t type, u32 error)
 {
-    (void)error;
+	(void)error;
 
 	switch (type)
-    {
+	{
 	case InterruptTypeDivisionError:
 	case InterruptTypeDebug:
 	case InterruptTypeNonMaskable:
@@ -75,19 +75,19 @@ MAKE_ISR_NO_ERROR(0x4)  // overflow
 MAKE_ISR_NO_ERROR(0x5)  // bound exceeded
 MAKE_ISR_NO_ERROR(0x6)  // invalid opcode
 MAKE_ISR_NO_ERROR(0x7)  // device unavailable
-MAKE_ISR_ERROR(0x8)  // double fault
+MAKE_ISR_ERROR(0x8)     // double fault
 MAKE_ISR_NO_ERROR(0x9)  // fpu segment overrun (legacy)
-MAKE_ISR_ERROR(0xa)  // invalid tss
-MAKE_ISR_ERROR(0xb)  // segment not present
-MAKE_ISR_ERROR(0xc)  // stack segment fault
-MAKE_ISR_ERROR(0xd)  // general protection fault
+MAKE_ISR_ERROR(0xa)     // invalid tss
+MAKE_ISR_ERROR(0xb)     // segment not present
+MAKE_ISR_ERROR(0xc)     // stack segment fault
+MAKE_ISR_ERROR(0xd)     // general protection fault
 MAKE_ISR_NO_ERROR(0xe)  // page fault
 MAKE_ISR_NO_ERROR(0x10) // x87 exception
-MAKE_ISR_ERROR(0x11) // alignment check
+MAKE_ISR_ERROR(0x11)    // alignment check
 MAKE_ISR_NO_ERROR(0x12) // machine check
 MAKE_ISR_NO_ERROR(0x13) // simd exception
 MAKE_ISR_NO_ERROR(0x14) // virtualization exception
-MAKE_ISR_ERROR(0x15) // control protection exception
+MAKE_ISR_ERROR(0x15)    // control protection exception
 MAKE_ISR_NO_ERROR(0x1c) // hypervisor injection exception
 MAKE_ISR_NO_ERROR(0x1d) // vmm communication exception
 MAKE_ISR_NO_ERROR(0x1e) // security exception
@@ -159,10 +159,8 @@ void InitializeIdt(void)
 	RegisterGate(Isr0x2e, InterruptTypePrimaryHardDisk, IdtGateTypeInterrupt32);
 	RegisterGate(Isr0x2f, InterruptTypeSecondaryHardDisk, IdtGateTypeInterrupt32);
 
-    IdtDescriptor_t desc = {(uptr)s_idt, sizeof(s_idt)};
+	IdtDescriptor_t desc = {(uptr)s_idt, sizeof(s_idt)};
 
-    // load the IDT
-    __asm__ (
-        "lidt %0" : : "m"(desc)
-    );
+	// load the IDT
+	asm volatile("lidt %0" : : "m"(desc));
 }

@@ -11,16 +11,16 @@ _Noreturn void KernelMain(void)
 	InitializeIdt();
 	InitializeFpu();
 
-	u16 color = 0;
-	for (u32 y = 0; y < FRAMEBUFFER_HEIGHT; y++)
+	u32 color = 0;
+	for (u32 y = 0; y < 16; y++)
 	{
-		for (u32 x = 0; x < FRAMEBUFFER_WIDTH; x++)
+		for (u32 x = 0; x < 16; x++)
 		{
-			FRAMEBUFFER[y * FRAMEBUFFER_WIDTH + x] = color++ / 256;
+			FRAMEBUFFER[(u32)(y / 16.0f * FRAMEBUFFER_HEIGHT) + (u32)(x / 16.0f * FRAMEBUFFER_WIDTH)] = color++;
 		}
 	}
 
 	while (1) {
-		__asm__ ("hlt");
+		asm ("hlt");
 	}
 }

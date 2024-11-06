@@ -17,6 +17,10 @@ typedef int16_t s16;
 typedef int32_t s32;
 typedef int64_t s64;
 
+typedef float f32;
+typedef double f64;
+typedef long double f80;
+
 typedef intptr_t sptr;
 typedef uintptr_t uptr;
 
@@ -30,3 +34,5 @@ typedef char* dstr;
 
 #define KERNEL_CODE_SELECTOR 0x8
 #define KERNEL_DATA_SELECTOR 0x10
+
+#define asm __asm__

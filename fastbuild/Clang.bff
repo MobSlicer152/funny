@@ -13,7 +13,7 @@
 	.CompilerName = 'Clang'
 
 	.Compiler = '$LLVMDir$/bin/clang$ExeExtension$'
-	.Linker = '$LLVMDir$/bin/ld.lld$ExeExtension$'
+	.Linker = '$LLVMDir$/bin/clang$ExeExtension$'
 	.Librarian = '$LLVMDir$/bin/llvm-ar$ExeExtension$'
 	.ObjCopy = '$LLVMDir$/bin/llvm-objcopy$ExeExtension$'
 
@@ -45,6 +45,7 @@
 
 	.LinkerOptions = ' -o "%2"' // Output
 				   + ' "%1"' // Input
+				   + ' -fuse-ld=lld'
 				   + ' -nostdlib' // Disable automatically linking to CRT and others
 	
 	.LibrarianOptions = ' rc' // Replace/insert, create
@@ -102,6 +103,8 @@
 				     + ' --target=x86_64-none-elf'
 					 + ' -march=pentium4'
 					 + ' -mgeneral-regs-only' // no SSE/AVX/whatever
+
+	.LinkerOptions = ' --target=x86_64-none-elf'
 ]
 
 .Clang_AMD64_Debug = .Clang_Common + .Clang_AMD64 + .Clang_Debug
@@ -127,6 +130,8 @@
 					 + ' --target=i386-none-elf'
 					 + ' -march=i386' // no crazy post-1985 instructions
 					 + ' -mgeneral-regs-only' // no SSE/AVX/whatever
+					 
+	.LinkerOptions = ' --target=i386-none-elf'
 ]
 
 .Clang_x86_Debug = .Clang_Common + .Clang_x86 + .Clang_Debug

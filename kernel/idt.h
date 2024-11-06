@@ -41,7 +41,7 @@ typedef void (*Isr_t)(void);
 #define MAKE_ISR_ERROR(index)                                                                                                    \
 	void __attribute__((naked)) Isr##index(void)                                                                                 \
 	{                                                                                                                            \
-		__asm__("pusha;"                                                                                                         \
+		asm("pusha;"                                                                                                         \
 				"push " #index ";"                                                                                               \
 				"call %P0;"                                                                                                      \
 				"popa;"                                                                                                          \
@@ -53,7 +53,7 @@ typedef void (*Isr_t)(void);
 #define MAKE_ISR_NO_ERROR(index)                                                                                                 \
 	void __attribute__((naked)) Isr##index(void)                                                                                 \
 	{                                                                                                                            \
-		__asm__("pusha;"                                                                                                         \
+		asm("pusha;"                                                                                                         \
 				"push 0;" /* IsrCommon expects an error code */                                                                  \
 				"push " #index ";"                                                                                               \
 				"call %P0;"                                                                                                      \
