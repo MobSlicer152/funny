@@ -100,8 +100,8 @@
 
 	.CompilerOptions = ' -DX86 -DAMD64 -DSIMD128 -DSIMD256'
 				     + ' --target=x86_64-none-elf'
-					 + ' -mno-sse' // No SSE in codegen (unless it's explicitly used)
-					 + ' -msse4.2' // Allow using SSE
+					 + ' -march=pentium4'
+					 + ' -mgeneral-regs-only' // no SSE/AVX/whatever
 ]
 
 .Clang_AMD64_Debug = .Clang_Common + .Clang_AMD64 + .Clang_Debug
@@ -125,8 +125,8 @@
 
 	.CompilerOptions = ' -DX86 -DIA32 -DSIMD128 -DSIMD256'
 					 + ' --target=i386-none-elf'
-					 + ' -mno-sse' // No SSE in codegen (unless it's explicitly used)
-					 + ' -msse4.2' // Allow using SSE
+					 + ' -march=i386' // no crazy post-1985 instructions
+					 + ' -mgeneral-regs-only' // no SSE/AVX/whatever
 ]
 
 .Clang_x86_Debug = .Clang_Common + .Clang_x86 + .Clang_Debug

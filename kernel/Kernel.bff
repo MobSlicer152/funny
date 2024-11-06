@@ -24,7 +24,8 @@
 		{
 			.CompilerInputFiles =
 			{
-				'$ProjectPath$/idt.c'
+				'$ProjectPath$/fpu.c',
+				'$ProjectPath$/idt.c',
 				'$ProjectPath$/main.c'
 			}
 

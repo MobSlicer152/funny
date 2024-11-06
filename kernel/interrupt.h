@@ -30,6 +30,9 @@ typedef enum InterruptType
     InterruptTypeVmmCommunicationException = 0x1d,
     InterruptTypeSecurityException = 0x1e,
 
+    InterruptTypeMinException = InterruptTypeDivisionError,
+    InterruptTypeMaxException = InterruptTypeSecurityException,
+
     // remapped IRQs
     InterruptTypeTimer = 0x20,
     InterruptTypeKeyboard = 0x21,
@@ -47,5 +50,8 @@ typedef enum InterruptType
     InterruptTypeMouse = 0x2c,
     InterruptTypeFpu = 0x2d,
     InterruptTypePrimaryHardDisk = 0x2e,
-    InterruptTypeSecondaryHardDisk = 0x2f
+    InterruptTypeSecondaryHardDisk = 0x2f,
+    
+    InterruptTypeMinIrq = InterruptTypeTimer,
+    InterruptTypeMaxIrq = InterruptTypeSecondaryHardDisk
 } InterruptType_t;
