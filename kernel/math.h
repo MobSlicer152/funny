@@ -9,7 +9,8 @@
 
 static ATTRIBUTE(always_inline) s32 abs(s32 x)
 {
-    return (s32)((u32)x & (-1UL / 2));
+    // glibc does this, it's fine somehow (i guess fabs matters more)
+    return x < 0 ? -x : x;
 }
 
 // https://github.com/embeddedartistry/libc/blob/master/src/math/fabs.c
