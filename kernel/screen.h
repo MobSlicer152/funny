@@ -9,4 +9,4 @@ extern void InitializeScreen(void);
 
 extern void Flip(void);
 extern void ClearScreen(u8 color);
-extern void SetPixel(u32 x, u32 y, u8 color);
+extern void SetPixel(s32 x, s32 y, u8 color);

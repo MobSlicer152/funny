@@ -80,3 +80,11 @@ static ATTRIBUTE(always_inline) void ResetX87Control(void)
 {
 	asm volatile("fninit");
 }
+
+[[noreturn]] static ATTRIBUTE(always_inline) void Halt(void)
+{
+	while (true)
+	{
+		asm volatile("hlt");
+	}
+}
