@@ -27,8 +27,9 @@
 				'$ProjectPath$/fpu.c',
 				'$ProjectPath$/idt.c',
 				'$ProjectPath$/irq.c',
+				'$ProjectPath$/libc.c',
 				'$ProjectPath$/main.c',
-				'$ProjectPath$/math.c',
+				'$ProjectPath$/screen.c',
 				'$ProjectPath$/timer.c'
 			}
 

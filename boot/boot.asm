@@ -9,12 +9,12 @@
 
 ; Runs at 7c00h
 Entry:
-	; kernel 7e00h-17e00
+	; kernel 7e00h-17e00h
 	xor ax, ax
 	mov ds, ax
 	mov es, ax
-	; stack 100000h-108000h
-	mov ax, 1000h
+	; stack 17e00h-1fe00h
+	mov ax, 17eh
 	mov ss, ax
 	mov sp, 8000h
 

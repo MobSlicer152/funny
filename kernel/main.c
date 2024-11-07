@@ -2,26 +2,28 @@
 #include "idt.h"
 #include "irq.h"
 #include "kernel.h"
+#include "libc.h"
+#include "math.h"
+#include "screen.h"
 #include "timer.h"
 
 _Noreturn void KernelMain(void)
 {
-	static volatile u8* const FRAMEBUFFER = (volatile u8* const)0xA0000;
-	static const u32 FRAMEBUFFER_WIDTH = 320;
-	static const u32 FRAMEBUFFER_HEIGHT = 200;
-
 	InitializeIdt();
-	InitializeIrq();
+	//InitializeIrq();
 	InitializeFpu();
+	InitializeScreen();
 	//InitializeTimer();
 
-	for (u32 y = 0; y < FRAMEBUFFER_HEIGHT; y++)
+	for (u32 x = 0; x < SCREEN_WIDTH; x++)
 	{
-		for (u32 x = 0; x < FRAMEBUFFER_WIDTH; x++)
-		{
-			FRAMEBUFFER[y * FRAMEBUFFER_WIDTH + x] = (u8)(((f32)x / FRAMEBUFFER_WIDTH + (f32)y / FRAMEBUFFER_HEIGHT) * 15.0f) + 32;
-		}
+		f32 cleanX = fmod((f32)x / 9.26f, 63.0);
+		f32 sinX = (sin(cleanX) + 1.0f) / 2.0f;
+		//f32 cosX = (cos(cleanX) + 1.0f) / 2.0f;
+		SetPixel(x, sinX * SCREEN_HEIGHT, 32 + sinX * 15.0f);
+		SetPixel(x, SCREEN_HEIGHT - (sinX * SCREEN_HEIGHT), 63 - sinX * 15.0f);
 	}
+	Flip();
 
 	while (1) {
 		asm ("hlt");

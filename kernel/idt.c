@@ -1,5 +1,6 @@
 #include "idt.h"
 #include "irq.h"
+#include "libc.h"
 
 typedef void (*Isr_t)(void);
 
@@ -142,7 +143,7 @@ MAKE_ISR_NO_ERROR(0x2f) // secondary hard disk
 void InitializeIdt(void)
 {
 	// wipe the table (it should be clear already but idk)
-	__builtin_memset_inline(s_idt, 0, sizeof(s_idt));
+	memset(s_idt, 0, sizeof(s_idt));
 
 	// exceptions
 	RegisterGate(Isr0x0, InterruptTypeDivisionError, IdtGateTypeInterrupt32);
