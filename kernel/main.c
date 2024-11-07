@@ -1,6 +1,8 @@
 #include "fpu.h"
 #include "idt.h"
+#include "irq.h"
 #include "kernel.h"
+#include "timer.h"
 
 _Noreturn void KernelMain(void)
 {
@@ -9,14 +11,15 @@ _Noreturn void KernelMain(void)
 	static const u32 FRAMEBUFFER_HEIGHT = 200;
 
 	InitializeIdt();
+	InitializeIrq();
 	InitializeFpu();
+	//InitializeTimer();
 
-	u32 color = 0;
-	for (u32 y = 0; y < 16; y++)
+	for (u32 y = 0; y < FRAMEBUFFER_HEIGHT; y++)
 	{
-		for (u32 x = 0; x < 16; x++)
+		for (u32 x = 0; x < FRAMEBUFFER_WIDTH; x++)
 		{
-			FRAMEBUFFER[(u32)(y / 16.0f * FRAMEBUFFER_HEIGHT) + (u32)(x / 16.0f * FRAMEBUFFER_WIDTH)] = color++;
+			FRAMEBUFFER[y * FRAMEBUFFER_WIDTH + x] = (u8)(((f32)x / FRAMEBUFFER_WIDTH + (f32)y / FRAMEBUFFER_HEIGHT) * 15.0f) + 32;
 		}
 	}
 

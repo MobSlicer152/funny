@@ -53,5 +53,15 @@ typedef enum InterruptType
     InterruptTypeSecondaryHardDisk = 0x2f,
     
     InterruptTypeMinIrq = InterruptTypeTimer,
-    InterruptTypeMaxIrq = InterruptTypeSecondaryHardDisk
+    InterruptTypeMaxIrq = InterruptTypeSecondaryHardDisk,
+    InterruptTypeMinPrimaryIrq = InterruptTypeTimer,
+    InterruptTypeMaxPrimaryIrq = InterruptTypeLpt1,
+    InterruptTypeMinSecondaryIrq = InterruptTypeCmos,
+    InterruptTypeMaxSecondaryIrq = InterruptTypeSecondaryHardDisk,
 } InterruptType_t;
+
+// initialize and remap pic, start interrupts
+extern void InitializeIrq(void);
+
+// send an eoi to pic
+extern void EndIrq(InterruptType_t type);

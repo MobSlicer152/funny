@@ -1,5 +1,32 @@
 #include "idt.h"
-#include "interrupt.h"
+#include "irq.h"
+
+typedef void (*Isr_t)(void);
+
+#define MAKE_ISR_ERROR(index)                                                                                                    \
+	void __attribute__((naked)) Isr##index(void)                                                                                 \
+	{                                                                                                                            \
+		asm("pusha;"                                                                                                             \
+			"push " #index ";"                                                                                                   \
+			"call %P0;"                                                                                                          \
+			"popa;"                                                                                                              \
+			"iret"                                                                                                               \
+			:                                                                                                                    \
+			: "i"(IsrCommon));                                                                                                   \
+	}
+
+#define MAKE_ISR_NO_ERROR(index)                                                                                                 \
+	void __attribute__((naked)) Isr##index(void)                                                                                 \
+	{                                                                                                                            \
+		asm("pusha;"                                                                                                             \
+			"push 0;" /* IsrCommon expects an error code */                                                                      \
+			"push " #index ";"                                                                                                   \
+			"call %P0;"                                                                                                          \
+			"popa;"                                                                                                              \
+			"iret"                                                                                                               \
+			:                                                                                                                    \
+			: "i"(IsrCommon));                                                                                                   \
+	}
 
 static IdtEntry_t s_idt[48];
 
@@ -16,7 +43,7 @@ static void RegisterGate(Isr_t handler, InterruptType_t type, IdtGateType_t gate
 	s_idt[type].present = true;
 }
 
-void ATTRIBUTE(no_caller_saved_registers) IsrCommon(InterruptType_t type, u32 error)
+void IsrCommon(InterruptType_t type, u32 error)
 {
 	(void)error;
 
@@ -46,6 +73,7 @@ void ATTRIBUTE(no_caller_saved_registers) IsrCommon(InterruptType_t type, u32 er
 	case InterruptTypeHypervisorInjectionException:
 	case InterruptTypeVmmCommunicationException:
 	case InterruptTypeSecurityException:
+        break;
 	case InterruptTypeTimer:
 	case InterruptTypeKeyboard:
 	case InterruptTypeCascade:
@@ -62,6 +90,7 @@ void ATTRIBUTE(no_caller_saved_registers) IsrCommon(InterruptType_t type, u32 er
 	case InterruptTypeFpu:
 	case InterruptTypePrimaryHardDisk:
 	case InterruptTypeSecondaryHardDisk:
+        EndIrq(type);
 		break;
 	}
 }

@@ -26,7 +26,10 @@
 			{
 				'$ProjectPath$/fpu.c',
 				'$ProjectPath$/idt.c',
-				'$ProjectPath$/main.c'
+				'$ProjectPath$/irq.c',
+				'$ProjectPath$/main.c',
+				'$ProjectPath$/math.c',
+				'$ProjectPath$/timer.c'
 			}
 
 			.CompilerOutputPath = '$ObjectDir$/$ProjectPath$'
