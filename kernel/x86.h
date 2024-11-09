@@ -96,11 +96,7 @@ static ATTRIBUTE(always_inline) void DisableInterrupts(void)
 	asm volatile("cli");
 }
 
-[[noreturn]] static ATTRIBUTE(always_inline) void Halt(void)
+static ATTRIBUTE(always_inline) void Halt(void)
 {
-	DisableInterrupts();
-	while (true)
-	{
-		asm volatile("hlt");
-	}
+	asm volatile("hlt");
 }

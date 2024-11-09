@@ -8,10 +8,10 @@ static u8* const BACKBUFFER = (u8* const)(BACKBUFFER_BASE);
 void InitializeScreen(void)
 {
 	ClearScreen(0);
-	Flip();
+	FlipScreen();
 }
 
-void Flip(void)
+void FlipScreen(void)
 {
 	memcpy((u8*)FRAMEBUFFER, BACKBUFFER, SCREEN_WIDTH * SCREEN_HEIGHT);
 }

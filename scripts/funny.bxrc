@@ -3,8 +3,8 @@ plugin_ctrl: voodoo=false, unmapped=true, biosdev=true, speaker=true, extfpuirq=
 config_interface: win32config
 display_library: win32, options="gui_debug"
 memory: guest=32, host=32, block_size=128
-romimage: file="C:\Program Files\Bochs-2.8\BIOS-bochs-latest", address=0x00000000, options=none, flash_data=none
-vgaromimage: file="C:\Program Files\Bochs-2.8\VGABIOS-lgpl-latest"
+romimage: file="C:\Users\MobSlicer152\source\repos\funny\v86\bios\seabios.bin", address=0x00000000, options=none, flash_data=none
+vgaromimage: file="C:\Users\MobSlicer152\source\repos\funny\v86\bios\vgabios.bin"
 boot: disk
 floppy_bootsig_check: disabled=0
 floppya: type=1_44

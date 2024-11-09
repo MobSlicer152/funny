@@ -1,6 +1,7 @@
 #include "idt.h"
 #include "irq.h"
 #include "libc.h"
+#include "timer.h"
 #include "x86.h"
 
 typedef void (*Isr_t)(void);
@@ -55,6 +56,55 @@ static void IsrCommon(InterruptType_t type, u32 error)
 	(void)error;
 
 	DisableInterrupts();
+
+	switch (type)
+	{
+	case InterruptTypeDivisionError:
+	case InterruptTypeDebug:
+	case InterruptTypeNonMaskable:
+	case InterruptTypeBreakpoint:
+	case InterruptTypeOverflow:
+	case InterruptTypeBoundRangeExceeded:
+	case InterruptTypeInvalidOpcode:
+	case InterruptTypeDeviceNotAvailable:
+	case InterruptTypeDoubleFault:
+	case InterruptTypeCoprocessorSegmentOverrun:
+	case InterruptTypeInvalidTss:
+	case InterruptTypeSegmentNotPresent:
+	case InterruptTypeStackSegmentFault:
+	case InterruptTypeGeneralProtectionFault:
+	case InterruptTypePageFault:
+	case InterruptTypeX87FloatException:
+	case InterruptTypeAlignmentCheck:
+	case InterruptTypeMachineCheck:
+	case InterruptTypeSimdFloatException:
+	case InterruptTypeVirtualizationException:
+	case InterruptTypeControlProtectionException:
+	case InterruptTypeHypervisorInjectionException:
+	case InterruptTypeVmmCommunicationException:
+	case InterruptTypeSecurityException:
+		break;
+
+	case InterruptTypeTimer:
+		UpdateTimer();
+		break;
+	case InterruptTypeKeyboard:
+	case InterruptTypeCascade:
+	case InterruptTypeCom2:
+	case InterruptTypeCom1:
+	case InterruptTypeLpt2:
+	case InterruptTypeFloppy:
+	case InterruptTypeLpt1:
+	case InterruptTypeCmos:
+	case InterruptTypePeripheral1:
+	case InterruptTypePeripheral2:
+	case InterruptTypePeripheral3:
+	case InterruptTypeMouse:
+	case InterruptTypeFpu:
+	case InterruptTypePrimaryHardDisk:
+	case InterruptTypeSecondaryHardDisk:
+		break;
+	}
 
 	if (InterruptTypeMinIrq <= type && type <= InterruptTypeMaxIrq)
 	{

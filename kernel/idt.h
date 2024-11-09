@@ -22,7 +22,7 @@ typedef struct IdtEntry
 	u16 offsetLower;
 	u16 selector;
 	union {
-		u32 flags;
+		u16 flags;
 		struct
 		{
 			u8 reserved2;
