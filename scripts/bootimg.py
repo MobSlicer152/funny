@@ -1,7 +1,7 @@
 import os
 import sys
 
-# 1 sector for boot, 80h for kernel
+# 1MB
 IMAGE_SIZE = 0x200 * 0x81
 
 def main(argc, argv):

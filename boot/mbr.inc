@@ -2,7 +2,7 @@
 	TIMES 440 - ($ - $$) DB 0
 
 	; MBR partition table
-	DD 69420694h ; unique ID
+	DD 4e42534ch ; unique ID
 	DW 0 ; reserved
 
 	; partition 1

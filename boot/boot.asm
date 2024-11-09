@@ -1,22 +1,22 @@
 	BITS 16
 	ORG 7c00h
 
-	; total sectors (80h/128 sectors = 65.5kB)
-	%define kernelSize 080h
+	; total sectors in the kernel (80h/128 sectors = 65.5kB)
+	%define kernelSize 80h
 
-	; just in case loaded at 7c00:0000 instead of 0000:7c00
+	; just in case loaded at 7c00h:0000h instead of 0000h:7c00h
 	jmp 0:Entry
 
-; Runs at 7c00h
+; Runs at 0000h:7c00h
 Entry:
 	; kernel 7e00h-17e00h
 	xor ax, ax
 	mov ds, ax
 	mov es, ax
-	; stack 17e00h-1fe00h
+	; stack 17e00h-1ae00h
 	mov ax, 17eh
 	mov ss, ax
-	mov sp, 8000h
+	mov sp, 4000h
 
 	; read partition 1
 	mov ah, 2 ; read sectors
@@ -35,25 +35,10 @@ Entry:
 	cmp al, kernelSize
 	jne .exit
 
-		; set mode 2
-	;mov ah, 0
-	;mov al, 2
-	;int 10h
-
-	; set cursor to page 0 at (0, 0)
-	;mov ah, 2
-	;mov bh, 0
-	;xor dx, dx
-	;int 10h
-
 	; change video mode to 320x200 256-colour
 	mov ah, 0
 	mov al, 13h
 	int 10h
-
-	; print message
-	;mov si, startMsg
-	;call PrintStr
 
 	; check A20
 	call CheckA20
@@ -64,18 +49,12 @@ Entry:
 	call EnableA20
 
 .A20Enabled:
-	;mov si, A20EnabledMsg
-	;call PrintStr
-
 	; load the GDT
-	;mov si, protectedModeMsg
-	;call PrintStr
-
-	xor eax, eax
-	add eax, gdt
+	mov eax, gdt
 	mov ds:[gdtr + GDT_DESCRIPTOR.offset], eax
 	mov eax, gdtEnd
 	sub eax, gdt
+	dec eax ; subtract one
 	mov ds:[gdtr + GDT_DESCRIPTOR.size], ax
 
 	; no interrupts during this
@@ -119,9 +98,6 @@ PrintStr:
 
 ; check A20 line, return in AL
 CheckA20:
-	;mov si, checkA20Msg
-	;call PrintStr
-
 	push es
 	push ds
 
@@ -161,9 +137,6 @@ CheckA20:
 
 ; enable A20 line, using Fast A20
 EnableA20:
-	;mov si, enableA20Msg
-	;call PrintStr
-
 	in al, 92h
 	test al, 2
 	jnz .done
@@ -173,23 +146,12 @@ EnableA20:
 .done:
 	ret
 
-startMsg:
-	DB 'Doing a funny', 0dh, 0ah, 0
-checkA20Msg:
-	DB 'Checking A20 line', 0dh, 0ah, 0
-enableA20Msg:
-	DB 'Enabling A20 line', 0dh, 0ah, 0
-A20EnabledMsg:
-	DB 'A20 line enabled', 0dh, 0ah, 0
-protectedModeMsg:
-	DB 'Loading GDT and entering protected mode', 0dh, 0ah, 0
-
 %include "gdt.inc"
 
-%define QUOTE
+%define QUOTE "
 %define STRINGIZE(x) QUOTE %+ x %+ QUOTE
 
 errorMsg:
-	DB "Failed to read kernel partition (", STRINGIZE(kernelSize), ")", 0dh, 0ah, 00h
+	DB "Failed to read kernel partition (", STRINGIZE(kernelSize), " sectors)", 0dh, 0ah, 00h
 
 %include "mbr.inc"

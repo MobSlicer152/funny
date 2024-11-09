@@ -11,10 +11,13 @@
 [[noreturn]] void KernelMain(void)
 {
 	InitializeIdt();
-	// InitializeIrq();
+	InitializeIrq();
+	EnableInterrupts();
 	InitializeFpu();
-	InitializeScreen();
+	//InitializeScreen();
 	// InitializeTimer();
+
+	Breakpoint();
 
 	for (f32 x = 0; x < SCREEN_WIDTH; x += 0.1)
 	{

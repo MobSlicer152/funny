@@ -4,9 +4,9 @@
 
 typedef struct IdtDescriptor
 {
-	uptr address;
 	u16 size;
-} IdtDescriptor_t;
+	struct IdtEntry* address;
+} ATTRIBUTE(packed) IdtDescriptor_t;
 
 typedef enum IdtGateType
 {
@@ -21,16 +21,19 @@ typedef struct IdtEntry
 {
 	u16 offsetLower;
 	u16 selector;
-	struct
-	{
-		u8 present : 1;
-		u8 dpl : 2;
-		u8 reserved : 1;
-		u8 gateType : 4;
-		u8 reserved2;
+	union {
+		u32 flags;
+		struct
+		{
+			u8 reserved2;
+			u8 gateType : 4;
+			u8 reserved : 1;
+			u8 dpl : 2;
+			u8 present : 1;
+		};
 	};
 	u16 offsetUpper;
-} IdtEntry_t;
+} ATTRIBUTE(packed) IdtEntry_t;
 
 // initialize and load the idt
 extern void InitializeIdt(void);

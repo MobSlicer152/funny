@@ -1,28 +1,34 @@
 #include "idt.h"
 #include "irq.h"
 #include "libc.h"
+#include "x86.h"
 
 typedef void (*Isr_t)(void);
 
 #define MAKE_ISR_ERROR(index)                                                                                                    \
-	void __attribute__((naked)) Isr##index(void)                                                                                 \
+	void ATTRIBUTE(naked) Isr##index(void)                                                                                       \
 	{                                                                                                                            \
 		asm("pusha;"                                                                                                             \
-			"push " #index ";"                                                                                                   \
+			"movl -36(%%esp), %%eax;" /* get the error code above preserved registers */                                         \
+			"pushl %%eax;"            /* pass it to IsrCommon */                                                                 \
+			"pushl " #index ";"                                                                                                  \
 			"call %P0;"                                                                                                          \
+			"addl $8, %%esp;"                                                                                                     \
 			"popa;"                                                                                                              \
+			"addl $4, %%esp;" /* remove the error code from the stack */                                                         \
 			"iret"                                                                                                               \
 			:                                                                                                                    \
 			: "i"(IsrCommon));                                                                                                   \
 	}
 
 #define MAKE_ISR_NO_ERROR(index)                                                                                                 \
-	void __attribute__((naked)) Isr##index(void)                                                                                 \
+	void ATTRIBUTE(naked) Isr##index(void)                                                                                       \
 	{                                                                                                                            \
 		asm("pusha;"                                                                                                             \
-			"push 0;" /* IsrCommon expects an error code */                                                                      \
-			"push " #index ";"                                                                                                   \
+			"pushl 0;" /* IsrCommon expects an error code */                                                                      \
+			"pushl " #index ";"                                                                                                   \
 			"call %P0;"                                                                                                          \
+			"addl $8, %%esp;"                                                                                                   \
 			"popa;"                                                                                                              \
 			"iret"                                                                                                               \
 			:                                                                                                                    \
@@ -39,60 +45,20 @@ static void RegisterGate(Isr_t handler, InterruptType_t type, IdtGateType_t gate
 	s_idt[type].gateType = gateType;
 
 	// these fields are always the same
-	s_idt[type].selector = KERNEL_CODE_SELECTOR << 3;
+	s_idt[type].selector = KERNEL_CODE_SELECTOR;
 	s_idt[type].dpl = 0;
 	s_idt[type].present = true;
 }
 
-void IsrCommon(InterruptType_t type, u32 error)
+static void IsrCommon(InterruptType_t type, u32 error)
 {
 	(void)error;
 
-	switch (type)
+	DisableInterrupts();
+
+	if (InterruptTypeMinIrq <= type && type <= InterruptTypeMaxIrq)
 	{
-	case InterruptTypeDivisionError:
-	case InterruptTypeDebug:
-	case InterruptTypeNonMaskable:
-	case InterruptTypeBreakpoint:
-	case InterruptTypeOverflow:
-	case InterruptTypeBoundRangeExceeded:
-	case InterruptTypeInvalidOpcode:
-	case InterruptTypeDeviceNotAvailable:
-	case InterruptTypeDoubleFault:
-	case InterruptTypeCoprocessorSegmentOverrun:
-	case InterruptTypeInvalidTss:
-	case InterruptTypeSegmentNotPresent:
-	case InterruptTypeStackSegmentFault:
-	case InterruptTypeGeneralProtectionFault:
-	case InterruptTypePageFault:
-	case InterruptTypeX87FloatException:
-	case InterruptTypeAlignmentCheck:
-	case InterruptTypeMachineCheck:
-	case InterruptTypeSimdFloatException:
-	case InterruptTypeVirtualizationException:
-	case InterruptTypeControlProtectionException:
-	case InterruptTypeHypervisorInjectionException:
-	case InterruptTypeVmmCommunicationException:
-	case InterruptTypeSecurityException:
-        break;
-	case InterruptTypeTimer:
-	case InterruptTypeKeyboard:
-	case InterruptTypeCascade:
-	case InterruptTypeCom2:
-	case InterruptTypeCom1:
-	case InterruptTypeLpt2:
-	case InterruptTypeFloppy:
-	case InterruptTypeLpt1:
-	case InterruptTypeCmos:
-	case InterruptTypePeripheral1:
-	case InterruptTypePeripheral2:
-	case InterruptTypePeripheral3:
-	case InterruptTypeMouse:
-	case InterruptTypeFpu:
-	case InterruptTypePrimaryHardDisk:
-	case InterruptTypeSecondaryHardDisk:
-        EndIrq(type);
-		break;
+		EndIrq(type);
 	}
 }
 
@@ -142,34 +108,34 @@ MAKE_ISR_NO_ERROR(0x2f) // secondary hard disk
 
 void InitializeIdt(void)
 {
-	// wipe the table (it should be clear already but idk)
+	// wipe the table (it should be clear already but idc)
 	memset(s_idt, 0, sizeof(s_idt));
 
 	// exceptions
-	RegisterGate(Isr0x0, InterruptTypeDivisionError, IdtGateTypeInterrupt32);
-	RegisterGate(Isr0x1, InterruptTypeDebug, IdtGateTypeInterrupt32);
-	RegisterGate(Isr0x2, InterruptTypeNonMaskable, IdtGateTypeInterrupt32);
-	RegisterGate(Isr0x3, InterruptTypeBreakpoint, IdtGateTypeInterrupt32);
-	RegisterGate(Isr0x4, InterruptTypeOverflow, IdtGateTypeInterrupt32);
-	RegisterGate(Isr0x5, InterruptTypeBoundRangeExceeded, IdtGateTypeInterrupt32);
-	RegisterGate(Isr0x6, InterruptTypeInvalidOpcode, IdtGateTypeInterrupt32);
-	RegisterGate(Isr0x7, InterruptTypeDeviceNotAvailable, IdtGateTypeInterrupt32);
-	RegisterGate(Isr0x8, InterruptTypeDoubleFault, IdtGateTypeInterrupt32);
-	RegisterGate(Isr0x9, InterruptTypeCoprocessorSegmentOverrun, IdtGateTypeInterrupt32);
-	RegisterGate(Isr0xa, InterruptTypeInvalidTss, IdtGateTypeInterrupt32);
-	RegisterGate(Isr0xb, InterruptTypeSegmentNotPresent, IdtGateTypeInterrupt32);
-	RegisterGate(Isr0xc, InterruptTypeStackSegmentFault, IdtGateTypeInterrupt32);
-	RegisterGate(Isr0xd, InterruptTypeGeneralProtectionFault, IdtGateTypeInterrupt32);
-	RegisterGate(Isr0xe, InterruptTypePageFault, IdtGateTypeInterrupt32);
-	RegisterGate(Isr0x10, InterruptTypeX87FloatException, IdtGateTypeInterrupt32);
-	RegisterGate(Isr0x11, InterruptTypeAlignmentCheck, IdtGateTypeInterrupt32);
-	RegisterGate(Isr0x12, InterruptTypeMachineCheck, IdtGateTypeInterrupt32);
-	RegisterGate(Isr0x13, InterruptTypeSimdFloatException, IdtGateTypeInterrupt32);
-	RegisterGate(Isr0x14, InterruptTypeVirtualizationException, IdtGateTypeInterrupt32);
-	RegisterGate(Isr0x15, InterruptTypeControlProtectionException, IdtGateTypeInterrupt32);
-	RegisterGate(Isr0x1c, InterruptTypeHypervisorInjectionException, IdtGateTypeInterrupt32);
-	RegisterGate(Isr0x1d, InterruptTypeVmmCommunicationException, IdtGateTypeInterrupt32);
-	RegisterGate(Isr0x1e, InterruptTypeSecurityException, IdtGateTypeInterrupt32);
+	RegisterGate(Isr0x0, InterruptTypeDivisionError, IdtGateTypeTrap32);
+	RegisterGate(Isr0x1, InterruptTypeDebug, IdtGateTypeTrap32);
+	RegisterGate(Isr0x2, InterruptTypeNonMaskable, IdtGateTypeTrap32);
+	RegisterGate(Isr0x3, InterruptTypeBreakpoint, IdtGateTypeTrap32);
+	RegisterGate(Isr0x4, InterruptTypeOverflow, IdtGateTypeTrap32);
+	RegisterGate(Isr0x5, InterruptTypeBoundRangeExceeded, IdtGateTypeTrap32);
+	RegisterGate(Isr0x6, InterruptTypeInvalidOpcode, IdtGateTypeTrap32);
+	RegisterGate(Isr0x7, InterruptTypeDeviceNotAvailable, IdtGateTypeTrap32);
+	RegisterGate(Isr0x8, InterruptTypeDoubleFault, IdtGateTypeTrap32);
+	RegisterGate(Isr0x9, InterruptTypeCoprocessorSegmentOverrun, IdtGateTypeTrap32);
+	RegisterGate(Isr0xa, InterruptTypeInvalidTss, IdtGateTypeTrap32);
+	RegisterGate(Isr0xb, InterruptTypeSegmentNotPresent, IdtGateTypeTrap32);
+	RegisterGate(Isr0xc, InterruptTypeStackSegmentFault, IdtGateTypeTrap32);
+	RegisterGate(Isr0xd, InterruptTypeGeneralProtectionFault, IdtGateTypeTrap32);
+	RegisterGate(Isr0xe, InterruptTypePageFault, IdtGateTypeTrap32);
+	RegisterGate(Isr0x10, InterruptTypeX87FloatException, IdtGateTypeTrap32);
+	RegisterGate(Isr0x11, InterruptTypeAlignmentCheck, IdtGateTypeTrap32);
+	RegisterGate(Isr0x12, InterruptTypeMachineCheck, IdtGateTypeTrap32);
+	RegisterGate(Isr0x13, InterruptTypeSimdFloatException, IdtGateTypeTrap32);
+	RegisterGate(Isr0x14, InterruptTypeVirtualizationException, IdtGateTypeTrap32);
+	RegisterGate(Isr0x15, InterruptTypeControlProtectionException, IdtGateTypeTrap32);
+	RegisterGate(Isr0x1c, InterruptTypeHypervisorInjectionException, IdtGateTypeTrap32);
+	RegisterGate(Isr0x1d, InterruptTypeVmmCommunicationException, IdtGateTypeTrap32);
+	RegisterGate(Isr0x1e, InterruptTypeSecurityException, IdtGateTypeTrap32);
 
 	// irqs
 	RegisterGate(Isr0x20, InterruptTypeTimer, IdtGateTypeInterrupt32);
@@ -189,7 +155,7 @@ void InitializeIdt(void)
 	RegisterGate(Isr0x2e, InterruptTypePrimaryHardDisk, IdtGateTypeInterrupt32);
 	RegisterGate(Isr0x2f, InterruptTypeSecondaryHardDisk, IdtGateTypeInterrupt32);
 
-	IdtDescriptor_t desc = {(uptr)s_idt, sizeof(s_idt)};
+	IdtDescriptor_t desc = {sizeof(s_idt) - 1, s_idt};
 
 	// load the IDT
 	asm volatile("lidt %0" : : "m"(desc));

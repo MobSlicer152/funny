@@ -2,6 +2,11 @@
 
 #include "kernel.h"
 
+static ATTRIBUTE(always_inline) void Breakpoint(void)
+{
+	asm volatile ("int $3");
+}
+
 #define MAKE_IN_FUNC(name, size, suffix)                                                                                         \
 	static ATTRIBUTE(always_inline) u##size name(u16 port)                                                                              \
 	{                                                                                                                            \
@@ -81,8 +86,19 @@ static ATTRIBUTE(always_inline) void ResetX87Control(void)
 	asm volatile("fninit");
 }
 
+static ATTRIBUTE(always_inline) void EnableInterrupts(void)
+{
+	asm volatile("sti");
+}
+
+static ATTRIBUTE(always_inline) void DisableInterrupts(void)
+{
+	asm volatile("cli");
+}
+
 [[noreturn]] static ATTRIBUTE(always_inline) void Halt(void)
 {
+	DisableInterrupts();
 	while (true)
 	{
 		asm volatile("hlt");

@@ -13,12 +13,10 @@ static ATTRIBUTE(always_inline) s32 abs(s32 x)
     return x < 0 ? -x : x;
 }
 
-// https://github.com/embeddedartistry/libc/blob/master/src/math/fabs.c
 static ATTRIBUTE(always_inline) f32 fabs(f32 x)
 {
-    union {f32 f; u32 i;} u = {.i = x};
-    u.i &= -1UL / 2; // pretty sure this leaves -0 or smth
-    return u.f;
+    asm volatile ("fabs" : "=t"(x) : "t"(x));
+    return x;
 }
 
 static ATTRIBUTE(always_inline) f32 fmod(f32 dividend, f32 divisor)
@@ -47,6 +45,6 @@ static ATTRIBUTE(always_inline) f32 cos(f32 x)
 
 static ATTRIBUTE(always_inline) f32 tan(f32 x)
 {
-    asm volatile ("ftan" : "=t"(x) : "t"(x));
+    asm volatile ("fptan" : "=t"(x) : "t"(x));
     return x;
 }

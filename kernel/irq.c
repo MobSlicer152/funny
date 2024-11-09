@@ -56,9 +56,6 @@ void InitializeIrq(void)
     // restore saved masks
     OutByte(PIC1_DATA, primaryMask);
     OutByte(PIC2_DATA, secondaryMask);
-
-    // enable interrupts (they were disabled in boot.bin)
-    asm volatile("sti");
 }
 
 void EndIrq(InterruptType_t type)
