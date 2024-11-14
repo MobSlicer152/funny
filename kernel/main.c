@@ -32,8 +32,8 @@
 			ClearScreen(0);
 			for (f32 x = 0; x < SCREEN_WIDTH; x += 0.1)
 			{
-				f32 cleanX = x / 9.26f + (f32)now / TIMER_TPS;
-				f32 cosX = (cos(cleanX) + 1.0f) / 2.0f;
+				f32 cleanX = x / 9.26f - (f32)now / TIMER_TPS;
+				f32 cosX = 1 / cleanX;//(cos(cleanX) + 1.0f) / 2.0f;
 				SetPixel(x, cosX * SCREEN_HEIGHT, 32 + cosX * 15.0f);
 				SetPixel(x, -cosX * SCREEN_HEIGHT, 63 - cosX * 15.0f);
 			}

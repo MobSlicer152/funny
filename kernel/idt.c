@@ -10,11 +10,14 @@ typedef void (*Isr_t)(void);
 	void ATTRIBUTE(naked) Isr##index(void)                                                                                       \
 	{                                                                                                                            \
 		asm("pusha;"                                                                                                             \
-			"movl -36(%%esp), %%eax;" /* get the error code above preserved registers */                                         \
-			"pushl %%eax;"            /* pass it to IsrCommon */                                                                 \
+			"movl 36(%%esp), %%eax;" /* get the error code above preserved registers */                                          \
+			"mov %%esp, %%ebp;"      /* load interrupt stack */                                                                  \
+			"mov $0x1b000, %%esp;"                                                                                               \
+			"pushl %%eax;" /* pass it to IsrCommon */                                                                            \
 			"pushl " #index ";"                                                                                                  \
 			"call %P0;"                                                                                                          \
-			"addl $8, %%esp;"                                                                                                     \
+			"addl $8, %%esp;"                                                                                                    \
+			"mov %%ebp, %%esp;"                                                                                                  \
 			"popa;"                                                                                                              \
 			"addl $4, %%esp;" /* remove the error code from the stack */                                                         \
 			"iret"                                                                                                               \
@@ -26,10 +29,13 @@ typedef void (*Isr_t)(void);
 	void ATTRIBUTE(naked) Isr##index(void)                                                                                       \
 	{                                                                                                                            \
 		asm("pusha;"                                                                                                             \
-			"pushl 0;" /* IsrCommon expects an error code */                                                                      \
-			"pushl " #index ";"                                                                                                   \
+			"mov %%esp, %%ebp;" /* load interrupt stack */                                                                       \
+			"mov $0x1b000, %%esp;"                                                                                               \
+			"pushl $0;" /* IsrCommon expects an error code */                                                                    \
+			"pushl $" #index ";"                                                                                                 \
 			"call %P0;"                                                                                                          \
-			"addl $8, %%esp;"                                                                                                   \
+			"addl $8, %%esp;"                                                                                                    \
+			"mov %%ebp, %%esp;"                                                                                                  \
 			"popa;"                                                                                                              \
 			"iret"                                                                                                               \
 			:                                                                                                                    \
@@ -51,12 +57,15 @@ static void RegisterGate(Isr_t handler, InterruptType_t type, IdtGateType_t gate
 	s_idt[type].present = true;
 }
 
+InterruptType_t lastInterrupt;
+
 static void IsrCommon(InterruptType_t type, u32 error)
 {
 	(void)error;
 
 	DisableInterrupts();
 
+	lastInterrupt = type;
 	switch (type)
 	{
 	case InterruptTypeDivisionError:

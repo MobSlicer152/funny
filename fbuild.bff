@@ -2,7 +2,7 @@
 
 .Root = ._WORKING_DIR_
 
-.IncludeDirs = {}
+.IncludeDirs = {"."}
 .ExternalIncludeDirs = {}
 
 #include "fastbuild/Clang.bff"

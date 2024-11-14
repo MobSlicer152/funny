@@ -13,7 +13,7 @@ Entry:
 	xor ax, ax
 	mov ds, ax
 	mov es, ax
-	; stack 17e00h-1ae00h
+	; stack 17e00h-1ae00h, interrupt stack 1ae00h-1b000h
 	mov ax, 17eh
 	mov ss, ax
 	mov sp, 4000h
