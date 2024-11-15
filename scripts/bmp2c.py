@@ -1,3 +1,5 @@
+import argparse
+import math
 import os
 import struct
 import sys
@@ -45,32 +47,44 @@ class BMP:
             self.color_count: int = struct.unpack("<i", f.read(4))[0]
             self.important_colors: int = struct.unpack("<i", f.read(4))[0]
 
+            # align to dword
+            self.row_size: int = math.ceil(self.width / 4.0, ) * 4
+
             # skip the palette
             f.seek(self.image_offset, os.SEEK_SET)
             self.image_data: bytes = f.read(self.image_size)
 
     def get_pixel(self, x: int, y: int) -> int:
-        return 0
-
+        return self.image_data[y * self.row_size + x]
 
 def clean_name(name: str) -> str:
     return ''.join(filter(str.isidentifier, name))
 
 
 def main(argc: int, argv: list[str]) -> int:
-    if argc < 2:
-        print(f"usage: {argv[0]} <image> [output] [symbol prefix]")
-        exit(1)
+    parser = argparse.ArgumentParser(
+        prog="bmp2c",
+        description="convert indexed BMP images into C sources"
+    )
+    parser.add_argument("input")
+    parser.add_argument("-f", "--force", action="store_true")
+    parser.add_argument("-s", "--symbol")
+    parser.add_argument("-o", "--output")
 
-    image = argv[1]
-    output = argv[2] if argc >= 3 else f"{image}.c"
-    symbol = argv[3] if argc >= 4 else clean_name(image).upper()
+    args = parser.parse_args()
+
+    image = args.input
+    output = args.output if args.output != None else f"{image}.c"
+    symbol = args.symbol if args.symbol != None else clean_name(os.path.splitext(os.path.basename(image))[0]).upper()
+    force = args.force == True
 
     if os.path.exists(output):
-        choice = input(f'{output} will be overridden, type "yes" if this is ok: ')
-        if choice[0].lower() != "y":
-            print("not overwriting")
-            exit(1)
+        print(f"{output} will be overwritten", end="")
+        if not force: 
+            choice = input(", type \"yes\" to continue: ")
+            if choice[0].lower() != "y":
+                print("not overwriting")
+                exit(1)
 
     f = open(output, "w")
     bmp = BMP(image)
@@ -84,12 +98,31 @@ def main(argc: int, argv: list[str]) -> int:
         f"const unsigned int {symbol}_HEIGHT = {bmp.height};\n" +
         f"\n" +
         f"const unsigned char {symbol}_DATA[{bmp.width * bmp.height}] =\n" +
-        f"{{\n"
+        f"{{\n" +
+        f"\t"
     )
 
-    for y in range(0, bmp.height):
+    line_length = 80 / len("0x00, ")
+    pixels = ""
+    current_length = 0
+    for y in range(bmp.height - 1, 0, -1):
         for x in range(0, bmp.width):
-            bmp.get_pixel(x, y)
+            pixel = bmp.get_pixel(x, y)
+            current_length += 1
+            pixels += f"0x{pixel:02X},"
+            if current_length >= line_length:
+                pixels += "\n\t"
+                current_length = 0
+            else:
+                pixels += " "
+
+    pixels = pixels.strip()
+    f.write(pixels)
+
+    f.write(
+        f"\n" +
+        f"}};\n"
+    )
 
     return 0
 
