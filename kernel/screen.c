@@ -21,23 +21,42 @@ void ClearScreen(u8 color)
 	memset(BACKBUFFER, color, SCREEN_WIDTH * SCREEN_HEIGHT);
 }
 
+static void FixPoint(s32* x, s32* y)
+{
+	if (*x < 0)
+	{
+		*x = SCREEN_WIDTH + *x - 1;
+	}
+	if (*y < 0)
+	{
+		*y = SCREEN_HEIGHT + *y - 1;
+	}
+	if (*x >= SCREEN_WIDTH)
+	{
+		*x = SCREEN_WIDTH - 1;
+	}
+	if (*y >= SCREEN_HEIGHT)
+	{
+		*y = SCREEN_HEIGHT - 1;
+	}
+}
+
 void SetPixel(s32 x, s32 y, u8 color)
 {
-	if (x < 0)
-	{
-		x = SCREEN_WIDTH + x - 1;
-	}
-	if (y < 0)
-	{
-		y = SCREEN_HEIGHT + y - 1;
-	}
-	if (x >= SCREEN_WIDTH)
-	{
-		x = SCREEN_WIDTH - 1;
-	}
-	if (y >= SCREEN_HEIGHT)
-	{
-		y = SCREEN_HEIGHT - 1;
-	}
+	FixPoint(&x, &y);
 	BACKBUFFER[y * SCREEN_WIDTH + x] = color;
+}
+
+void Fill(s32 x1, s32 y1, s32 x2, s32 y2, u8 color)
+{
+	//FixPoint(&x1, &y1);
+	//FixPoint(&x2, &y2);
+	for (s32 y = MIN(y1, y2); y < MAX(y1, y2); y++)
+	{
+		//memset(&BACKBUFFER[y * SCREEN_WIDTH + x1], color, MAX(x1, x2) - MIN(x1, x2));
+		for (s32 x = MIN(x1, x2); x < MAX(x1, x2); x++)
+		{
+			SetPixel(x, y, color);
+		}
+	}
 }

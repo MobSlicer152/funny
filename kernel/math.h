@@ -56,10 +56,23 @@ static ATTRIBUTE(always_inline) f32 fpow(f32 x, f32 y) {
     return result;
 }
 
+static ATTRIBUTE(always_inline) f32 invsqrt(f32 x)
+{
+    // we love quake 3
+    f32 x2 = x * 0.5;
+    f32 y = x;
+    u32 i = *(u32*)&y;
+    i = 0x5f3759df - (i >> 1);
+    y = *(f32*)&i;
+    y = y * (1.5 - (x2 * y * y));
+    return y;
+}
+
 static ATTRIBUTE(always_inline) f32 sqrt(f32 x)
 {
-    asm volatile ("fsqrt" : "=t"(x) : "t"(x));
-    return x;
+    // as it turns out, fast inverse square root is faster than fsqrt by a lot
+    //asm volatile ("fsqrt" : "=t"(x) : "t"(x));
+    return 1.0f / invsqrt(x);
 }
 
 static ATTRIBUTE(always_inline) f32 sin(f32 x)
