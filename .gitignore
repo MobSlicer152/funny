@@ -11,3 +11,4 @@ obj/
 fastbuild/Config.bff
 .cache/
 compile_commands.json
+*.log
