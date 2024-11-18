@@ -40,7 +40,7 @@ typedef struct IdtEntry
 	u16 offsetUpper;
 } ATTRIBUTE(packed) IdtEntry_t;
 
-#define ISB STRINGIZE_EXPAND(INTERRUPT_STACK_BASE)
+#define INTERRUPT_STACK STRINGIZE_EXPAND(INTERRUPT_STACK_END)
 
 #define MAKE_ISR_ERROR(index)                                                                                                    \
 	void ATTRIBUTE(naked) Isr##index(void)                                                                                       \
@@ -48,7 +48,7 @@ typedef struct IdtEntry
 		asm("pusha;"                                                                                                             \
 			"movl 36(%%esp), %%eax;" /* get the error code above preserved registers */                                          \
 			"mov %%esp, %%ebp;"      /* load interrupt stack */                                                                  \
-			"mov $" ISB ", %%esp;"                                                                                               \
+			"mov $" INTERRUPT_STACK ", %%esp;"                                                                                               \
 			"pushl %%eax;" /* pass it to IsrCommon */                                                                            \
 			"pushl " #index ";"                                                                                                  \
 			"call %P0;"                                                                                                          \
@@ -66,7 +66,7 @@ typedef struct IdtEntry
 	{                                                                                                                            \
 		asm("pusha;"                                                                                                             \
 			"mov %%esp, %%ebp;" /* load interrupt stack */                                                                       \
-			"mov $" ISB ", %%esp;"                                                                                               \
+			"mov $" INTERRUPT_STACK ", %%esp;"                                                                                               \
 			"pushl $0;" /* IsrCommon expects an error code */                                                                    \
 			"pushl $" #index ";"                                                                                                 \
 			"call %P0;"                                                                                                          \

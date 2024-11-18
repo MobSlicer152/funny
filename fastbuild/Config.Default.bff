@@ -9,6 +9,3 @@
 
 .Python = 'C:\Program Files\Python\python.exe'
 
-.QEMUDir = 'C:\Program Files\qemu'
-.QEMU_x86 = '$QEMUDir$/qemu-system-i386.exe'
-
