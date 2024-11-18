@@ -49,14 +49,19 @@ void SetPixel(s32 x, s32 y, u8 color)
 
 void Fill(s32 x1, s32 y1, s32 x2, s32 y2, u8 color)
 {
-	//FixPoint(&x1, &y1);
-	//FixPoint(&x2, &y2);
-	for (s32 y = MIN(y1, y2); y < MAX(y1, y2); y++)
+	if (x1 > x2)
 	{
-		//memset(&BACKBUFFER[y * SCREEN_WIDTH + x1], color, MAX(x1, x2) - MIN(x1, x2));
-		for (s32 x = MIN(x1, x2); x < MAX(x1, x2); x++)
-		{
-			SetPixel(x, y, color);
-		}
+		SWAP(x1, x2);
+	}
+	if (y1 > y2)
+	{
+		SWAP(y1, y2);
+	}
+	FixPoint(&x1, &y1);
+	FixPoint(&x2, &y2);
+
+	for (s32 y = y1; y < y2; y++)
+	{
+		memset(&BACKBUFFER[y * SCREEN_WIDTH + x1], color, x2 - x1);
 	}
 }

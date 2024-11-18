@@ -6,13 +6,15 @@
 
 typedef void (*Isr_t)(void);
 
+#define ISB STRINGIZE_EXPAND(INTERRUPT_STACK_BASE)
+
 #define MAKE_ISR_ERROR(index)                                                                                                    \
 	void ATTRIBUTE(naked) Isr##index(void)                                                                                       \
 	{                                                                                                                            \
 		asm("pusha;"                                                                                                             \
 			"movl 36(%%esp), %%eax;" /* get the error code above preserved registers */                                          \
 			"mov %%esp, %%ebp;"      /* load interrupt stack */                                                                  \
-			"mov $0x1b000, %%esp;"                                                                                               \
+			"mov $" ISB ", %%esp;"                                                                                               \
 			"pushl %%eax;" /* pass it to IsrCommon */                                                                            \
 			"pushl " #index ";"                                                                                                  \
 			"call %P0;"                                                                                                          \
@@ -30,7 +32,7 @@ typedef void (*Isr_t)(void);
 	{                                                                                                                            \
 		asm("pusha;"                                                                                                             \
 			"mov %%esp, %%ebp;" /* load interrupt stack */                                                                       \
-			"mov $0x1b000, %%esp;"                                                                                               \
+			"mov $" ISB ", %%esp;"                                                                                               \
 			"pushl $0;" /* IsrCommon expects an error code */                                                                    \
 			"pushl $" #index ";"                                                                                                 \
 			"call %P0;"                                                                                                          \

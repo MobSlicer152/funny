@@ -30,11 +30,14 @@
 			last = now;
 
 			ClearScreen(0);
-			f32 x = (f32)now / TIMER_TPS;
-			f32 cosX = (cos(x) + 1.0f) / 2.0f;
-			//SetPixel(0, 0, 32 + cosX * 15.0f);
-			//Fill(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 32 + cosX * 15.0f);
-			ClearScreen(32 + cosX * 15.0f);
+			Fill(10, 10, 30, 30, 15);
+			for (f32 x = 0; x < SCREEN_WIDTH; x += 0.01f)
+			{
+				f32 scaledX = x / 9.62f;
+				f32 y = (cos(scaledX) + 1.0f) / 2.0f;
+				f32 color = 16 + ((cos(scaledX + (f32)now / TIMER_TPS) + 1.0f) / 2.0f) * 15.0f;
+				SetPixel(x, y * SCREEN_HEIGHT, color);
+			}
 			FlipScreen();
 		}
 	}
