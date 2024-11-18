@@ -1,5 +1,6 @@
 // based on https://github.com/lucianoforks/tetris-os/blob/master/src/timer.c
 
+#include "serial.h"
 #include "timer.h"
 #include "x86.h"
 
@@ -17,6 +18,7 @@ static u64 s_ticks;
 
 static void SetFrequency(u32 hertz)
 {
+    DebugPrint("Initializing timer\n");
     OutByte(PIT_CONTROL, PIT_SET);
     u16 divisor = (u16)(PIT_FREQUENCY / hertz);
     OutByte(PIT_CHANNEL0, divisor & 0xFF);

@@ -1,12 +1,13 @@
-#include "screen.h"
+#include "serial.h"
 #include "libc.h"
-#include "math.h"
+#include "screen.h"
 
 static volatile u8* const FRAMEBUFFER = (volatile u8* const)0xA0000;
 static u8* const BACKBUFFER = (u8* const)(BACKBUFFER_BASE);
 
 void InitializeScreen(void)
 {
+	DebugPrint("Initializing screen\n");
 	ClearScreen(0);
 	FlipScreen();
 }
@@ -60,8 +61,18 @@ void Fill(s32 x1, s32 y1, s32 x2, s32 y2, u8 color)
 	FixPoint(&x1, &y1);
 	FixPoint(&x2, &y2);
 
-	for (s32 y = y1; y < y2; y++)
+	if (x1 == x2)
 	{
-		memset(&BACKBUFFER[y * SCREEN_WIDTH + x1], color, x2 - x1);
+		for (s32 y = y1; y < y2; y++)
+		{
+			BACKBUFFER[y * SCREEN_WIDTH + x1] = color;
+		}
+	}
+	else
+	{
+		for (s32 y = y1; y < y2; y++)
+		{
+			memset(&BACKBUFFER[y * SCREEN_WIDTH + x1], color, x2 - x1);
+		}
 	}
 }

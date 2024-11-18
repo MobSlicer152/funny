@@ -3,6 +3,7 @@
 #include <builtins.h>
 #include <x86intrin.h>
 
+#include "common/macros.h"
 #include "common/types.h"
 
 #define ATTRIBUTE(x) __attribute__((x))
@@ -26,17 +27,3 @@
 	{                                                                                                                            \
 		Halt();                                                                                                                  \
 	}
-
-#define MIN(a, b)              (a) < (b) ? (a) : (b)
-#define MAX(a, b)              (a) > (b) ? (a) : (b)
-#define CLAMP(value, min, max) MAX((min), MIN((value), (max)))
-#define SWAP(a, b)                                                                                                               \
-	{                                                                                                                            \
-		typeof(a) c = (b);                                                                                                            \
-		(b) = (a);                                                                                                               \
-		(a) = c;                                                                                                                 \
-	}
-
-#define STRINGIZE(x) #x
-#define STRINGIZE_EXPAND(x) STRINGIZE(x)
-#define STRINGIZE_EXPAND2(x) STRINGIZE_EXPAND(x)

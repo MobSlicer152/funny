@@ -1,10 +1,44 @@
 #include "idt.h"
 #include "irq.h"
 #include "libc.h"
+#include "serial.h"
 #include "timer.h"
 #include "x86.h"
 
 typedef void (*Isr_t)(void);
+
+typedef struct IdtDescriptor
+{
+	u16 size;
+	struct IdtEntry* address;
+} ATTRIBUTE(packed) IdtDescriptor_t;
+
+typedef enum IdtGateType
+{
+	IdtGateTypeTask = 0x5,
+	IdtGateTypeInterrupt16 = 0x6,
+	IdtGateTypeTrap16 = 0x7,
+	IdtGateTypeInterrupt32 = 0xE,
+	IdtGateTypeTrap32 = 0xF
+} IdtGateType_t;
+
+typedef struct IdtEntry
+{
+	u16 offsetLower;
+	u16 selector;
+	union {
+		u16 flags;
+		struct
+		{
+			u8 reserved2;
+			u8 gateType : 4;
+			u8 reserved : 1;
+			u8 dpl : 2;
+			u8 present : 1;
+		};
+	};
+	u16 offsetUpper;
+} ATTRIBUTE(packed) IdtEntry_t;
 
 #define ISB STRINGIZE_EXPAND(INTERRUPT_STACK_BASE)
 
@@ -48,6 +82,8 @@ static IdtEntry_t s_idt[48];
 
 static void RegisterGate(Isr_t handler, InterruptType_t type, IdtGateType_t gateType)
 {
+	DebugPrint("Registering type 0x%X ISR 0x%X for gate 0x%X\n", gateType, (uptr)handler, type);
+
 	s_idt[type].offsetLower = (uptr)handler & 0xFFFF;
 	s_idt[type].offsetUpper = (uptr)handler >> 16;
 
@@ -94,6 +130,7 @@ static void IsrCommon(InterruptType_t type, u32 error)
 	case InterruptTypeHypervisorInjectionException:
 	case InterruptTypeVmmCommunicationException:
 	case InterruptTypeSecurityException:
+		DebugPrint("Got exception 0x%X with error 0x%X\n", type, error);
 		break;
 
 	case InterruptTypeTimer:
@@ -115,6 +152,11 @@ static void IsrCommon(InterruptType_t type, u32 error)
 	case InterruptTypePrimaryHardDisk:
 	case InterruptTypeSecondaryHardDisk:
 		break;
+	}
+
+	if (type >= InterruptTypeMinIrq && type != InterruptTypeTimer)
+	{
+		DebugPrint("Got interrupt 0x%x\n", type);
 	}
 
 	if (InterruptTypeMinIrq <= type && type <= InterruptTypeMaxIrq)
@@ -172,6 +214,8 @@ void InitializeIdt(void)
 	// wipe the table (it should be clear already but idc)
 	memset(s_idt, 0, sizeof(s_idt));
 
+	DebugPrint("Initializing IDT\n");
+
 	// exceptions
 	RegisterGate(Isr0x0, InterruptTypeDivisionError, IdtGateTypeTrap32);
 	RegisterGate(Isr0x1, InterruptTypeDebug, IdtGateTypeTrap32);
@@ -217,6 +261,8 @@ void InitializeIdt(void)
 	RegisterGate(Isr0x2f, InterruptTypeSecondaryHardDisk, IdtGateTypeInterrupt32);
 
 	IdtDescriptor_t desc = {sizeof(s_idt) - 1, s_idt};
+
+	DebugPrint("Setting IDT\n");
 
 	// load the IDT
 	asm volatile("lidt %0" : : "m"(desc));

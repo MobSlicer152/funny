@@ -1,5 +1,6 @@
 #include "irq.h"
 #include "kernel.h"
+#include "serial.h"
 #include "x86.h"
 
 #define PIC1_BASE 0x20
@@ -25,6 +26,8 @@
 
 void InitializeIrq(void)
 {
+    DebugPrint("Initializing IRQs\n");
+
     // save masks
     u8 primaryMask = InByte(PIC1_DATA);
     u8 secondaryMask = InByte(PIC2_DATA);

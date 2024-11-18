@@ -5,6 +5,7 @@
 #include "libc.h"
 #include "math.h"
 #include "screen.h"
+#include "serial.h"
 #include "timer.h"
 #include "x86.h"
 
@@ -12,6 +13,7 @@
 
 [[noreturn]] void KernelMain(void)
 {
+	InitializeSerial(SERIAL_115200_BAUD);
 	InitializeIdt();
 	InitializeIrq();
 	EnableInterrupts();
@@ -30,7 +32,6 @@
 			last = now;
 
 			ClearScreen(0);
-			Fill(10, 10, 30, 30, 15);
 			for (f32 x = 0; x < SCREEN_WIDTH; x += 0.01f)
 			{
 				f32 scaledX = x / 9.62f;

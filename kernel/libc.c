@@ -1,3 +1,4 @@
+#define STB_SPRINTF_IMPLEMENTATION
 #include "libc.h"
 
 // i've written a better memcpy and memset before, but this is easy and fast enough
