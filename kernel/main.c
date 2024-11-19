@@ -46,7 +46,7 @@
 			for (f32 offset = 0.0f; offset < 1.0f; offset += 0.1f)
 			{
 				f32 x = offset * TAU + now * TIMER_SPT;
-				DrawBitmap(((-cos(x) + 1.0f) * 0.5f * (SCREEN_WIDTH - A_WIDTH)), ((sin(x) + 1.0f) * 0.5f * (SCREEN_HEIGHT - A_HEIGHT)), A_DATA, A_WIDTH, A_HEIGHT);
+				DrawBitmap(((cos(x) + 1.0f) * 0.5f * (SCREEN_WIDTH - A_WIDTH)), ((sin(x) + 1.0f) * 0.5f * (SCREEN_HEIGHT - A_HEIGHT)), A_DATA, A_WIDTH, A_HEIGHT);
 			}
 			FlipScreen();
 		}
