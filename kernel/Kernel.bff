@@ -65,13 +65,13 @@
 
 			.LinkerOptions + ' -T $ProjectPath$/kernel.ld'
 
-			.LinkerOutput = '$OutputDir$/$ProjectName$.exe'
+			.LinkerOutput = '$OutputDir$/$ProjectName$.elf'
 		}
 
 		Exec('$ProjectName$-Flat-$CompilerName$-$ArchName$-$ConfigName$')
 		{
 			.ExecExecutable = .ObjCopy
-			.ExecInput = '$OutputDir$/$ProjectName$.exe'
+			.ExecInput = '$OutputDir$/$ProjectName$.elf'
 			.ExecOutput = '$OutputDir$/$ProjectName$.bin'
 			.ExecArguments = '"%1"'
 						   + ' "%2"'

@@ -93,11 +93,15 @@ void Fill(s32 x1, s32 y1, s32 x2, s32 y2, u8 color)
 
 void DrawBitmap(s32 x, s32 y, const u8* bitmap, s32 width, s32 height)
 {
-	for (s32 curY = 0; curY < height && y + curY < SCREEN_HEIGHT; curY++)
+	u32 i = 0;
+	for (s32 curY = 0; curY < height - 1 && y + curY < SCREEN_HEIGHT; curY++)
 	{
 		for (s32 curX = 0; curX < width && x + curX < SCREEN_WIDTH; curX++)
 		{
 			RawSetPixel(x + curX, y + curY, bitmap[curY * width + curX]);
+			i++;
 		}
 	}
+
+	DebugPrint("\r%u", i);
 }
