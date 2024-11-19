@@ -35,11 +35,11 @@ class BMP:
             self.color_planes: int = struct.unpack("<H", f.read(2))[0]
             self.color_depth: int = struct.unpack("<H", f.read(2))[0]
             if self.color_depth != 8:
-                raise ValueError(f"unsupported color depth {self.color_depth[0]}")
+                raise ValueError(f"unsupported color depth {self.color_depth}")
             self.compression_method: int = struct.unpack("<I", f.read(4))[0]
             if self.compression_method != 0:  # BI_RGB, uncompressed
                 raise ValueError(
-                    f"unsupported compression method {self.compression_method[0]}, only uncompressed (BI_RGB) images are supported"
+                    f"unsupported compression method {self.compression_method}, only uncompressed (BI_RGB) images are supported"
                 )
             self.image_size: int = struct.unpack("<I", f.read(4))[0]
             self.horizontal_resolution: int = struct.unpack("<i", f.read(4))[0]
@@ -74,26 +74,31 @@ def main(argc: int, argv: list[str]) -> int:
     args = parser.parse_args()
 
     image = args.input
-    output = args.output if args.output != None else f"{image}.c"
     symbol = args.symbol if args.symbol != None else clean_name(os.path.splitext(os.path.basename(image))[0]).upper()
+    output = args.output if args.output != None else f"{os.path.join(os.path.dirname(image), symbol.lower())}.h"
     force = args.force == True
 
     if os.path.exists(output):
-        print(f"{output} will be overwritten", end="")
+        print(f"{output} will be overwritten", end="\n" if force else "")
         if not force: 
             choice = input(", type \"yes\" to continue: ")
-            if choice[0].lower() != "y":
+            if len(choice) >= 1 and choice[0].lower() != "y":
                 print("not overwriting")
                 exit(1)
 
-    f = open(output, "w")
     bmp = BMP(image)
 
+    f = open(output, "w")
     f.write(
         f"/* generated from {image} by bmp2c.py */\n" +
         f"\n" +
         f"#pragma once\n" +
         f"\n" +
+        f"#ifndef {symbol}_DEFINE_DATA\n" +
+        f"extern const unsigned int {symbol}_WIDTH;\n" +
+        f"extern const unsigned int {symbol}_HEIGHT;\n" +
+        f"extern const unsigned char {symbol}_DATA[{bmp.width * bmp.height}];\n" +
+        f"#else\n" +
         f"const unsigned int {symbol}_WIDTH = {bmp.width};\n" +
         f"const unsigned int {symbol}_HEIGHT = {bmp.height};\n" +
         f"\n" +
@@ -121,7 +126,8 @@ def main(argc: int, argv: list[str]) -> int:
 
     f.write(
         f"\n" +
-        f"}};\n"
+        f"}};\n" +
+        f"#endif\n"
     )
 
     return 0

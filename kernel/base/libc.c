@@ -1,7 +1,6 @@
-#define STB_SPRINTF_IMPLEMENTATION
 #include "libc.h"
 
-// i've written a better memcpy and memset before, but this is easy and fast enough
+// i've written a better memcpy and memset before, but this is easy and fast enough (they also use these for some cases)
 
 void* memcpy(void* dest, const void* src, usize size)
 {

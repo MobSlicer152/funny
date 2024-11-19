@@ -1,5 +1,4 @@
 #include "irq.h"
-#include "kernel.h"
 #include "serial.h"
 #include "x86.h"
 
@@ -26,7 +25,7 @@
 
 void InitializeIrq(void)
 {
-    DebugPrint("Remapping IRQs to 0x%X and 0x%X\n", InterruptTypeMinPrimaryIrq, InterruptTypeMaxSecondaryIrq);
+    DBG("Remapping IRQs to 0x%X and 0x%X", InterruptTypeMinPrimaryIrq, InterruptTypeMaxSecondaryIrq);
 
     // save masks
     u8 primaryMask = InByte(PIC1_DATA);

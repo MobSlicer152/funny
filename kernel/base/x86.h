@@ -1,6 +1,7 @@
 #pragma once
 
-#include "kernel.h"
+#include "common/macros.h"
+#include "common/types.h"
 
 static ATTRIBUTE(always_inline) void Breakpoint(void)
 {

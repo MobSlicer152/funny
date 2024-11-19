@@ -14,26 +14,43 @@
 		Exec('$ProjectName$-startup-$CompilerName$-$ArchName$-$ConfigName$')
 		{
 			.ExecExecutable = .NASM
-			.ExecInput = '$ProjectPath$/startup.asm'
-			.ExecOutput = '$ObjectDir$/$ProjectPath$/startup.obj'
+			.ExecInput = '$ProjectPath$/base/startup.asm'
+			.ExecOutput = '$ObjectDir$/$ProjectPath$/base/startup.obj'
 			.ExecArguments = .NASMOptions + ' -felf -l $ObjectDir$/$ProjectPath$/startup.lst'
 			.ExecWorkingDir = '$ProjectPath$'
 		}
 		
+		Unity('$ProjectName$-Unity-$CompilerName$-$ArchName$-$ConfigName$')
+		{
+			.UnityInputFiles =
+			{
+				'$ProjectPath$/base/fpu.c',
+				'$ProjectPath$/base/idt.c',
+				'$ProjectPath$/base/irq.c',
+				'$ProjectPath$/base/libc.c',
+				'$ProjectPath$/base/screen.c',
+				'$ProjectPath$/base/serial.c',
+				'$ProjectPath$/base/timer.c',
+				'$ProjectPath$/main.c',
+			}
+
+			.UnityOutputPath = '$ObjectDir$/$ProjectPath$'
+			.UnityOutputPattern = '$ProjectName$_Unity*.c'
+		}
+
 		ObjectList('$ProjectName$-Objs-$CompilerName$-$ArchName$-$ConfigName$')
 		{
 			.CompilerInputFiles =
 			{
-				'$ProjectPath$/arith64.c',
-				'$ProjectPath$/fpu.c',
-				'$ProjectPath$/idt.c',
-				'$ProjectPath$/irq.c',
-				'$ProjectPath$/libc.c',
-				'$ProjectPath$/main.c',
-				'$ProjectPath$/screen.c',
-				'$ProjectPath$/serial.c',
-				'$ProjectPath$/timer.c'
+				'$ProjectPath$/base/arith64.c',
+				'$ProjectPath$/base/stb.c',
+
+				'$ProjectPath$/sprites/sprites.c',
 			}
+			.CompilerInputUnity = '$ProjectName$-Unity-$CompilerName$-$ArchName$-$ConfigName$'
+
+			.CompilerOptions + ' -DKERNEL'
+							 + ' -I$ProjectPath$'
 
 			.CompilerOutputPath = '$ObjectDir$/$ProjectPath$'
 		}
@@ -43,18 +60,18 @@
 			.Libraries =
 			{
 				'$ProjectName$-Objs-$CompilerName$-$ArchName$-$ConfigName$',
-				'$ObjectDir$/$ProjectPath$/startup.obj'
+				'$ObjectDir$/$ProjectPath$/base/startup.obj'
 			}
 
 			.LinkerOptions + ' -T $ProjectPath$/kernel.ld'
 
-			.LinkerOutput = '$OutputDir$/$ProjectName$.elf'
+			.LinkerOutput = '$OutputDir$/$ProjectName$.exe'
 		}
 
 		Exec('$ProjectName$-Flat-$CompilerName$-$ArchName$-$ConfigName$')
 		{
 			.ExecExecutable = .ObjCopy
-			.ExecInput = '$OutputDir$/$ProjectName$.elf'
+			.ExecInput = '$OutputDir$/$ProjectName$.exe'
 			.ExecOutput = '$OutputDir$/$ProjectName$.bin'
 			.ExecArguments = '"%1"'
 						   + ' "%2"'

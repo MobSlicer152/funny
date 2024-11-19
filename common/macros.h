@@ -15,3 +15,17 @@
 #define STRINGIZE_EXPAND2(x) STRINGIZE_EXPAND(x)
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
+
+#define ATTRIBUTE(x) __attribute__((x))
+
+#define asm __asm__
+
+#ifndef KERNEL
+#define Halt abort
+#endif
+
+#define ASSERT(cond)                                                                                                             \
+	if (!(cond))                                                                                                                 \
+	{                                                                                                                            \
+		Halt();                                                                                                                  \
+	}

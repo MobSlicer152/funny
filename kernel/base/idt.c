@@ -1,3 +1,5 @@
+#include "globals/kernel.h"
+
 #include "idt.h"
 #include "irq.h"
 #include "libc.h"
@@ -82,7 +84,7 @@ static IdtEntry_t s_idt[48];
 
 static void RegisterGate(Isr_t handler, InterruptType_t type, IdtGateType_t gateType)
 {
-	DebugPrint("Registering type 0x%X ISR 0x%X for gate 0x%X\n", gateType, (uptr)handler, type);
+	DBG("Registering type 0x%X ISR 0x%X for gate 0x%X", gateType, (uptr)handler, type);
 
 	s_idt[type].offsetLower = (uptr)handler & 0xFFFF;
 	s_idt[type].offsetUpper = (uptr)handler >> 16;
@@ -130,7 +132,7 @@ static void IsrCommon(InterruptType_t type, u32 error)
 	case InterruptTypeHypervisorInjectionException:
 	case InterruptTypeVmmCommunicationException:
 	case InterruptTypeSecurityException:
-		DebugPrint("Got exception 0x%X with error 0x%X\n", type, error);
+		DBG("Got exception 0x%X with error 0x%X", type, error);
 		break;
 
 	case InterruptTypeTimer:
@@ -156,7 +158,7 @@ static void IsrCommon(InterruptType_t type, u32 error)
 
 	if (type >= InterruptTypeMinIrq && type != InterruptTypeTimer)
 	{
-		DebugPrint("Got interrupt 0x%x\n", type);
+		DBG("Got interrupt 0x%x", type);
 	}
 
 	if (InterruptTypeMinIrq <= type && type <= InterruptTypeMaxIrq)
@@ -214,7 +216,7 @@ void InitializeIdt(void)
 	// wipe the table (it should be clear already but idc)
 	memset(s_idt, 0, sizeof(s_idt));
 
-	DebugPrint("Initializing IDT at 0x%X\n", (uptr)s_idt);
+	DBG("Initializing IDT at 0x%X", (uptr)s_idt);
 
 	// exceptions
 	RegisterGate(Isr0x0, InterruptTypeDivisionError, IdtGateTypeTrap32);
@@ -262,7 +264,7 @@ void InitializeIdt(void)
 
 	IdtDescriptor_t desc = {sizeof(s_idt) - 1, s_idt};
 
-	DebugPrint("Setting IDT to %u:0x%X\n", desc.size, desc.address);
+	DBG("Setting IDT to %u:0x%X", desc.size, desc.address);
 
 	// load the IDT
 	asm volatile("lidt %0" : : "m"(desc));

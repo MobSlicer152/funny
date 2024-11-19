@@ -1,6 +1,7 @@
 #pragma once
 
-#include "kernel.h"
+#include "common/macros.h"
+#include "common/types.h"
 
 #define PI 3.1415926f
 #define TAU (2.0f * PI)

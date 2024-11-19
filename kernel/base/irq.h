@@ -1,6 +1,6 @@
 #pragma once
 
-#include "kernel.h"
+#include "common/types.h"
 
 typedef enum InterruptType
 {

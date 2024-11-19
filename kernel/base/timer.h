@@ -1,8 +1,9 @@
 #pragma once
 
-#include "kernel.h"
+#include "common/types.h"
 
 #define TIMER_TPS 363
+#define TIMER_SPT (1.0f / (f32)TIMER_TPS)
 
 extern void InitializeTimer(void);
 extern void UpdateTimer(void);
