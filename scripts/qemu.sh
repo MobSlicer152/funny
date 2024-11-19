@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 config=$1
-if [ $config == "" ]; then
+if [ $# -lt 2 ]; then
     config=Debug
 fi
 

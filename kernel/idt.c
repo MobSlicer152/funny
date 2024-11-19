@@ -214,7 +214,7 @@ void InitializeIdt(void)
 	// wipe the table (it should be clear already but idc)
 	memset(s_idt, 0, sizeof(s_idt));
 
-	DebugPrint("Initializing IDT\n");
+	DebugPrint("Initializing IDT at 0x%X\n", (uptr)s_idt);
 
 	// exceptions
 	RegisterGate(Isr0x0, InterruptTypeDivisionError, IdtGateTypeTrap32);
@@ -262,7 +262,7 @@ void InitializeIdt(void)
 
 	IdtDescriptor_t desc = {sizeof(s_idt) - 1, s_idt};
 
-	DebugPrint("Setting IDT\n");
+	DebugPrint("Setting IDT to %u:0x%X\n", desc.size, desc.address);
 
 	// load the IDT
 	asm volatile("lidt %0" : : "m"(desc));

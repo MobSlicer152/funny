@@ -26,7 +26,7 @@
 
 void InitializeIrq(void)
 {
-    DebugPrint("Initializing IRQs\n");
+    DebugPrint("Remapping IRQs to 0x%X and 0x%X\n", InterruptTypeMinPrimaryIrq, InterruptTypeMaxSecondaryIrq);
 
     // save masks
     u8 primaryMask = InByte(PIC1_DATA);

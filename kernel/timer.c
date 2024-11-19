@@ -18,7 +18,7 @@ static u64 s_ticks;
 
 static void SetFrequency(u32 hertz)
 {
-    DebugPrint("Initializing timer\n");
+    DebugPrint("Setting frequency to %u Hz\n", hertz);
     OutByte(PIT_CONTROL, PIT_SET);
     u16 divisor = (u16)(PIT_FREQUENCY / hertz);
     OutByte(PIT_CHANNEL0, divisor & 0xFF);
