@@ -64,9 +64,12 @@ static void Ring(const u8* bitmap, u32 width, u32 height, u64 now, f32 factor, f
 			//	f32 color = 32 + ((cos(scaledX + (f32)now / TIMER_TPS) + 1.0f) * 0.5f) * 15.0f;
 			//	SetPixel(x, y * SCREEN_HEIGHT, color);
 			// }
-			Ring(A_DATA, A_WIDTH, A_HEIGHT, now, 1.0f, 10);
-			Ring(A_DATA, A_WIDTH, A_HEIGHT, now, 1.5f, 10);
-			Ring(A_DATA, A_WIDTH, A_HEIGHT, now, 3.0f, 5);
+			Ring(A_DATA, A_WIDTH, A_HEIGHT, now, 1.0f, 30);
+			Ring(A_DATA, A_WIDTH, A_HEIGHT, now, 1.25f, 30);
+			Ring(A_DATA, A_WIDTH, A_HEIGHT, now, 1.5f, 30);
+			Ring(A_DATA, A_WIDTH, A_HEIGHT, now, 2.0f, 30);
+			Ring(A_DATA, A_WIDTH, A_HEIGHT, now, 3.0f, 30);
+			Ring(A_DATA, A_WIDTH, A_HEIGHT, now, 5.0f, 30);
 			FlipScreen();
 		}
 	}
