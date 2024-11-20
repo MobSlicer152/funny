@@ -38,7 +38,7 @@
 		{
 			last = now;
 
-			ClearScreen(48 + (cos(now * TIMER_SPT) + 1.0f) * 0.5f * 15.0f);
+			ClearScreen(16 + (cos(now * TIMER_SPT) + 1.0f) * 0.5f * 15.0f);
 			//for (f32 x = 0; x < SCREEN_WIDTH; x += 0.01f)
 			//{
 			//	f32 scaledX = x / 9.62f;
