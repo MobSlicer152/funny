@@ -101,3 +101,11 @@ static ATTRIBUTE(always_inline) void Halt(void)
 {
 	asm volatile("hlt");
 }
+
+[[noreturn]] static ATTRIBUTE(always_inline) void HaltAndCatchFire(void)
+{
+	DisableInterrupts();
+	OutByte(0x70, 0x0); // disable nmis
+	Halt();
+	__builtin_unreachable();
+}

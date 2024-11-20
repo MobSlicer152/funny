@@ -5,13 +5,13 @@
 #define CLAMP(value, min, max) MAX((min), MIN((value), (max)))
 #define SWAP(a, b)                                                                                                               \
 	{                                                                                                                            \
-		typeof(a) c = (b);                                                                                                            \
+		typeof(a) c = (b);                                                                                                       \
 		(b) = (a);                                                                                                               \
 		(a) = c;                                                                                                                 \
 	}
 
-#define STRINGIZE(x) #x
-#define STRINGIZE_EXPAND(x) STRINGIZE(x)
+#define STRINGIZE(x)         #x
+#define STRINGIZE_EXPAND(x)  STRINGIZE(x)
 #define STRINGIZE_EXPAND2(x) STRINGIZE_EXPAND(x)
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
@@ -27,5 +27,7 @@
 #define ASSERT(cond)                                                                                                             \
 	if (!(cond))                                                                                                                 \
 	{                                                                                                                            \
+		DBG("Assertion \"" #cond "\" failed!");                                                                                  \
+		DisableInterrupts();                                                                                                     \
 		Halt();                                                                                                                  \
 	}

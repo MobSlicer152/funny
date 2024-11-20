@@ -48,7 +48,7 @@ class BMP:
             self.important_colors: int = struct.unpack("<i", f.read(4))[0]
 
             # align to dword
-            self.row_size: int = math.ceil(self.width / 4.0, ) * 4
+            self.row_size: int = math.ceil(self.width / 4.0) * 4
 
             # skip the palette
             f.seek(self.image_offset, os.SEEK_SET)
@@ -110,7 +110,7 @@ def main(argc: int, argv: list[str]) -> int:
     line_length = 80 / len("0x00, ")
     pixels = ""
     current_length = 0
-    for y in range(bmp.height - 1, 0, -1):
+    for y in range(bmp.height - 1, -1, -1):
         for x in range(0, bmp.width):
             pixel = bmp.get_pixel(x, y)
             current_length += 1

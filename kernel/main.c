@@ -12,6 +12,7 @@
 #include "globals/kernel.h"
 #include "globals/vars.h"
 
+#include "sprites/a.h"
 #include "sprites/sprites.h"
 
 #include "systems/camera.h"
@@ -52,10 +53,13 @@
 				f32 cosAngle = (cos(angle) + 1.0f) * 0.5f;
 				f32 x = cosAngle * (SCREEN_WIDTH - A_WIDTH);
 				f32 y = (sin(angle) + 1.0f) * 0.5f * (SCREEN_HEIGHT - A_HEIGHT);
-				Fill(x, y, x + 16, y + 16, 32 + cosAngle * 15.0f);
+				Fill(x, y, x + A_WIDTH, y + A_HEIGHT, 32 + cosAngle * 15.0f);
 				DrawBitmap(x, y, A_DATA, A_WIDTH, A_HEIGHT);
 			}
 			FlipScreen();
 		}
 	}
+
+	// shouldn't get here
+	HaltAndCatchFire();
 }
