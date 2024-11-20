@@ -15,3 +15,4 @@ you need fastbuild, clang, nasm, and python
 3. build will be in `out/Clang/x86/Debug`, gives a hard drive image named `funny.img`
 4. you can do `qemu-system-i386 -hda out/Clang/x86/Debug/funny.img` to run it, or `scripts\qemu.bat`/`scripts/qemu.sh` if you want a log of the serial output
    (qemu messes up the console input mode on windows)
+5. if you want a `compile_commands.json` for your editor, do `fbuild -compdb`

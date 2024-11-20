@@ -1,7 +1,0 @@
-{
-    "clangd.arguments": [],
-    "files.associations": {
-        "kernel.h": "c",
-        "x86.h": "c"
-    }
-}
