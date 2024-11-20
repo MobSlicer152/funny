@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common/types.h"
+#include "types.h"
 
 #define TIMER_TPS 363
 #define TIMER_SPT (1.0f / (f32)TIMER_TPS)

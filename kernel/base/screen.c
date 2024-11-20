@@ -74,14 +74,14 @@ void Fill(s32 x1, s32 y1, s32 x2, s32 y2, u8 color)
 
 	if (x1 == x2)
 	{
-		for (s32 y = y1; y < y2; y++)
+		for (s32 y = y1; y < y2 - 1; y++)
 		{
 			RawSetPixel(x1, y, color);
 		}
 	}
 	else
 	{
-		for (s32 y = y1; y < y2 && y < SCREEN_HEIGHT; y++)
+		for (s32 y = y1; y < y2 - 1 && y < SCREEN_HEIGHT; y++)
 		{
 			for (s32 x = x1; x < x2 && x < SCREEN_WIDTH; x++)
 			{
@@ -93,15 +93,11 @@ void Fill(s32 x1, s32 y1, s32 x2, s32 y2, u8 color)
 
 void DrawBitmap(s32 x, s32 y, const u8* bitmap, s32 width, s32 height)
 {
-	u32 i = 0;
 	for (s32 curY = 0; curY < height - 1 && y + curY < SCREEN_HEIGHT; curY++)
 	{
 		for (s32 curX = 0; curX < width && x + curX < SCREEN_WIDTH; curX++)
 		{
 			RawSetPixel(x + curX, y + curY, bitmap[curY * width + curX]);
-			i++;
 		}
 	}
-
-	DebugPrint("\r%u", i);
 }

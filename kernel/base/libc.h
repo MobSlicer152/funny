@@ -1,8 +1,8 @@
 #pragma once
 
-#include "common/types.h"
+#include "types.h"
 #define STB_SPRINTF_DECORATE(x) x
-#include "common/stb_sprintf.h"
+#include "stb_sprintf.h"
 
 
 extern void* memcpy(void* dest, const void* source, usize size);

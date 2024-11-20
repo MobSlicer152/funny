@@ -95,7 +95,6 @@ u8 ReadSerial(void)
 {
 	while (!DataReady())
 	{
-		Halt();
 	}
 	return InByte(COM1_RECEIVE);
 }
@@ -109,7 +108,6 @@ static void WaitForTransmit(void)
 {
 	while (!TransmitEmpty())
 	{
-		Halt();
 	}
 }
 

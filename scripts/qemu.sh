@@ -5,4 +5,4 @@ if [ $# -lt 2 ]; then
     config=Debug
 fi
 
-qemu-system-i386 -hda $(dirname $0)/../out/Clang/x86/$config/funny.img -serial stdio > qemu.log
+qemu-system-i386 -hda $(dirname $0)/../out/Clang/x86/$config/funny.img -serial stdio -rtc base=localtime > qemu.log

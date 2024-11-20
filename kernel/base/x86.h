@@ -1,7 +1,7 @@
 #pragma once
 
-#include "common/macros.h"
-#include "common/types.h"
+#include "macros.h"
+#include "types.h"
 
 static ATTRIBUTE(always_inline) void Breakpoint(void)
 {

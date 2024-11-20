@@ -24,6 +24,7 @@
 		{
 			.UnityInputFiles =
 			{
+				'$ProjectPath$/base/cmos.c',
 				'$ProjectPath$/base/fpu.c',
 				'$ProjectPath$/base/idt.c',
 				'$ProjectPath$/base/irq.c',
@@ -31,6 +32,11 @@
 				'$ProjectPath$/base/screen.c',
 				'$ProjectPath$/base/serial.c',
 				'$ProjectPath$/base/timer.c',
+
+				'$ProjectPath$/globals/vars.c',
+
+				'$ProjectPath$/systems/camera.c',
+
 				'$ProjectPath$/main.c',
 			}
 
