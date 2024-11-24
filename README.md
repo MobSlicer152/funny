@@ -16,3 +16,26 @@ you need fastbuild, clang, nasm, and python
 4. you can do `qemu-system-i386 -hda out/Clang/x86/Debug/funny.img` to run it, or `scripts\qemu.bat`/`scripts/qemu.sh` if you want a log of the serial output
    (qemu messes up the console input mode on windows)
 5. if you want a `compile_commands.json` for your editor, do `fbuild -compdb`
+
+## program flow
+
+1. `boot/boot.asm`:
+   - reads kernel with `int 13h` to `0x7e00`
+   - sets VGA to mode 13h
+   - enables A20 line
+   - loads the GDT (defined in `boot/gdt.inc`)
+   - enables protected mode
+   - jumps into kernel at `0x7e00`
+2. `kernel/startup.asm`:
+   - loads segment registers
+   - adjusts stack pointer
+3. `kernel/main.c`:
+   - configures serial COM1 (`serial.c`)
+   - fills and loads the IDT (`idt.c`)
+   - remaps IRQs to avoid conflicts with CPU exceptions (`irq.c`)
+   - enables interrupts (`x86.h`)
+   - initializes the x87 FPU (`fpu.c`)
+   - initializes the screen (`screen.c`)
+   - initializes the timer (`timer.c`)
+   - enters a 30 FPS loop that clears the screen and draws rings of sprites
+   - if, somehow, the `while (true)` loop is broken, disables interrupts (and NMIs) and enters a `while (true)` that does the `hlt` instruction
