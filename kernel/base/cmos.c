@@ -51,7 +51,6 @@ static u8 ReadRtcValue(u8 index)
 
 	if (!(statusB & CMOS_B_BINARY))
 	{
-		// why the fuck would anyone want BCD
 		final = ((value & 0xf0) >> 4) * 10 + (value & 0x0f);
 	}
 
