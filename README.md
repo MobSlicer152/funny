@@ -16,6 +16,7 @@ you need fastbuild, clang, nasm, and python
 4. you can do `qemu-system-i386 -hda out/Clang/x86/Debug/funny.img` to run it, or `scripts\qemu.bat`/`scripts/qemu.sh` if you want a log of the serial output
    (qemu messes up the console input mode on windows)
 5. if you want a `compile_commands.json` for your editor, do `fbuild -compdb`
+6. to add/update sprites, use `bmp2c.py`
 
 ## program flow
 
@@ -37,5 +38,7 @@ you need fastbuild, clang, nasm, and python
    - initializes the x87 FPU (`fpu.c`)
    - initializes the screen (`screen.c`)
    - initializes the timer (`timer.c`)
+   - initializes PS/2 controller (`ps2.c`)
+   - initializes keyboard controller (`keyboard.c`)
    - enters a 30 FPS loop that clears the screen and draws rings of sprites
    - if, somehow, the `while (true)` loop is broken, disables interrupts (and NMIs) and enters a `while (true)` that does the `hlt` instruction
