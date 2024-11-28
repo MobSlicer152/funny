@@ -19,30 +19,6 @@
 			.ExecArguments = .NASMOptions + ' -felf -l $ObjectDir$/$ProjectPath$/startup.lst'
 			.ExecWorkingDir = '$ProjectPath$'
 		}
-		
-		Unity('$ProjectName$-Unity-$CompilerName$-$ArchName$-$ConfigName$')
-		{
-			.UnityInputFiles =
-			{
-				'$ProjectPath$/base/cmos.c',
-				'$ProjectPath$/base/fpu.c',
-				'$ProjectPath$/base/idt.c',
-				'$ProjectPath$/base/irq.c',
-				'$ProjectPath$/base/libc.c',
-				'$ProjectPath$/base/screen.c',
-				'$ProjectPath$/base/serial.c',
-				'$ProjectPath$/base/timer.c',
-
-				'$ProjectPath$/globals/vars.c',
-
-				'$ProjectPath$/systems/camera.c',
-
-				'$ProjectPath$/main.c',
-			}
-
-			.UnityOutputPath = '$ObjectDir$/$ProjectPath$'
-			.UnityOutputPattern = '$ProjectName$_Unity*.c'
-		}
 
 		ObjectList('$ProjectName$-Objs-$CompilerName$-$ArchName$-$ConfigName$')
 		{
@@ -50,10 +26,25 @@
 			{
 				'$ProjectPath$/base/arith64.c',
 				'$ProjectPath$/base/stb.c',
+				'$ProjectPath$/base/cmos.c',
+				'$ProjectPath$/base/fpu.c',
+				'$ProjectPath$/base/idt.c',
+				'$ProjectPath$/base/irq.c',
+				'$ProjectPath$/base/keyboard.c',
+				'$ProjectPath$/base/libc.c',
+				'$ProjectPath$/base/ps2.c',
+				'$ProjectPath$/base/screen.c',
+				'$ProjectPath$/base/serial.c',
+				'$ProjectPath$/base/timer.c',
+
+				'$ProjectPath$/globals/vars.c',
 
 				'$ProjectPath$/sprites/sprites.c',
+
+				'$ProjectPath$/systems/camera.c',
+
+				'$ProjectPath$/main.c',
 			}
-			.CompilerInputUnity = '$ProjectName$-Unity-$CompilerName$-$ArchName$-$ConfigName$'
 
 			.CompilerOptions + ' -DKERNEL'
 							 + ' -I$ProjectPath$'

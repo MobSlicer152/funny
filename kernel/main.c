@@ -1,8 +1,10 @@
 #include "base/fpu.h"
 #include "base/idt.h"
 #include "base/irq.h"
+#include "base/keyboard.h"
 #include "base/libc.h"
 #include "base/math.h"
+#include "base/ps2.h"
 #include "base/screen.h"
 #include "base/serial.h"
 #include "base/timer.h"
@@ -45,6 +47,8 @@ static void Ring(const u8* bitmap, u32 width, u32 height, u64 now, f32 factor, f
 	InitializeFpu();
 	InitializeScreen();
 	InitializeTimer();
+	InitializePs2();
+	InitializeKeyboard();
 
 	u64 last = 0;
 
@@ -56,6 +60,9 @@ static void Ring(const u8* bitmap, u32 width, u32 height, u64 now, f32 factor, f
 		{
 			last = now;
 
+			// so it doesn't change mid frame
+			SwapKeyboardState();
+
 			ClearScreen(16 + (cos(now * TIMER_SPT) + 1.0f) * 0.5f * 15.0f);
 			// for (f32 x = 0; x < SCREEN_WIDTH; x += 0.01f)
 			//{
@@ -64,13 +71,22 @@ static void Ring(const u8* bitmap, u32 width, u32 height, u64 now, f32 factor, f
 			//	f32 color = 32 + ((cos(scaledX + (f32)now / TIMER_TPS) + 1.0f) * 0.5f) * 15.0f;
 			//	SetPixel(x, y * SCREEN_HEIGHT, color);
 			// }
-			Ring(A_DATA, A_WIDTH, A_HEIGHT, now, 1.0f, 80);
-			Ring(A_DATA, A_WIDTH, A_HEIGHT, now, 1.25f, 70);
+			if (GetKey(KeyCodeA))
+			{
+				Ring(A_DATA, A_WIDTH, A_HEIGHT, now, 1.0f, 80);
+			}
+			if (GetKey(KeyCodeS))
+			{
+				Ring(A_DATA, A_WIDTH, A_HEIGHT, now, 1.25f, 70);
+			}
 			Ring(A_DATA, A_WIDTH, A_HEIGHT, now, 1.5f, 60);
 			Ring(A_DATA, A_WIDTH, A_HEIGHT, now, 2.0f, 50);
 			Ring(A_DATA, A_WIDTH, A_HEIGHT, now, 3.0f, 40);
 			Ring(A_DATA, A_WIDTH, A_HEIGHT, now, 5.0f, 30);
 			FlipScreen();
+
+			u32 light = 1 << (u32)((cos(now * TIMER_SPT) + 1.0f) * 0.5f * 3.0f);
+			SetKeyboardLights(light & 0b001, light & 0b010, light & 0b100);
 		}
 	}
 

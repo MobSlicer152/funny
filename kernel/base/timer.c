@@ -41,3 +41,14 @@ u64 GetTimer(void)
 {
     return s_ticks;
 }
+
+void Sleep(u32 ticks)
+{
+    u64 start = GetTimer();
+    u64 now = start;
+    // every timer tick this gets interrupted
+    while (now - start < ticks)
+    {
+        Halt();
+    }
+}

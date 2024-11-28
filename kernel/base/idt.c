@@ -2,10 +2,13 @@
 
 #include "idt.h"
 #include "irq.h"
+#include "keyboard.h"
 #include "libc.h"
+#include "ps2.h"
 #include "serial.h"
 #include "timer.h"
 #include "x86.h"
+
 
 typedef void (*Isr_t)(void);
 
@@ -50,7 +53,7 @@ typedef struct IdtEntry
 		asm("pusha;"                                                                                                             \
 			"movl 36(%%esp), %%eax;" /* get the error code above preserved registers */                                          \
 			"mov %%esp, %%ebp;"      /* load interrupt stack */                                                                  \
-			"mov $" INTERRUPT_STACK ", %%esp;"                                                                                               \
+			"mov $" INTERRUPT_STACK ", %%esp;"                                                                                   \
 			"pushl %%eax;" /* pass it to IsrCommon */                                                                            \
 			"pushl " #index ";"                                                                                                  \
 			"call %P0;"                                                                                                          \
@@ -68,7 +71,7 @@ typedef struct IdtEntry
 	{                                                                                                                            \
 		asm("pusha;"                                                                                                             \
 			"mov %%esp, %%ebp;" /* load interrupt stack */                                                                       \
-			"mov $" INTERRUPT_STACK ", %%esp;"                                                                                               \
+			"mov $" INTERRUPT_STACK ", %%esp;"                                                                                   \
 			"pushl $0;" /* IsrCommon expects an error code */                                                                    \
 			"pushl $" #index ";"                                                                                                 \
 			"call %P0;"                                                                                                          \
@@ -139,6 +142,11 @@ static void IsrCommon(InterruptType_t type, u32 error)
 		UpdateTimer();
 		break;
 	case InterruptTypeKeyboard:
+		if (Ps2Initialized())
+		{
+			UpdateKeyboard();
+		}
+		break;
 	case InterruptTypeCascade:
 	case InterruptTypeCom2:
 	case InterruptTypeCom1:
@@ -153,12 +161,8 @@ static void IsrCommon(InterruptType_t type, u32 error)
 	case InterruptTypeFpu:
 	case InterruptTypePrimaryHardDisk:
 	case InterruptTypeSecondaryHardDisk:
-		break;
-	}
-
-	if (type >= InterruptTypeMinIrq && type != InterruptTypeTimer)
-	{
 		DBG("Got interrupt 0x%x", type);
+		break;
 	}
 
 	if (InterruptTypeMinIrq <= type && type <= InterruptTypeMaxIrq)
