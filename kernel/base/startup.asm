@@ -14,9 +14,8 @@ Main:
 	mov gs, ax
 	mov ss, ax
 	
-	; SS is now mapped to 00000h, have to adjust ESP
-	add esp, 17e00h
+	; SS is now mapped to 0000h, have to adjust ESP
+	add esp, 20000h
 
-	; enter C code
-	call KernelMain
-
+	; enter C code (no call cause it doesn't return)
+	jmp KernelMain

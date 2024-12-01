@@ -14,7 +14,7 @@
 	DB 0c2h ; hidden Linux
 	; end offset in CHS
 	DB 3 ; head 3
-	DB 00110100b ; sector 13
+	DB 00101100b ; sector 11
 	DB 0 ; cylinder 0
 	DD 1 ; starting LBA offset
 	DD kernelSize

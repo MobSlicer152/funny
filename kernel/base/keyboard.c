@@ -93,7 +93,6 @@ void UpdateKeyboard(void)
 
     if (code < KeyCodeCount)
     {
-        DBG("0x%02X = %s", code, released ? "false" : "true");
         s_keyboardState[code] = !released;
         released = false;
     }

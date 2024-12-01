@@ -29,8 +29,8 @@ static void Ring(const u8* bitmap, u32 width, u32 height, u64 now, f32 factor, f
 	for (f32 offset = 0.0f; offset < 1.0f; offset += 1.0f / count)
 	{
 		f32 angle = offset * TAU + now * TIMER_SPT;
-		f32 cosAngle = (cos(angle) + 1.0f) * 0.5f;
-		f32 sinAngle = (sin(angle) + 1.0f) * 0.5f;
+		f32 cosAngle = NormalizedCosine(angle);
+		f32 sinAngle = NormalizedSine(angle);
 		f32 x = (cosAngle * (SCREEN_WIDTH - width) + xShift) * reciprocal;
 		f32 y = (sinAngle * (SCREEN_HEIGHT - height) + yShift) * reciprocal;
 		Fill(x, y, x + width, y + height, 32 + cosAngle * 15.0f);
@@ -85,7 +85,7 @@ static void Ring(const u8* bitmap, u32 width, u32 height, u64 now, f32 factor, f
 			Ring(A_DATA, A_WIDTH, A_HEIGHT, now, 5.0f, 30);
 			FlipScreen();
 
-			u32 light = 1 << (u32)((cos(now * TIMER_SPT) + 1.0f) * 0.5f * 3.0f);
+			u32 light = 1 << (u32)(NormalizedCosine(now * TIMER_SPT) * 3.0f);
 			SetKeyboardLights(light & 0b001, light & 0b010, light & 0b100);
 		}
 	}

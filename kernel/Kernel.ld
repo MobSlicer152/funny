@@ -1,8 +1,8 @@
-ENTRY(0x7e00)
+ENTRY(0x10000)
 
 SECTIONS
 {
-	.startup 0x7e00 : {
+	.startup 0x10000 : {
 		*(.startup)
 	}
 	.text : { *(.text) }

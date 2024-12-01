@@ -1,8 +1,8 @@
 import os
 import sys
 
-# 1MB
-IMAGE_SIZE = 0x200 * 0x81
+# minimum floppy size
+IMAGE_SIZE = 0x140 * 0x200
 
 def main(argc, argv):
     if argc < 3:

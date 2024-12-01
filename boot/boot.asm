@@ -1,22 +1,30 @@
 	BITS 16
 	ORG 7c00h
 
-	; total sectors in the kernel (80h/128 sectors = 65.5kB)
-	%define kernelSize 80h
+	; total sectors in the kernel (7fh/127 sectors = 63.5kB)
+	%define kernelSize 7fh
 
-	; just in case loaded at 7c00h:0000h instead of 0000h:7c00h
+	; just in case loaded at 7c00:0000 instead of 0000:7c00
 	jmp 0:Entry
 
-; Runs at 0000h:7c00h
+; Runs at 0000:7c00
 Entry:
-	; kernel 7e00h-17e00h
 	xor ax, ax
 	mov ds, ax
 	mov es, ax
-	; stack 17e00h-1be00h, backbuffer 1be00h-2b800, interrupt stack 2b800h-2c800h
-	mov ax, 17eh
+	mov ax, 2000h
 	mov ss, ax
 	mov sp, 4000h
+
+	; try three times in case of disk controller being shit
+	xor si, si
+	jmp .read
+.readLoop:
+	cmp si, 3
+	jae .exit
+	inc si
+.read:
+	; TODO: 18 sectors at a time for floppy to work
 
 	; read partition 1
 	mov ah, 2 ; read sectors
@@ -24,16 +32,19 @@ Entry:
 	mov ch, 0 ; 0th cylinder
 	mov cl, 2 ; 2nd sector
 	mov dh, 0 ; 0th head
-	; dl is already the drive this booted from, where the kernel should be
-	mov bx, 7e00h ; ES:BX is 0000:7e00
+	; DL is already the drive this booted from, where the kernel should be
+	; ES:BX = 1000:0000
+	mov bx, 1000h
+	mov es, bx
+	xor bx, bx
 	int 13h
 
 	; check if the read failed
-	jc .exit
+	jc .readLoop
 
 	; check if enough sectors were read
 	cmp al, kernelSize
-	jne .exit
+	jl .readLoop
 
 	; change video mode to 320x200 256-colour
 	mov ah, 0
@@ -66,11 +77,17 @@ Entry:
 
 	; enable protected mode
 	mov eax, cr0
-	or eax, 1
+	or eax, 1 ; bit 0 is
 	mov cr0, eax
 
-	; Enter the 32-bit kernel
-	jmp 08h:7e00h
+	; set CS to GDT code descriptor
+	jmp 08h:.enterKernel
+
+	; need 32-bit for > 0ffffh jump
+	BITS 32
+.enterKernel:
+	jmp 10000h
+	BITS 16
 
 .exit:
 	; print an error

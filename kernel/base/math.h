@@ -82,10 +82,20 @@ static ATTRIBUTE(always_inline) f32 sin(f32 x)
     return x;
 }
 
+static ATTRIBUTE(always_inline) f32 NormalizedSine(f32 x)
+{
+    return (sin(x) + 1.0f) * 0.5f;
+}
+
 static ATTRIBUTE(always_inline) f32 cos(f32 x)
 {
     asm volatile ("fcos" : "=t"(x) : "t"(x));
     return x;
+}
+
+static ATTRIBUTE(always_inline) f32 NormalizedCosine(f32 x)
+{
+    return (cos(x) + 1.0f) * 0.5f;
 }
 
 static ATTRIBUTE(always_inline) f32 tan(f32 x)
