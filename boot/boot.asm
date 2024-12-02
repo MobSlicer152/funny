@@ -16,35 +16,22 @@ Entry:
 	mov ss, ax
 	mov sp, 4000h
 
-	; try three times in case of disk controller being shit
-	xor si, si
-	jmp .read
-.readLoop:
-	cmp si, 3
-	jae .exit
-	inc si
-.read:
-	; TODO: 18 sectors at a time for floppy to work
+	; get the drive's CHS stuff
+	call GetDriveGeometry
 
-	; read partition 1
-	mov ah, 2 ; read sectors
-	mov al, kernelSize ; however many sectors the partition is
-	mov ch, 0 ; 0th cylinder
-	mov cl, 2 ; 2nd sector
-	mov dh, 0 ; 0th head
-	; DL is already the drive this booted from, where the kernel should be
-	; ES:BX = 1000:0000
-	mov bx, 1000h
-	mov es, bx
-	xor bx, bx
-	int 13h
+	; read the kernel to 1000h:0000h
+	mov cx, kernelSize
+	mov ax, 1000h
+	mov es, ax
+	xor di, di
+	call Read
 
 	; check if the read failed
-	jc .readLoop
+	jc .exit
 
 	; check if enough sectors were read
 	cmp al, kernelSize
-	jl .readLoop
+	jl .exit
 
 	; change video mode to 320x200 256-colour
 	mov ah, 0
@@ -163,6 +150,107 @@ EnableA20:
 .done:
 	ret
 
+; get drive geometry of drive DL
+GetDriveGeometry:
+	push cx
+	push dx
+
+	; get drive info
+	push es
+	push di
+	mov ah, 8
+	xor di, di
+	mov es, di
+	int 13h
+	pop di
+	pop es
+
+	; get CHS stuff (AX is SPT, BX is HPC, CX is cylinders)
+	mov ax, cx
+	and ax, 3fh ; bits 0-5 is sectors per track
+	mov bx, cx
+	shl bx, 2 ; bits 6-15 is cylinders - 1
+	mov cl, ch
+	mov ch, bh
+	inc cx
+	mov bx, dx ; DH is heads - 1
+	and bx, 0ffh
+	inc bx
+	
+	mov [driveSectorsPerTrack], ax
+	mov [driveHeadsPerCylinder], bx
+	mov [driveCylinders], cx
+
+	pop dx
+	pop cx
+
+	ret
+
+; read CX sectors starting at SI in LBA to ES:DI from drive DL
+Read:
+	push cx
+	push dx
+
+	; calculate CHS of LBA in SI, stack becomes
+	; => sector
+	;    head
+	;    cylinder
+	;    DX with drive index
+	; ==
+
+	mov ax, [driveSectorsPerTrack]
+	mov bx, [driveHeadsPerCylinder]
+	mov cx, [driveCylinders]
+
+	; DX = cylinder = LBA / (HPC * SPT)
+	push ax
+	mul bl ; AX = HPC * SPT
+	mov dx, ax
+	mov ax, si
+	div dx ; LBA / DX
+	mov dx, ax
+	pop ax
+	push dx ; cylinder
+
+	; DX = head = (LBA / SPT) % HPC
+	push ax
+	mov dx, ax
+	mov ax, si
+	div dx ; AX = LBA / SPT
+	div bx ; DX = AX % HPC
+	pop ax
+	push dx ; head
+
+	; DX = sector = (LBA % SPT) + 1
+	push ax
+	mov ax, si
+	div cx
+	inc dx
+	pop ax
+	push dx ; sector
+
+	; take stuff off stack
+	pop ax ; sector
+	pop bx ; head
+	pop cx ; cylinder
+
+	; mutilate CX for int 13h
+	mov dx, cx
+	and dx, 0ffh
+	shl dx, 8
+	and cx, 300h
+	shr cx, 2
+	or cx, dx
+	or cx, ax
+
+	; do the int 13h
+	mov ax, cx
+	mov ah, 2
+	mov 
+
+.done:
+	ret
+
 %include "gdt.inc"
 
 %define QUOTE "
@@ -170,5 +258,12 @@ EnableA20:
 
 errorMsg:
 	DB "Failed to read kernel partition (", STRINGIZE(kernelSize), " sectors)", 0dh, 0ah, 00h
+
+driveCylinders:
+	RESW 1
+driveHeadsPerCylinder:
+	RESW 1
+driveSectorsPerTrack:
+	RESW 1
 
 %include "mbr.inc"
