@@ -40,7 +40,7 @@ static void Ring(const u8* bitmap, u32 width, u32 height, u64 now, f32 factor, f
 
 [[noreturn]] void KernelMain(void)
 {
-	InitializeSerial(SERIAL_115200_BAUD);
+	//InitializeSerial(SERIAL_115200_BAUD);
 	InitializeIdt();
 	InitializeIrq();
 	EnableInterrupts();
@@ -51,6 +51,7 @@ static void Ring(const u8* bitmap, u32 width, u32 height, u64 now, f32 factor, f
 	InitializeKeyboard();
 
 	u64 last = 0;
+	//u64 delta = 0;
 
 	while (true)
 	{
@@ -58,31 +59,15 @@ static void Ring(const u8* bitmap, u32 width, u32 height, u64 now, f32 factor, f
 
 		if ((now - last) > (TIMER_TPS / FPS))
 		{
+			//delta = now - last;
 			last = now;
 
 			// so it doesn't change mid frame
 			SwapKeyboardState();
 
-			ClearScreen(16 + (cos(now * TIMER_SPT) + 1.0f) * 0.5f * 15.0f);
-			// for (f32 x = 0; x < SCREEN_WIDTH; x += 0.01f)
-			//{
-			//	f32 scaledX = x / 9.62f;
-			//	f32 y = (cos(scaledX) + 1.0f) * 0.5f;
-			//	f32 color = 32 + ((cos(scaledX + (f32)now / TIMER_TPS) + 1.0f) * 0.5f) * 15.0f;
-			//	SetPixel(x, y * SCREEN_HEIGHT, color);
-			// }
-			if (GetKey(KeyCodeA))
-			{
-				Ring(A_DATA, A_WIDTH, A_HEIGHT, now, 1.0f, 80);
-			}
-			if (GetKey(KeyCodeS))
-			{
-				Ring(A_DATA, A_WIDTH, A_HEIGHT, now, 1.25f, 70);
-			}
-			Ring(A_DATA, A_WIDTH, A_HEIGHT, now, 1.5f, 60);
-			Ring(A_DATA, A_WIDTH, A_HEIGHT, now, 2.0f, 50);
-			Ring(A_DATA, A_WIDTH, A_HEIGHT, now, 3.0f, 40);
-			Ring(A_DATA, A_WIDTH, A_HEIGHT, now, 5.0f, 30);
+			ClearScreen(16 + NormalizedCosine(now * TIMER_SPT) * 15.0f);
+			f32 current = 1.0f + NormalizedCosine(now * TIMER_SPT) * 4.0f;
+			Ring(A_DATA, A_WIDTH, A_HEIGHT, now, current, 80 / current);
 			FlipScreen();
 
 			u32 light = 1 << (u32)(NormalizedCosine(now * TIMER_SPT) * 3.0f);

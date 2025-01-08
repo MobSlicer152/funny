@@ -2,7 +2,6 @@
 #include "libc.h"
 #include "x86.h"
 
-
 #define COM1_BASE             0x3f8
 #define COM1_RECEIVE          (COM1_BASE + 0)
 #define COM1_TRANSMIT         (COM1_BASE + 0)
@@ -54,6 +53,8 @@
 #define LINE_STATUS_DATA_READY     (1 << 0)
 #define LINE_STATUS_TRANSMIT_EMPTY (1 << 5)
 
+static bool s_serialWorks = false;
+
 static bool TestSerial(void)
 {
 	u8 mode = InByte(COM1_MODEM_CTRL);
@@ -72,7 +73,7 @@ void InitializeSerial(u16 baud)
 	OutByte(COM1_FIFO_CTRL, FIFO_CTRL_TRIGGER_14 | FIFO_CTRL_CLEAR_RECEIVE | FIFO_CTRL_CLEAR_TRANSMIT | FIFO_CTRL_ENABLE);
 	OutByte(
 		COM1_INTERRUPT_ENABLE, INTERRUPT_ENABLE_MODEM_STATUS | INTERRUPT_ENABLE_RECEIVED_DATA | INTERRUPT_ENABLE_RECEIVER_STATUS);
-	ASSERT(TestSerial() == true);
+	s_serialWorks = TestSerial();
 
 	OutByte(COM1_MODEM_CTRL, MODEM_CTRL_OUT_1 | MODEM_CTRL_OUT_2 | MODEM_CTRL_DATA_READY | MODEM_CTRL_REQUEST_SEND);
 }
@@ -93,10 +94,15 @@ static bool DataReady(void)
 
 u8 ReadSerial(void)
 {
-	while (!DataReady())
+	if (s_serialWorks)
 	{
+		while (!DataReady())
+		{
+		}
+
+		return InByte(COM1_RECEIVE);
 	}
-	return InByte(COM1_RECEIVE);
+	return 0;
 }
 
 static bool TransmitEmpty(void)
@@ -106,22 +112,28 @@ static bool TransmitEmpty(void)
 
 static void WaitForTransmit(void)
 {
-	while (!TransmitEmpty())
+	if (s_serialWorks)
 	{
+		while (!TransmitEmpty())
+		{
+		}
 	}
 }
 
 void WriteSerial(const u8* data, usize size)
 {
-	for (usize i = 0; i < size; i++)
+	if (s_serialWorks)
 	{
-		WaitForTransmit();
-		if (data[i] == '\n')
+		for (usize i = 0; i < size; i++)
 		{
-			OutByte(COM1_TRANSMIT, '\r');
 			WaitForTransmit();
+			if (data[i] == '\n')
+			{
+				OutByte(COM1_TRANSMIT, '\r');
+				WaitForTransmit();
+			}
+			OutByte(COM1_TRANSMIT, data[i]);
 		}
-		OutByte(COM1_TRANSMIT, data[i]);
 	}
 }
 

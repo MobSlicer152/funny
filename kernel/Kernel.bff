@@ -15,7 +15,7 @@
 		{
 			.ExecExecutable = .NASM
 			.ExecInput = '$ProjectPath$/base/startup.asm'
-			.ExecOutput = '$ObjectDir$/$ProjectPath$/base/startup.obj'
+			.ExecOutput = '$ObjectDir$/$ProjectPath$/startup.obj'
 			.ExecArguments = .NASMOptions + ' -felf -l $ObjectDir$/$ProjectPath$/startup.lst'
 			.ExecWorkingDir = '$ProjectPath$'
 		}

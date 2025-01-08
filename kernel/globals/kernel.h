@@ -1,6 +1,8 @@
 #pragma once
 
-#define KERNEL_BASE          0x10000
+#include "types.h"
+
+#define KERNEL_BASE          0x7e00
 #define KERNEL_SIZE          0x10000
 #define KERNEL_END           (KERNEL_BASE + KERNEL_SIZE)
 #define STACK_BASE           KERNEL_END

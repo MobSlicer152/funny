@@ -14,8 +14,8 @@ Main:
 	mov gs, ax
 	mov ss, ax
 	
-	; SS is now mapped to 0000h, have to adjust ESP
-	add esp, 20000h
+	; new ESP, has to match STACK_END in consts/kernel.h
+	mov esp, 1be00h
 
 	; enter C code (no call cause it doesn't return)
 	jmp KernelMain

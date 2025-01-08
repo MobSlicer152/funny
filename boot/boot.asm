@@ -1,6 +1,8 @@
 	BITS 16
 	ORG 7c00h
 
+	%define kernelHigh 000h
+	%define kernelLow 7e00h
 	; total sectors in the kernel (7fh/127 sectors = 63.5kB)
 	%define kernelSize 7fh
 
@@ -33,10 +35,10 @@ Entry:
 	mov cl, 2 ; 2nd sector
 	mov dh, 0 ; 0th head
 	; DL is already the drive this booted from, where the kernel should be
-	; ES:BX = 1000:0000
-	mov bx, 1000h
+	; ES:BX is destination
+	mov bx, kernelHigh
 	mov es, bx
-	xor bx, bx
+	mov bx, kernelLow
 	int 13h
 
 	; check if the read failed
@@ -86,7 +88,7 @@ Entry:
 	; need 32-bit for > 0ffffh jump
 	BITS 32
 .enterKernel:
-	jmp 10000h
+	jmp 7e00h
 	BITS 16
 
 .exit:

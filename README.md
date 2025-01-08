@@ -2,7 +2,7 @@
 
 x86 toy os, runs in ring 0 protected mode
 
-requires an 80386 with an fpu, 1mb of ram, a hard drive (the image is like 65k, any drive should do), a keyboard, and vga
+requires an 80386 with an fpu, 640kb of ram, a hard drive (the image is like 65k, any drive should do), a keyboard, and vga
 
 ## build instructions
 
@@ -21,7 +21,7 @@ you need fastbuild, clang, nasm, and python
 ## program flow
 
 1. `boot/boot.asm`:
-   - reads kernel with `int 13h` to `0x7e00`
+   - reads kernel to `0x7e00` with `int 13h`
    - sets VGA to mode 13h
    - enables A20 line
    - loads the GDT (defined in `boot/gdt.inc`)
