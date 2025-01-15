@@ -4,6 +4,7 @@ import sys
 # minimum floppy size
 IMAGE_SIZE = 0x140 * 0x200
 
+
 def main(argc, argv):
     if argc < 3:
         print(f"Usage: {argv[0]} <bootsector> <kernel binary> <output image>")
@@ -25,6 +26,7 @@ def main(argc, argv):
 
     with open(imagefile, "wb") as output:
         output.write(image)
+
 
 if __name__ == "__main__":
     main(len(sys.argv), sys.argv)
