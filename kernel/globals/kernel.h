@@ -14,7 +14,10 @@
 #define INTERRUPT_STACK_BASE BACKBUFFER_END
 #define INTERRUPT_STACK_SIZE 0x1000
 #define INTERRUPT_STACK_END  (INTERRUPT_STACK_BASE + INTERRUPT_STACK_SIZE)
+#define HEAP_BASE            INTERRUPT_STACK_END
+#define HEAP_SIZE            0x4000
+#define HEAP_END             (HEAP_BASE + HEAP_SIZE)
 
-#define MAKE_SELECTOR(index, rpl) ((index) << 3 | (rpl))
+#define MAKE_SELECTOR(index, rpl) ((index) << 3 | (rpl) & 0b111)
 #define KERNEL_CODE_SELECTOR      MAKE_SELECTOR(1, 0)
 #define KERNEL_DATA_SELECTOR      MAKE_SELECTOR(2, 0)

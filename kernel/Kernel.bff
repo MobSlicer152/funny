@@ -28,10 +28,12 @@
 				'$ProjectPath$/base/stb.c',
 				'$ProjectPath$/base/cmos.c',
 				'$ProjectPath$/base/fpu.c',
+				'$ProjectPath$/base/heap.c',
 				'$ProjectPath$/base/idt.c',
 				'$ProjectPath$/base/irq.c',
 				'$ProjectPath$/base/keyboard.c',
 				'$ProjectPath$/base/libc.c',
+				'$ProjectPath$/base/llist.c',
 				'$ProjectPath$/base/ps2.c',
 				'$ProjectPath$/base/screen.c',
 				'$ProjectPath$/base/serial.c',
@@ -57,6 +59,7 @@
 			.Libraries =
 			{
 				'$ProjectName$-Objs-$CompilerName$-$ArchName$-$ConfigName$',
+				'flecs-$CompilerName$-$ArchName$-$ConfigName$',
 				'$ObjectDir$/$ProjectPath$/base/startup.obj'
 			}
 

@@ -1,6 +1,6 @@
 # funny thing
 
-x86 toy os, runs in ring 0 protected mode
+x86 toy os, runs in flat ring 0 protected mode without paging
 
 requires an 80386 with an fpu, 640kb of ram, a hard drive (the image is like 65k, any drive should do), a keyboard, and vga
 
@@ -40,5 +40,5 @@ you need fastbuild, clang, nasm, and python
    - initializes the timer (`timer.c`)
    - initializes PS/2 controller (`ps2.c`)
    - initializes keyboard controller (`keyboard.c`)
-   - enters a 30 FPS loop that clears the screen and draws rings of sprites
+   - initializes the heap (`heap.c`), from [here](https://github.com/CCareaga/heap_allocator)
    - if, somehow, the `while (true)` loop is broken, disables interrupts (and NMIs) and enters a `while (true)` that does the `hlt` instruction

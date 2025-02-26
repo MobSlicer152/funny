@@ -17,17 +17,20 @@
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 
 #define ATTRIBUTE(x) __attribute__((x))
+#define FORCEINLINE ATTRIBUTE(always_inline)
 
 #define asm __asm__
 
 #ifndef KERNEL
-#define Halt abort
+#define HaltAndCatchFire abort
 #endif
 
-#define ASSERT(cond)                                                                                                             \
+#define UNUSED(x) ((void)x)
+
+#define ASSERT(cond, ...)                                                                                                        \
 	if (!(cond))                                                                                                                 \
 	{                                                                                                                            \
-		DBG("Assertion \"" #cond "\" failed!");                                                                                  \
+		DBG("Assertion \"" #cond "\" failed: " #__VA_ARGS__);                                                                    \
 		DisableInterrupts();                                                                                                     \
-		Halt();                                                                                                                  \
+		HaltAndCatchFire();                                                                                                      \
 	}

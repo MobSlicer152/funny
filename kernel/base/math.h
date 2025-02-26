@@ -1,33 +1,33 @@
 #pragma once
 
-#include "macros.h"
-#include "types.h"
+#include "kernel/macros.h"
+#include "kernel/types.h"
 
 #define PI 3.1415926f
 #define TAU (2.0f * PI)
 
 // a bunch of inline functions that do like 1 x87 instruction
 
-static ATTRIBUTE(always_inline) s32 abs(s32 x)
+static FORCEINLINE s32 abs(s32 x)
 {
     // glibc does this, it's fine somehow (i guess fabs matters more)
     return x < 0 ? -x : x;
 }
 
-static ATTRIBUTE(always_inline) f32 fabs(f32 x)
+static FORCEINLINE f32 fabs(f32 x)
 {
     asm volatile ("fabs" : "=t"(x) : "t"(x));
     return x;
 }
 
-static ATTRIBUTE(always_inline) f32 fmod(f32 dividend, f32 divisor)
+static FORCEINLINE f32 fmod(f32 dividend, f32 divisor)
 {
     asm volatile ("fprem1" : "=t"(dividend) : "t"(dividend), "u"(divisor));
     return dividend;
 }
 
 // https://stackoverflow.com/a/57228953
-static ATTRIBUTE(always_inline) f32 fpow(f32 x, f32 y) {
+static FORCEINLINE f32 fpow(f32 x, f32 y) {
     f32 result;
     asm volatile (
         // Save the address of 'y' in %eax
@@ -57,7 +57,7 @@ static ATTRIBUTE(always_inline) f32 fpow(f32 x, f32 y) {
     return result;
 }
 
-static ATTRIBUTE(always_inline) f32 invsqrt(f32 x)
+static FORCEINLINE f32 invsqrt(f32 x)
 {
     // we love quake 3
     f32 x2 = x * 0.5;
@@ -69,37 +69,51 @@ static ATTRIBUTE(always_inline) f32 invsqrt(f32 x)
     return y;
 }
 
-static ATTRIBUTE(always_inline) f32 sqrt(f32 x)
+static FORCEINLINE f32 sqrt(f32 x)
 {
     // as it turns out, fast inverse square root is faster than fsqrt by a lot
     //asm volatile ("fsqrt" : "=t"(x) : "t"(x));
     return 1.0f / invsqrt(x);
 }
 
-static ATTRIBUTE(always_inline) f32 sin(f32 x)
+static FORCEINLINE f32 sin(f32 x)
 {
     asm volatile ("fsin" : "=t"(x) : "t"(x));
     return x;
 }
 
-static ATTRIBUTE(always_inline) f32 NormalizedSine(f32 x)
+static FORCEINLINE f32 NormalizedSine(f32 x)
 {
     return (sin(x) + 1.0f) * 0.5f;
 }
 
-static ATTRIBUTE(always_inline) f32 cos(f32 x)
+static FORCEINLINE f32 cos(f32 x)
 {
     asm volatile ("fcos" : "=t"(x) : "t"(x));
     return x;
 }
 
-static ATTRIBUTE(always_inline) f32 NormalizedCosine(f32 x)
+static FORCEINLINE f32 NormalizedCosine(f32 x)
 {
     return (cos(x) + 1.0f) * 0.5f;
 }
 
-static ATTRIBUTE(always_inline) f32 tan(f32 x)
+static FORCEINLINE f32 tan(f32 x)
 {
     asm volatile ("fptan" : "=t"(x) : "t"(x));
     return x;
+}
+
+static FORCEINLINE bool isinf(f32 x)
+{
+    u32 xi = (u32)x;
+    // zero fraction, max exponent
+    return (xi & 0x7f800000) == 0x7f800000 && (xi & 0x007fffff) == 0;
+}
+
+static FORCEINLINE bool isnan(f32 x)
+{
+    u32 xi = (u32)x;
+    // non-zero fraction, max exponent
+    return (xi & 0x7f800000) == 0x7f800000 && (xi & 0x007fffff) != 0;
 }

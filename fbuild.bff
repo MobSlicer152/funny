@@ -3,7 +3,7 @@
 .Root = ._WORKING_DIR_
 
 .IncludeDirs = {"."}
-.ExternalIncludeDirs = {}
+.ExternalIncludeDirs = {"flecs/include"}
 
 #include "fastbuild/Clang.bff"
 
@@ -15,6 +15,7 @@
 
 #include "fastbuild/Targets.bff"
 
+#include "flecs/flecs.bff"
 #include "boot/Boot.bff"
 #include "kernel/Kernel.bff"
 #include "fastbuild/BootImage.bff"

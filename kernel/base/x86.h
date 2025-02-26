@@ -1,15 +1,15 @@
 #pragma once
 
-#include "macros.h"
-#include "types.h"
+#include "kernel/macros.h"
+#include "kernel/types.h"
 
-static ATTRIBUTE(always_inline) void Breakpoint(void)
+static FORCEINLINE void Breakpoint(void)
 {
 	asm volatile ("int $3");
 }
 
 #define MAKE_IN_FUNC(name, size, suffix)                                                                                         \
-	static ATTRIBUTE(always_inline) u##size name(u16 port)                                                                              \
+	static FORCEINLINE u##size name(u16 port)                                                                              \
 	{                                                                                                                            \
 		u##size value = 0;                                                                                                       \
 		asm volatile("in" #suffix " %1, %0" : "=a"(value) : "d"(port) : "memory");                                               \
@@ -22,7 +22,7 @@ MAKE_IN_FUNC(InDword, 32, l)
 
 #undef MAKE_IN_FUNC
 
-#define MAKE_OUT_FUNC(name, size, suffix) static ATTRIBUTE(always_inline) void name(u16 port, u##size value) { asm volatile("out" #suffix " %0, %1" : : "a"(value), "d"(port)); }
+#define MAKE_OUT_FUNC(name, size, suffix) static FORCEINLINE void name(u16 port, u##size value) { asm volatile("out" #suffix " %0, %1" : : "a"(value), "d"(port)); }
 
 MAKE_OUT_FUNC(OutByte, 8, b)
 MAKE_OUT_FUNC(OutWord, 16, w)
@@ -42,67 +42,67 @@ MAKE_OUT_FUNC(OutDword, 32, l)
 #define CR0_CD (1 << 30) // cache disable
 #define CR0_PG (1 << 31) // paging
 
-static ATTRIBUTE(always_inline) u32 ReadCr0(void)
+static FORCEINLINE u32 ReadCr0(void)
 {
 	u32 value = 0;
 	asm volatile("mov %%cr0, %0" : "=r"(value));
 	return value;
 }
 
-static ATTRIBUTE(always_inline) void WriteCr0(u32 value)
+static FORCEINLINE void WriteCr0(u32 value)
 {
 	asm volatile("mov %0, %%cr0" : "=r"(value));
 }
 
-static ATTRIBUTE(always_inline) void SetCr0Flag(u32 flag)
+static FORCEINLINE void SetCr0Flag(u32 flag)
 {
 	WriteCr0(ReadCr0() | flag);
 }
 
-static ATTRIBUTE(always_inline) void ClearCr0Flag(u32 flag)
+static FORCEINLINE void ClearCr0Flag(u32 flag)
 {
 	WriteCr0(ReadCr0() & ~flag);
 }
 
-static ATTRIBUTE(always_inline) void IoWait(void)
+static FORCEINLINE void IoWait(void)
 {
 	// write to dummy port
 	OutByte(0x80, 0);
 }
 
-static ATTRIBUTE(always_inline) u16 GetX87Status(void)
+static FORCEINLINE u16 GetX87Status(void)
 {
 	u16 value = 0;
 	asm volatile("fnstsw %0" : "=r"(value));
 	return value;
 }
 
-static ATTRIBUTE(always_inline) void SetX87Control(u16 value)
+static FORCEINLINE void SetX87Control(u16 value)
 {
 	asm volatile("fldcw %0" : : "m"(value));
 }
 
-static ATTRIBUTE(always_inline) void ResetX87Control(void)
+static FORCEINLINE void ResetX87Control(void)
 {
 	asm volatile("fninit");
 }
 
-static ATTRIBUTE(always_inline) void EnableInterrupts(void)
+static FORCEINLINE void EnableInterrupts(void)
 {
 	asm volatile("sti");
 }
 
-static ATTRIBUTE(always_inline) void DisableInterrupts(void)
+static FORCEINLINE void DisableInterrupts(void)
 {
 	asm volatile("cli");
 }
 
-static ATTRIBUTE(always_inline) void Halt(void)
+static FORCEINLINE void Halt(void)
 {
 	asm volatile("hlt");
 }
 
-[[noreturn]] static ATTRIBUTE(always_inline) void HaltAndCatchFire(void)
+[[noreturn]] static FORCEINLINE void HaltAndCatchFire(void)
 {
 	DisableInterrupts();
 	OutByte(0x70, 0x0); // disable nmis

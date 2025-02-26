@@ -1,4 +1,5 @@
 #include "base/fpu.h"
+#include "base/heap.h"
 #include "base/idt.h"
 #include "base/irq.h"
 #include "base/keyboard.h"
@@ -50,8 +51,9 @@ static void Ring(const u8* bitmap, u32 width, u32 height, u64 now, f32 factor, f
 	InitializePs2();
 	InitializeKeyboard();
 
+	InitializeHeap(GetKernelHeap(), HEAP_BASE);
+
 	u64 last = 0;
-	f32 scale = 1.0f;
 
 	while (true)
 	{
@@ -64,28 +66,9 @@ static void Ring(const u8* bitmap, u32 width, u32 height, u64 now, f32 factor, f
 			// so it doesn't change mid frame
 			SwapKeyboardState();
 
-			ClearScreen(16 + (cos(now * TIMER_SPT) + 1.0f) * 0.5f * 15.0f);
+			ClearScreen(0);
 
-			if (GetKey(KeyCodeA))
-			{
-				if (scale > 1.05f)
-				{
-					scale -= 0.05f;
-				}
-			}
-			if (GetKey(KeyCodeD))
-			{
-				if (scale < 9.95f)
-				{
-					scale += 0.05f;
-				}
-			}
-
-			Ring(A_DATA, A_WIDTH, A_HEIGHT, now, scale, 80.0f / scale);
 			FlipScreen();
-
-			u32 light = 1 << (u32)(NormalizedCosine(now * TIMER_SPT) * 3.0f);
-			SetKeyboardLights(light & 0b001, light & 0b010, light & 0b100);
 		}
 	}
 
