@@ -181,10 +181,12 @@ s64 atoll(cstr str)
 		switch (str[start + 1])
 		{
 		case 'b':
+		case 'B':
 			mode = HEX;
 			start++;
 			break;
 		case 'x':
+		case 'X':
 			mode = BIN;
 			start++;
 			break;
@@ -205,7 +207,7 @@ s64 atoll(cstr str)
 			}
 
 			u64 digit = c - '0';
-			value += digit * fpow(10, digit); // best way for sure 100% definitely not evil
+			value = (value + digit) * 10;
 		}
 		break;
 	}
