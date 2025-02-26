@@ -25,7 +25,7 @@ extern s64 atoll(cstr str);
 #define RAND_MAX INT32_MAX
 
 extern void srand(s32 seed);
-extern int rand();
+extern s32 rand(void);
 
 static FORCEINLINE bool isupper(char c)
 {

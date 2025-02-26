@@ -19,10 +19,14 @@
 				'$ProjectPath$/src/addons/module.c',
 				'$ProjectPath$/src/addons/timer.c',
 
+				'$ProjectPath$/src/addons/parser/tokenizer.c',
+
 				'$ProjectPath$/src/addons/pipeline/pipeline.c',
 				'$ProjectPath$/src/addons/pipeline/worker.c',
+
+				'$ProjectPath$/src/addons/query_dsl/parser.c',
+				
 				'$ProjectPath$/src/addons/system/system.c',
-				'$ProjectPath$/src/addons/parser/tokenizer.c',
 
 				'$ProjectPath$/src/datastructures/allocator.c',
 				'$ProjectPath$/src/datastructures/bitset.c',

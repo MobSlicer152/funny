@@ -1,5 +1,6 @@
 #include "libc.h"
 #include "base/math.h"
+#include "base/timer.h"
 #include "macros.h"
 
 // i've written a better memcpy and memset before, but this is easy and fast enough (they also use these for some cases)
@@ -240,4 +241,49 @@ s64 atoll(cstr str)
 	}
 
 	return value;
+}
+
+struct
+{
+	bool initialized;
+	u32 x[5];
+	u32 counter;
+} s_randState;
+
+void srand(s32 seed)
+{
+	if (seed == 0)
+	{
+		((u64*)s_randState.x)[0] = GetTimer();
+	}
+	else
+	{
+		s_randState.x[0] = seed;
+	}
+
+	s_randState.initialized = true;
+}
+
+// https://en.wikipedia.org/wiki/Xorshift
+s32 rand()
+{
+	if (!s_randState.initialized)
+	{
+		srand(0);
+	}
+	
+	u32 t = s_randState.x[4];
+
+	u32 s = s_randState.x[0];
+	s_randState.x[4] = s_randState.x[3];
+	s_randState.x[3] = s_randState.x[2];
+	s_randState.x[2] = s_randState.x[1];
+	s_randState.x[1] = s;
+
+	t ^= t >> 2;
+	t ^= t << 1;
+	t ^= s ^ (s << 4);
+	s_randState.x[0] = t;
+	s_randState.counter += 362437;
+	return t + s_randState.counter;
 }
