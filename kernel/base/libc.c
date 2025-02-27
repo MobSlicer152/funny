@@ -3,7 +3,7 @@
 #include "base/timer.h"
 #include "macros.h"
 
-// i've written a better memcpy and memset before, but this is easy and fast enough (they also use these for some cases)
+// rep xxxsb my beloved
 
 void* memcpy(void* dest, const void* src, usize size)
 {

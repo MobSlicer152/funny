@@ -36,8 +36,8 @@ static void Ring(const u8* bitmap, u32 width, u32 height, u64 now, f32 factor, f
 		f32 sinAngle = NormalizedSine(angle);
 		f32 x = (cosAngle * (SCREEN_WIDTH - width) + xShift) * reciprocal;
 		f32 y = (sinAngle * (SCREEN_HEIGHT - height) + yShift) * reciprocal;
-		Fill(&P2I(x, y), &P2I(x + width, y + height), 32 + cosAngle * 15.0f);
-		DrawBitmap(&P2I(x, y), bitmap, width, height);
+		Fill(V2I(x, y), V2I(x + width, y + height), 32 + cosAngle * 15.0f);
+		DrawBitmap(V2I(x, y), bitmap, width, height);
 	}
 }
 
@@ -69,8 +69,8 @@ static void Ring(const u8* bitmap, u32 width, u32 height, u64 now, f32 factor, f
 
 			ClearScreen(0);
 
-			DrawTriangle(&P2I(64, 0), &P2I(64, 64), &P2I(0, 64), 40);
-			DrawTriangle(&P2I(0, 0), &P2I(64, 0), &P2I(0, 64), 32);
+			DrawTriangle(V2I(64, 0), V2I(64, 64), V2I(0, 64), 40);
+			DrawTriangle(V2I(0, 0), V2I(64, 0), V2I(0, 64), 32);
 
 			FlipScreen();
 		}

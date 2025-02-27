@@ -25,73 +25,73 @@ void ClearScreen(u8 color)
 	memset(BACKBUFFER, color, SCREEN_WIDTH * SCREEN_HEIGHT);
 }
 
-void FixPoint(Point2i_t* p)
+void FixPoint(Vec2i_t p)
 {
-	p->x = MAX(p->x, 0);
-	p->y = MAX(p->y, 0);
-	p->x = MIN(p->x, SCREEN_WIDTH - 1);
-	p->y = MIN(p->y, SCREEN_HEIGHT - 1);
+	p[0] = MAX(p[0], 0);
+	p[1] = MAX(p[1], 0);
+	p[0] = MIN(p[0], SCREEN_WIDTH - 1);
+	p[1] = MIN(p[1], SCREEN_HEIGHT - 1);
 }
 
-void RawSetPixel(const Point2i_t* p, u8 color)
+void RawSetPixel(const Vec2i_t p, u8 color)
 {
 	if (color != TRANSPARENT_COLOR)
 	{
-		BACKBUFFER[p->y * SCREEN_WIDTH + p->x] = color;
+		BACKBUFFER[p[1] * SCREEN_WIDTH + p[0]] = color;
 	}
 }
 
-void SetPixel(const Point2i_t* pi, u8 color)
+void SetPixel(const Vec2i_t pi, u8 color)
 {
-	Point2i_t p = *pi;
-	FixPoint(&p);
-	RawSetPixel(&p, color);
+	Vec2i_t p = V2I_COPY(pi);
+	FixPoint(p);
+	RawSetPixel(p, color);
 }
 
-void Fill(const Point2i_t* p1i, const Point2i_t* p2i, u8 color)
+void Fill(const Vec2i_t p1i, const Vec2i_t p2i, u8 color)
 {
-	Point2i_t p1 = *p1i;
-	Point2i_t p2 = *p2i;
+	Vec2i_t p1 = V2I_COPY(p1i);
+	Vec2i_t p2 = V2I_COPY(p2i);
 
-	FixPoint(&p1);
-	FixPoint(&p2);
-	if (p1.x > p2.x)
+	FixPoint(p1);
+	FixPoint(p2);
+	if (p1[0] > p2[0])
 	{
-		SWAP(p1.x, p2.x);
+		SWAP(p1[0], p2[0]);
 	}
-	if (p1.y > p2.y)
+	if (p1[1] > p2[1])
 	{
-		SWAP(p1.y, p2.y);
+		SWAP(p1[1], p2[1]);
 	}
 
-	if (p1.x == p2.x)
+	if (p1[0] == p2[0])
 	{
-		for (s32 y = p1.y; y < p2.y; y++)
+		for (s32 y = p1[1]; y < p2[1]; y++)
 		{
-			RawSetPixel(&P2I(p1.x, y), color);
+			RawSetPixel(V2I(p1[0], y), color);
 		}
 	}
 	else
 	{
-		for (s32 y = p1.y; y < p2.y && y < SCREEN_HEIGHT; y++)
+		for (s32 y = p1[1]; y < p2[1] && y < SCREEN_HEIGHT; y++)
 		{
-			for (s32 x = p2.x; x < p2.x && x < SCREEN_WIDTH; x++)
+			for (s32 x = p2[0]; x < p2[0] && x < SCREEN_WIDTH; x++)
 			{
-				RawSetPixel(&P2I(x, y), color);
+				RawSetPixel(V2I(x, y), color);
 			}
 		}
 	}
 }
 
-void DrawBitmap(const Point2i_t* p, const u8* bitmap, s32 width, s32 height)
+void DrawBitmap(const Vec2i_t p, const u8* bitmap, s32 width, s32 height)
 {
 	for (s32 curY = 0; curY < height; curY++)
 	{
 		for (s32 curX = 0; curX < width; curX++)
 		{
-			if (p->x + curX < SCREEN_WIDTH && p->y + curY < SCREEN_HEIGHT)
+			if (p[0] + curX < SCREEN_WIDTH && p[1] + curY < SCREEN_HEIGHT)
 			{
-				RawSetPixel(&P2I(p->x + curX, p->y + curY), bitmap[curY * width + curX]);
+				RawSetPixel(V2I(p[0] + curX, p[1] + curY), bitmap[curY * width + curX]);
 			}
 		}
 	}

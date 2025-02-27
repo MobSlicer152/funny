@@ -4,12 +4,12 @@
 
 #include "raster.h"
 
-static s32 Orient2(const Point2i_t* a, const Point2i_t* b, const Point2i_t* c)
+static s32 Orient2(const Vec2i_t a, const Vec2i_t b, const Vec2i_t c)
 {
-	return (b->x - a->x) * (c->y - a->y) - (b->y - a->y) * (c->x - a->x);
+	return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
 }
 
-static void RenderPixel(const Point2i_t* p, s32 w0, s32 w1, s32 w2, u8 color)
+static void RenderPixel(const Vec2i_t p, s32 w0, s32 w1, s32 w2, u8 color)
 {
 	UNUSED(w0);
 	UNUSED(w1);
@@ -17,41 +17,41 @@ static void RenderPixel(const Point2i_t* p, s32 w0, s32 w1, s32 w2, u8 color)
 	RawSetPixel(p, color);
 }
 
-void DrawTriangle(const Point2i_t* v0, const Point2i_t* v1, const Point2i_t* v2, u8 color)
+void DrawTriangle(const Vec2i_t v0, const Vec2i_t v1, const Vec2i_t v2, u8 color)
 {
-	Point2i_t min = P2I(MIN3(v0->x, v1->x, v2->x), MIN3(v0->y, v1->y, v2->y));
-	Point2i_t max = P2I(MAX3(v0->x, v1->x, v2->x), MAX3(v0->y, v1->y, v2->y));
+	Vec2i_t min = {MIN3(v0[0], v1[0], v2[0]), MIN3(v0[1], v1[1], v2[1])};
+	Vec2i_t max = {MAX3(v0[0], v1[0], v2[0]), MAX3(v0[1], v1[1], v2[1])};
 
-	FixPoint(&min);
-	FixPoint(&max);
+	FixPoint(min);
+	FixPoint(max);
 
 	s32 bias0 = 0;
 	s32 bias1 = 0;
 	s32 bias2 = 0;
 
-	s32 a01 = v0->y - v1->y;
-	s32 a12 = v1->y - v2->y;
-	s32 a20 = v2->y - v0->y;
+	s32 a01 = v0[1] - v1[1];
+	s32 a12 = v1[1] - v2[1];
+	s32 a20 = v2[1] - v0[1];
 
-	s32 b10 = v1->x - v0->x;
-	s32 b21 = v2->x - v1->x;
-	s32 b02 = v0->x - v2->x;
+	s32 b10 = v1[0] - v0[0];
+	s32 b21 = v2[0] - v1[0];
+	s32 b02 = v0[0] - v2[0];
 
-	s32 w0r = Orient2(v1, v2, &min) + bias0;
-	s32 w1r = Orient2(v2, v0, &min) + bias1;
-	s32 w2r = Orient2(v0, v1, &min) + bias2;
+	s32 w0r = Orient2(v1, v2, min) + bias0;
+	s32 w1r = Orient2(v2, v0, min) + bias1;
+	s32 w2r = Orient2(v0, v1, min) + bias2;
 
-	Point2i_t p;
-	for (p.y = min.y; p.y <= max.y; p.y++)
+	Vec2i_t p;
+	for (p[1] = min[1]; p[1] <= max[1]; p[1]++)
 	{
         s32 w0 = w0r;
         s32 w1 = w1r;
         s32 w2 = w2r;
-		for (p.x = min.x; p.x <= max.x; p.x++)
+		for (p[0] = min[0]; p[0] <= max[0]; p[0]++)
 		{
 			if (w0 >= 0 && w1 >= 0 && w2 >= 0)
 			{
-				RenderPixel(&p, w0, w1, w2, color);
+				RenderPixel(p, w0, w1, w2, color);
 			}
 
             w0 += a12;
