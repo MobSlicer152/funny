@@ -5,7 +5,6 @@
 #define STB_SPRINTF_DECORATE(x) x
 #include "kernel/stb_sprintf.h"
 
-
 extern void* memcpy(void* dest, const void* source, usize size);
 extern void* memmove(void* dest, const void* source, usize size);
 extern void* memset(void* dest, s32 value, usize size);
@@ -20,7 +19,17 @@ extern cstr strchr(cstr str, char c);
 extern cstr strrchr(cstr str, char c);
 extern cstr strstr(cstr str, cstr seq);
 
+#define strcat(a, b) ASSERT(false, "don't use strcat")
+#define strcpy(a, b) ASSERT(false, "don't use strcpy")
+
+extern dstr strncpy(dstr dest, cstr src, usize size);
+
 extern s64 atoll(cstr str);
+extern s32 atoi(cstr str);
+extern f32 atof(cstr str);
+
+#define atol atoi
+#define strtol(str, end, base) atoi(str)
 
 #define RAND_MAX INT32_MAX
 
@@ -67,9 +76,6 @@ static FORCEINLINE bool isxdigit(char c)
     return isdigit(c) || ('A' <= c && c <= 'F') || ('a' <= c && c <= 'f');
 }
 
-#define printf DBG 
+#define printf DBG
 
 #define alloca(size) __builtin_alloca(size)
-
-#define strcat(a, b) ASSERT(false, "don't use strcat")
-#define strcpy(a, b) ASSERT(false, "don't use strcpy")

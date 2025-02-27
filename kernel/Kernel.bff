@@ -3,7 +3,7 @@
 {
 	.ProjectName = 'kernel'
 	.ProjectPath = 'kernel'
-	
+
 	ForEach(.BuildConfig in .BuildConfigs)
 	{
 		Using(.BuildConfig)
@@ -15,7 +15,7 @@
 		{
 			.ExecExecutable = .NASM
 			.ExecInput = '$ProjectPath$/base/startup.asm'
-			.ExecOutput = '$ObjectDir$/$ProjectPath$/startup.obj'
+			.ExecOutput = '$ObjectDir$/$ProjectPath$/base/startup.obj'
 			.ExecArguments = .NASMOptions + ' -felf -l $ObjectDir$/$ProjectPath$/startup.lst'
 			.ExecWorkingDir = '$ProjectPath$'
 		}

@@ -20,7 +20,7 @@ static ECS_MOVE(ecs_string_t, dst, src, {
     *(ecs_string_t*)src = NULL;
 })
 
-static ECS_DTOR(ecs_string_t, ptr, { 
+static ECS_DTOR(ecs_string_t, ptr, {
     ecs_os_free(*(ecs_string_t*)ptr);
     *(ecs_string_t*)ptr = NULL;
 })
@@ -29,11 +29,11 @@ static ECS_DTOR(ecs_string_t, ptr, {
 /* EcsTypeSerializer lifecycle */
 
 void ecs_meta_dtor_serialized(
-    EcsTypeSerializer *ptr) 
+    EcsTypeSerializer *ptr)
 {
     int32_t i, count = ecs_vec_count(&ptr->ops);
     ecs_meta_type_op_t *ops = ecs_vec_first(&ptr->ops);
-    
+
     for (i = 0; i < count; i ++) {
         ecs_meta_type_op_t *op = &ops[i];
         if (op->members) {
@@ -51,7 +51,7 @@ static ECS_COPY(EcsTypeSerializer, dst, src, {
 
     int32_t o, count = ecs_vec_count(&dst->ops);
     ecs_meta_type_op_t *ops = ecs_vec_first_t(&dst->ops, ecs_meta_type_op_t);
-    
+
     for (o = 0; o < count; o ++) {
         ecs_meta_type_op_t *op = &ops[o];
         if (op->members) {
@@ -66,7 +66,7 @@ static ECS_MOVE(EcsTypeSerializer, dst, src, {
     src->ops = (ecs_vec_t){0};
 })
 
-static ECS_DTOR(EcsTypeSerializer, ptr, { 
+static ECS_DTOR(EcsTypeSerializer, ptr, {
     ecs_meta_dtor_serialized(ptr);
 })
 
@@ -74,7 +74,7 @@ static ECS_DTOR(EcsTypeSerializer, ptr, {
 /* EcsStruct lifecycle */
 
 static void flecs_struct_dtor(
-    EcsStruct *ptr) 
+    EcsStruct *ptr)
 {
     ecs_member_t *members = ecs_vec_first_t(&ptr->members, ecs_member_t);
     int32_t i, count = ecs_vec_count(&ptr->members);
@@ -109,7 +109,7 @@ static ECS_DTOR(EcsStruct, ptr, { flecs_struct_dtor(ptr); })
 /* EcsEnum lifecycle */
 
 static void flecs_constants_dtor(
-    ecs_map_t *constants) 
+    ecs_map_t *constants)
 {
     ecs_map_iter_t it = ecs_map_iter(constants);
     while (ecs_map_next(&it)) {
@@ -173,7 +173,7 @@ static ECS_DTOR(EcsBitmask, ptr, { flecs_constants_dtor(&ptr->constants); })
 /* EcsUnit lifecycle */
 
 static void dtor_unit(
-    EcsUnit *ptr) 
+    EcsUnit *ptr)
 {
     ecs_os_free(ptr->symbol);
 }
@@ -208,7 +208,7 @@ static ECS_DTOR(EcsUnit, ptr, { dtor_unit(ptr); })
 /* EcsUnitPrefix lifecycle */
 
 static void dtor_unit_prefix(
-    EcsUnitPrefix *ptr) 
+    EcsUnitPrefix *ptr)
 {
     ecs_os_free(ptr->symbol);
 }
@@ -270,11 +270,11 @@ int flecs_init_type(
         ecs_type_info_t *ti = flecs_type_info_ensure(world, type);
         if (meta_type->existing && !ti->hooks.ctor) {
             ti->hooks.ctor = flecs_default_ctor;
-        } 
+        }
     } else {
         if (meta_type->kind != kind) {
-            ecs_err("type '%s' reregistered as '%s' (was '%s')", 
-                ecs_get_name(world, type), 
+            ecs_err("type '%s' reregistered as '%s' (was '%s')",
+                ecs_get_name(world, type),
                 flecs_type_kind_str(kind),
                 flecs_type_kind_str(meta_type->kind));
             return -1;
@@ -289,12 +289,12 @@ int flecs_init_type(
     } else {
         const EcsComponent *comp = ecs_get(world, type, EcsComponent);
         if (comp->size < size) {
-            ecs_err("computed size (%d) for '%s' is larger than actual type (%d)", 
+            ecs_err("computed size (%d) for '%s' is larger than actual type (%d)",
                 size, ecs_get_name(world, type), comp->size);
             return -1;
         }
         if (comp->alignment < alignment) {
-            ecs_err("computed alignment (%d) for '%s' is larger than actual type (%d)", 
+            ecs_err("computed alignment (%d) for '%s' is larger than actual type (%d)",
                 alignment, ecs_get_name(world, type), comp->alignment);
             return -1;
         }
@@ -305,7 +305,7 @@ int flecs_init_type(
                         alignment, comp->alignment);
             }
         }
-        
+
         meta_type->partial = comp->size != size;
     }
 
@@ -422,7 +422,7 @@ int flecs_add_member_to_struct(
     int32_t i, count = ecs_vec_count(&s->members);
     for (i = 0; i < count; i ++) {
         if (members[i].member == member) {
-            flecs_set_struct_member(&members[i], member, name, m->type, 
+            flecs_set_struct_member(&members[i], member, name, m->type,
                 m->count, m->offset, unit, ranges);
             break;
         }
@@ -433,7 +433,7 @@ int flecs_add_member_to_struct(
         ecs_vec_init_if_t(&s->members, ecs_member_t);
         ecs_member_t *elem = ecs_vec_append_t(NULL, &s->members, ecs_member_t);
         elem->name = NULL;
-        flecs_set_struct_member(elem, member, name, m->type, 
+        flecs_set_struct_member(elem, member, name, m->type,
             m->count, m->offset, unit, ranges);
 
         /* Reobtain members array in case it was reallocated */
@@ -493,7 +493,7 @@ int flecs_add_member_to_struct(
             }
         }
     } else {
-        /* If members have explicit offsets, we can't rely on computed 
+        /* If members have explicit offsets, we can't rely on computed
          * size/alignment values. Calculate size as if this is the last member
          * instead, since this will validate if the member fits in the struct.
          * It doesn't matter if the size is smaller than the actual struct size
@@ -571,8 +571,8 @@ int flecs_add_member_to_struct(
 
 static
 int flecs_add_constant_to_enum(
-    ecs_world_t *world, 
-    ecs_entity_t type, 
+    ecs_world_t *world,
+    ecs_entity_t type,
     ecs_entity_t e,
     ecs_id_t constant_id)
 {
@@ -591,7 +591,7 @@ int flecs_add_constant_to_enum(
         }
     }
 
-    ecs_assert(ut != 0, ECS_INVALID_OPERATION, 
+    ecs_assert(ut != 0, ECS_INVALID_OPERATION,
         "missing underlying type for enum");
 
     const EcsPrimitive *p = ecs_get(world, ut, EcsPrimitive);
@@ -665,11 +665,11 @@ int flecs_add_constant_to_enum(
             if (value_set) {
                 if (c->value_unsigned == value_unsigned) {
                     char *path = ecs_get_path(world, e);
-                    ecs_abort(ECS_INTERNAL_ERROR, 
+                    ecs_abort(ECS_INTERNAL_ERROR,
                         "conflicting constant value %u for '%s' (other is '%s')",
                         value_unsigned, path, c->name);
                     ecs_os_free(path);
-                    
+
                     return -1;
                 }
             } else {
@@ -684,7 +684,7 @@ int flecs_add_constant_to_enum(
                     ecs_err("conflicting constant value %d for '%s' (other is '%s')",
                         value, path, c->name);
                     ecs_os_free(path);
-                    flecs_dump_backtrace(stdout);
+                    //flecs_dump_backtrace(stdout);
                     return -1;
                 }
             } else {
@@ -698,12 +698,12 @@ int flecs_add_constant_to_enum(
     ecs_map_init_if(&ptr->constants, &world->allocator);
     ecs_enum_constant_t *c;
     if (ut_is_unsigned) {
-        c = ecs_map_insert_alloc_t(&ptr->constants, 
+        c = ecs_map_insert_alloc_t(&ptr->constants,
             ecs_enum_constant_t, value_unsigned);
         c->value_unsigned = value_unsigned;
         c->value = 0;
     } else {
-        c = ecs_map_insert_alloc_t(&ptr->constants, 
+        c = ecs_map_insert_alloc_t(&ptr->constants,
             ecs_enum_constant_t, (ecs_map_key_t)value);
         c->value_unsigned = 0;
         c->value = value;
@@ -739,13 +739,13 @@ int flecs_add_constant_to_enum(
 
 static
 int flecs_add_constant_to_bitmask(
-    ecs_world_t *world, 
-    ecs_entity_t type, 
+    ecs_world_t *world,
+    ecs_entity_t type,
     ecs_entity_t e,
     ecs_id_t constant_id)
 {
     EcsBitmask *ptr = ecs_ensure(world, type, EcsBitmask);
-    
+
     /* Remove constant from map if it was already added */
     ecs_map_iter_t it = ecs_map_iter(&ptr->constants);
     while (ecs_map_next(&it)) {
@@ -789,7 +789,7 @@ int flecs_add_constant_to_bitmask(
 
     ecs_map_init_if(&ptr->constants, &world->allocator);
 
-    ecs_bitmask_constant_t *c = ecs_map_insert_alloc_t(&ptr->constants, 
+    ecs_bitmask_constant_t *c = ecs_map_insert_alloc_t(&ptr->constants,
         ecs_bitmask_constant_t, value);
     c->name = ecs_os_strdup(ecs_get_name(world, e));
     c->value = value;
@@ -877,7 +877,7 @@ static
 void flecs_set_member(ecs_iter_t *it) {
     ecs_world_t *world = it->world;
     EcsMember *member = ecs_field(it, EcsMember, 0);
-    EcsMemberRanges *ranges = ecs_table_get_id(world, it->table, 
+    EcsMemberRanges *ranges = ecs_table_get_id(world, it->table,
         ecs_id(EcsMemberRanges), it->offset);
 
     int i, count = it->count;
@@ -889,7 +889,7 @@ void flecs_set_member(ecs_iter_t *it) {
             continue;
         }
 
-        flecs_add_member_to_struct(world, parent, e, &member[i], 
+        flecs_add_member_to_struct(world, parent, e, &member[i],
             ranges ? &ranges[i] : NULL);
     }
 }
@@ -898,7 +898,7 @@ static
 void flecs_set_member_ranges(ecs_iter_t *it) {
     ecs_world_t *world = it->world;
     EcsMemberRanges *ranges = ecs_field(it, EcsMemberRanges, 0);
-    EcsMember *member = ecs_table_get_id(world, it->table, 
+    EcsMember *member = ecs_table_get_id(world, it->table,
         ecs_id(EcsMember), it->offset);
     if (!member) {
         return;
@@ -913,7 +913,7 @@ void flecs_set_member_ranges(ecs_iter_t *it) {
             continue;
         }
 
-        flecs_add_member_to_struct(world, parent, e, &member[i], 
+        flecs_add_member_to_struct(world, parent, e, &member[i],
             &ranges[i]);
     }
 }
@@ -1008,8 +1008,8 @@ void flecs_set_array(ecs_iter_t *it) {
         }
 
         const EcsComponent *elem_ptr = ecs_get(world, elem_type, EcsComponent);
-        if (flecs_init_type(world, e, EcsArrayType, 
-            elem_ptr->size * elem_count, elem_ptr->alignment)) 
+        if (flecs_init_type(world, e, EcsArrayType,
+            elem_ptr->size * elem_count, elem_ptr->alignment))
         {
             continue;
         }
@@ -1056,7 +1056,7 @@ void flecs_set_custom_type(ecs_iter_t *it) {
         if (!comp || !comp->size || !comp->alignment) {
             ecs_err("custom type '%s' has no size/alignment, register as component first",
                 ecs_get_name(world, e));
-            flecs_dump_backtrace(stdout);
+            //flecs_dump_backtrace(stdout);
             continue;
         }
 
@@ -1164,7 +1164,7 @@ bool flecs_unit_validate(
         if (derived_symbol && symbol && ecs_os_strcmp(symbol, derived_symbol)) {
             if (must_match) {
                 ecs_err("symbol '%s' for unit '%s' does not match base"
-                    " symbol '%s'", symbol, 
+                    " symbol '%s'", symbol,
                         ecs_get_name(world, t), derived_symbol);
                 goto error;
             }
@@ -1356,51 +1356,51 @@ void FlecsMetaImport(
 
     ecs_set_hooks(world, EcsType, { .ctor = flecs_default_ctor });
 
-    ecs_set_hooks(world, EcsTypeSerializer, { 
+    ecs_set_hooks(world, EcsTypeSerializer, {
         .ctor = flecs_default_ctor,
         .move = ecs_move(EcsTypeSerializer),
         .copy = ecs_copy(EcsTypeSerializer),
         .dtor = ecs_dtor(EcsTypeSerializer)
     });
 
-    ecs_set_hooks(world, EcsStruct, { 
+    ecs_set_hooks(world, EcsStruct, {
         .ctor = flecs_default_ctor,
         .move = ecs_move(EcsStruct),
         .copy = ecs_copy(EcsStruct),
         .dtor = ecs_dtor(EcsStruct)
     });
 
-    ecs_set_hooks(world, EcsMember, { 
+    ecs_set_hooks(world, EcsMember, {
         .ctor = flecs_default_ctor,
         .on_set = flecs_member_on_set
     });
 
-    ecs_set_hooks(world, EcsMemberRanges, { 
+    ecs_set_hooks(world, EcsMemberRanges, {
         .ctor = flecs_default_ctor
     });
 
-    ecs_set_hooks(world, EcsEnum, { 
+    ecs_set_hooks(world, EcsEnum, {
         .ctor = flecs_default_ctor,
         .move = ecs_move(EcsEnum),
         .copy = ecs_copy(EcsEnum),
         .dtor = ecs_dtor(EcsEnum)
     });
 
-    ecs_set_hooks(world, EcsBitmask, { 
+    ecs_set_hooks(world, EcsBitmask, {
         .ctor = flecs_default_ctor,
         .move = ecs_move(EcsBitmask),
         .copy = ecs_copy(EcsBitmask),
         .dtor = ecs_dtor(EcsBitmask)
     });
 
-    ecs_set_hooks(world, EcsUnit, { 
+    ecs_set_hooks(world, EcsUnit, {
         .ctor = flecs_default_ctor,
         .move = ecs_move(EcsUnit),
         .copy = ecs_copy(EcsUnit),
         .dtor = ecs_dtor(EcsUnit)
     });
 
-    ecs_set_hooks(world, EcsUnitPrefix, { 
+    ecs_set_hooks(world, EcsUnitPrefix, {
         .ctor = flecs_default_ctor,
         .move = ecs_move(EcsUnitPrefix),
         .copy = ecs_copy(EcsUnitPrefix),

@@ -64,11 +64,11 @@ const char* skip_scope(const char *ptr, flecs_meta_utils_parse_ctx_t *ctx) {
             if (sp >= 256) {
                 ecs_meta_error(ctx, ptr, "maximum level of nesting reached");
                 goto error;
-            }            
+            }
         } else if (ch == ')' || ch == '>') {
             sp --;
-            if ((sp < 0) || (ch == '>' && stack[sp] != '<') || 
-                (ch == ')' && stack[sp] != '(')) 
+            if ((sp < 0) || (ch == '>' && stack[sp] != '<') ||
+                (ch == ')' && stack[sp] != '('))
             {
                 ecs_meta_error(ctx, ptr, "mismatching %c in identifier", ch);
                 goto error;
@@ -108,10 +108,10 @@ error:
 
 static
 const char* parse_c_identifier(
-    const char *ptr, 
+    const char *ptr,
     char *buff,
     char *params,
-    flecs_meta_utils_parse_ctx_t *ctx) 
+    flecs_meta_utils_parse_ctx_t *ctx)
 {
     ecs_assert(ptr != NULL, ECS_INTERNAL_ERROR, NULL);
     ecs_assert(buff != NULL, ECS_INTERNAL_ERROR, NULL);
@@ -132,8 +132,8 @@ const char* parse_c_identifier(
         goto error;
     }
 
-    while ((ch = *ptr) && !isspace(ch) && ch != ';' && ch != ',' && ch != ')' && 
-        ch != '>' && ch != '}' && ch != '*') 
+    while ((ch = *ptr) && !isspace(ch) && ch != ';' && ch != ',' && ch != ')' &&
+        ch != '>' && ch != '}' && ch != '*')
     {
         /* Type definitions can contain macros or templates */
         if (ch == '(' || ch == '<') {
@@ -169,7 +169,7 @@ error:
 static
 const char * flecs_meta_utils_open_scope(
     const char *ptr,
-    flecs_meta_utils_parse_ctx_t *ctx)    
+    flecs_meta_utils_parse_ctx_t *ctx)
 {
     /* Skip initial whitespaces */
     ptr = flecs_parse_ws_eol(ptr);
@@ -178,7 +178,7 @@ const char * flecs_meta_utils_open_scope(
     if (ctx->desc == ptr) {
         if (*ptr != '{') {
             ecs_meta_error(ctx, ptr, "missing '{' in struct definition");
-            goto error; 
+            goto error;
         }
 
         ptr ++;
@@ -189,13 +189,13 @@ const char * flecs_meta_utils_open_scope(
     if (!*ptr) {
         ecs_meta_error(ctx, ptr, "missing '}' at end of struct definition");
         goto error;
-    }   
+    }
 
     /* Is this the end of the type definition? */
     if (*ptr == '}') {
         ptr = flecs_parse_ws_eol(ptr + 1);
         if (*ptr) {
-            ecs_meta_error(ctx, ptr, 
+            ecs_meta_error(ctx, ptr,
                 "stray characters after struct definition");
             goto error;
         }
@@ -212,7 +212,7 @@ const char* flecs_meta_utils_parse_constant(
     const char *ptr,
     flecs_meta_utils_constant_t *token,
     flecs_meta_utils_parse_ctx_t *ctx)
-{    
+{
     ptr = flecs_meta_utils_open_scope(ptr, ctx);
     if (!ptr) {
         return NULL;
@@ -320,7 +320,7 @@ const char* flecs_meta_utils_parse_member(
     }
 
     if (!ptr[0]) {
-        return ptr;        
+        return ptr;
     }
 
     /* Next token is the identifier */
@@ -333,7 +333,7 @@ const char* flecs_meta_utils_parse_member(
     ptr = flecs_parse_ws_eol(ptr);
 
     /* Check if this is an array */
-    char *array_start = strchr(token->name, '[');
+    char *array_start = (dstr)strchr(token->name, '[');
     if (!array_start) {
         /* If the [ was separated by a space, it will not be parsed as part of
          * the name */
@@ -345,7 +345,7 @@ const char* flecs_meta_utils_parse_member(
 
     if (array_start) {
         /* Check if the [ matches with a ] */
-        char *array_end = strchr(array_start, ']');
+        char *array_end = (dstr)strchr(array_start, ']');
         if (!array_end) {
             ecs_meta_error(ctx, ptr, "missing ']'");
             goto error;
@@ -388,7 +388,7 @@ int flecs_meta_utils_parse_desc(
 
     ptr = flecs_parse_ws_eol(ptr);
     if (*ptr != '(' && *ptr != '<') {
-        ecs_meta_error(ctx, ptr, 
+        ecs_meta_error(ctx, ptr,
             "expected '(' at start of collection definition");
         goto error;
     }
@@ -406,7 +406,7 @@ int flecs_meta_utils_parse_desc(
     /* If next token is a ',' the first type was a key type */
     if (*ptr == ',') {
         ptr = flecs_parse_ws_eol(ptr + 1);
-        
+
         if (isdigit(*ptr)) {
             int64_t value;
             ptr = parse_c_digit(ptr, &value);
@@ -428,7 +428,7 @@ int flecs_meta_utils_parse_desc(
     }
 
     if (*ptr != ')' && *ptr != '>') {
-        ecs_meta_error(ctx, ptr, 
+        ecs_meta_error(ctx, ptr,
             "expected ')' at end of collection definition");
         goto error;
     }
@@ -597,8 +597,8 @@ ecs_entity_t flecs_meta_utils_lookup(
         if (!ecs_os_strcmp(typename, "ecs_array")) {
             type = flecs_meta_utils_lookup_array(world, 0, token->params, ctx);
 
-        } else if (!ecs_os_strcmp(typename, "ecs_vector") || 
-                !ecs_os_strcmp(typename, "flecs::vector")) 
+        } else if (!ecs_os_strcmp(typename, "ecs_vector") ||
+                !ecs_os_strcmp(typename, "flecs::vector"))
         {
             type = flecs_meta_utils_lookup_vector(world, 0, token->params, ctx);
 
@@ -611,8 +611,8 @@ ecs_entity_t flecs_meta_utils_lookup(
         } else if (!ecs_os_strcmp(typename, "char")) {
             type = ecs_id(ecs_char_t);
 
-        } else if (!ecs_os_strcmp(typename, "bool") || 
-                !ecs_os_strcmp(typename, "_Bool")) 
+        } else if (!ecs_os_strcmp(typename, "bool") ||
+                !ecs_os_strcmp(typename, "_Bool"))
         {
             type = ecs_id(ecs_bool_t);
 
@@ -657,8 +657,8 @@ ecs_entity_t flecs_meta_utils_lookup(
         if (token->is_ptr) {
             typename = "flecs.meta.uptr";
         } else
-        if (!ecs_os_strcmp(typename, "char*") || 
-            !ecs_os_strcmp(typename, "flecs::string")) 
+        if (!ecs_os_strcmp(typename, "char*") ||
+            !ecs_os_strcmp(typename, "flecs::string"))
         {
             typename = "flecs.meta.string";
         }
@@ -711,7 +711,7 @@ int flecs_meta_utils_parse_struct(
         }
 
         ecs_set(world, m, EcsMember, {
-            .type = type, 
+            .type = type,
             .count = (ecs_size_t)token.count
         });
     }
@@ -762,13 +762,13 @@ int flecs_meta_utils_parse_constants(
 
         if (name_prefix) {
             if (!ecs_os_strncmp(token.name, name_prefix, name_prefix_len)) {
-                ecs_os_memmove(token.name, token.name + name_prefix_len, 
+                ecs_os_memmove(token.name, token.name + name_prefix_len,
                     ecs_os_strlen(token.name) - name_prefix_len + 1);
             }
         }
 
         if (!ecs_os_strncmp(token.name, name, name_len)) {
-            ecs_os_memmove(token.name, token.name + name_len, 
+            ecs_os_memmove(token.name, token.name + name_len,
                 ecs_os_strlen(token.name) - name_len + 1);
         }
 
@@ -777,10 +777,10 @@ int flecs_meta_utils_parse_constants(
         });
 
         if (!is_bitmask) {
-            ecs_set_pair_second(world, c, EcsConstant, ecs_i32_t, 
+            ecs_set_pair_second(world, c, EcsConstant, ecs_i32_t,
                 {(ecs_i32_t)last_value});
         } else {
-            ecs_set_pair_second(world, c, EcsConstant, ecs_u32_t, 
+            ecs_set_pair_second(world, c, EcsConstant, ecs_u32_t,
                 {(ecs_u32_t)last_value});
         }
 

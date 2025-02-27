@@ -4,7 +4,7 @@
  */
 
 #include "private_api.h"
-#include <time.h>
+//#include <time.h>
 #include "kernel/base/libc.h"
 
 #ifndef FLECS_NDEBUG
@@ -216,6 +216,8 @@ char* flecs_to_snake_case(const char *str) {
 char* flecs_load_from_file(
     const char *filename)
 {
+    (void)filename;
+#if 0
     FILE* file;
     char* content = NULL;
     int32_t bytes;
@@ -256,6 +258,7 @@ error:
         fclose(file);
     }
     ecs_os_free(content);
+#endif
     return NULL;
 }
 

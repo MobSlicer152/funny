@@ -3,8 +3,12 @@
 #include "kernel/macros.h"
 #include "kernel/types.h"
 
-#define PI 3.1415926f
-#define TAU (2.0f * PI)
+#define INFINITY (1.0f / 0.0f)
+#define NAN (0.0f / 0.0f)
+
+#define PI      3.14159265359f
+#define HALF_PI 1.57079632679f
+#define TAU     6.28318530718f
 
 // a bunch of inline functions that do like 1 x87 instruction
 

@@ -7,6 +7,7 @@
  * allow for customization by the user, like logging.
  */
 
+#include "kernel/base/heap.h"
 #include "private_api.h"
 
 void ecs_os_api_impl(ecs_os_api_t *api);
@@ -228,6 +229,7 @@ void flecs_log_msg(
         flecs_dump_backtrace(stream);
     }
 }
+#endif
 
 void ecs_os_dbg(
     const char *file,
@@ -286,13 +288,14 @@ void ecs_os_gettime(ecs_time_t *time) {
     uint64_t now = ecs_os_now();
     uint64_t sec = now / 1000000000;
 
-    assert(sec < UINT32_MAX);
-    assert((now - sec * 1000000000) < UINT32_MAX);
+    ASSERT(sec < UINT32_MAX);
+    ASSERT((now - sec * 1000000000) < UINT32_MAX);
 
     time->sec = (uint32_t)sec;
     time->nanosec = (uint32_t)(now - sec * 1000000000);
 }
 
+#if 0
 static
 void* ecs_os_api_malloc(ecs_size_t size) {
     ecs_os_linc(&ecs_os_api_malloc_count);
@@ -341,6 +344,7 @@ char* ecs_os_api_strdup(const char *str) {
         return NULL;
     }
 }
+#endif
 
 void ecs_os_strset(char **str, const char *value) {
     char *old = str[0];
@@ -368,6 +372,7 @@ void ecs_os_perf_trace_pop_(
     }
 }
 
+#if 0
 /* Replace dots with underscores */
 static
 char *module_file_base(const char *module, char sep) {
@@ -422,6 +427,7 @@ char* ecs_os_api_module_to_etc(const char *module) {
     return ecs_strbuf_get(&lib);
 }
 
+
 void ecs_os_set_api_defaults(void)
 {
     /* Don't overwrite if already initialized */
@@ -471,6 +477,8 @@ void ecs_os_set_api_defaults(void)
     ecs_os_api_initializing = false;
 }
 #endif
+
+void ecs_os_set_api_defaults(void) {}
 
 bool ecs_os_has_heap(void) {
     return 
@@ -548,3 +556,5 @@ static char error_str[255];
 //  //  return strerror(err);
 //#   endif
 //}
+
+void ecs_set_os_api_impl(void) {}

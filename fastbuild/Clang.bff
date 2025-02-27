@@ -8,7 +8,7 @@
 .ExeExtension = ''
 #endif
 
-.Clang_Common = 
+.Clang_Common =
 [
 	.CompilerName = 'Clang'
 
@@ -46,7 +46,7 @@
 	.LinkerOptions = ' -o "%2"' // Output
 				   + ' "%1"' // Input
 				   + ' -nostdlib' // Disable automatically linking to CRT and others
-	
+
 	.LibrarianOptions = ' rc' // Replace/insert, create
 					  + ' "%2"' // Output
 					  + ' "%1"' // Input
@@ -61,21 +61,20 @@
 
 	.CompilerOptions = ' -g' // Debug info
 					 + ' -O0' // Disable optimization
-					 
+
 					 + ' -DDEBUG'
 
 	.NASMOptions = ' -g' // Debug info
-	
+
 	.LinkerOptions = ' -g' // Debug info
 ]
 
 .Clang_Release =
 [
 	.ConfigName = 'Release'
-	
+
 	.CompilerOptions = ' -O2' // Optimize a bit
 					 + ' -Og' // Improve debugging
-					 + ' -ffast-math' // 2 plus 2 is 4
 					 + ' -flto=thin' // Faster incremental builds
 
 					 + ' -DRELEASE'

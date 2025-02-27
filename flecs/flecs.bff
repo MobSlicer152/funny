@@ -3,7 +3,7 @@
 {
 	.ProjectName = 'flecs'
 	.ProjectPath = 'flecs'
-	
+
 	ForEach(.BuildConfig in .BuildConfigs)
 	{
 		Using(.BuildConfig)
@@ -11,13 +11,29 @@
 		.ObjectDir = '$Root$/obj/$CompilerName$/$ArchName$/$ConfigName$'
 		.OutputDir = '$Root$/out/$CompilerName$/$ArchName$/$ConfigName$'
 
-		ObjectList('$ProjectName$-Objs-$CompilerName$-$ArchName$-$ConfigName$')
+		.CompilerOptions + ' -DKERNEL'
+		                 + ' -DECS_TARGET_POSIX'
+						 + ' -DFLECS_NO_SCRIPT'
+						 + ' -DFLECS_NO_CPP'
+						 + ' -DFLECS_NO_OS_API_IMPL'
+						 + ' -DFLECS_NO_HTTP'
+						 + ' -DFLECS_NO_REST'
+
+		Unity('$ProjectName$-Unity-Addons-$CompilerName$-$ArchName$-$ConfigName$')
 		{
-			.CompilerInputFiles =
+			.UnityInputFiles =
 			{
 				'$ProjectPath$/src/addons/log.c',
 				'$ProjectPath$/src/addons/module.c',
 				'$ProjectPath$/src/addons/timer.c',
+
+				'$ProjectPath$/src/addons/meta/api.c',
+				'$ProjectPath$/src/addons/meta/cursor.c',
+				'$ProjectPath$/src/addons/meta/c_utils.c',
+				'$ProjectPath$/src/addons/meta/definitions.c',
+				'$ProjectPath$/src/addons/meta/meta.c',
+				'$ProjectPath$/src/addons/meta/rtt_lifecycle.c',
+				'$ProjectPath$/src/addons/meta/serialized.c',
 
 				'$ProjectPath$/src/addons/parser/tokenizer.c',
 
@@ -25,9 +41,18 @@
 				'$ProjectPath$/src/addons/pipeline/worker.c',
 
 				'$ProjectPath$/src/addons/query_dsl/parser.c',
-				
-				'$ProjectPath$/src/addons/system/system.c',
 
+				'$ProjectPath$/src/addons/system/system.c',
+			}
+
+			.UnityOutputPath = '$ObjectDir$/$ProjectPath$'
+			.UnityOutputPattern = '$ProjectName$_Addons_Unity.c'
+		}
+
+		Unity('$ProjectName$-Unity-$CompilerName$-$ArchName$-$ConfigName$')
+		{
+			.UnityInputFiles =
+			{
 				'$ProjectPath$/src/datastructures/allocator.c',
 				'$ProjectPath$/src/datastructures/bitset.c',
 				'$ProjectPath$/src/datastructures/block_allocator.c',
@@ -47,7 +72,7 @@
 				'$ProjectPath$/src/query/validator.c',
 				'$ProjectPath$/src/query/compiler/compiler.c',
 				'$ProjectPath$/src/query/compiler/compiler_term.c',
-				
+
 				'$ProjectPath$/src/query/engine/cache.c',
 				'$ProjectPath$/src/query/engine/cache_iter.c',
 				'$ProjectPath$/src/query/engine/cache_order_by.c',
@@ -78,6 +103,7 @@
 				'$ProjectPath$/src/entity_name.c',
 				'$ProjectPath$/src/id.c',
 				'$ProjectPath$/src/iter.c',
+				'$ProjectPath$/src/misc.c',
 				'$ProjectPath$/src/observable.c',
 				'$ProjectPath$/src/os_api.c',
 				'$ProjectPath$/src/poly.c',
@@ -87,7 +113,19 @@
 				'$ProjectPath$/src/world.c',
 			}
 
-			.CompilerOptions + ' -DKERNEL -DECS_TARGET_POSIX'
+			.UnityOutputPath = '$ObjectDir$/$ProjectPath$'
+			.UnityOutputPattern = '$ProjectName$_Unity.c'
+		}
+
+		Library('$ProjectName$-Lib-$CompilerName$-$ArchName$-$ConfigName$')
+		{
+			.LibrarianOutput = '$OutputDir$/$ProjectName$.lib'
+
+			.CompilerInputUnity =
+			{
+				'$ProjectName$-Unity-Addons-$CompilerName$-$ArchName$-$ConfigName$',
+				'$ProjectName$-Unity-$CompilerName$-$ArchName$-$ConfigName$',
+			}
 
 			.CompilerOutputPath = '$ObjectDir$/$ProjectPath$'
 		}
@@ -95,7 +133,7 @@
 		// This is the main target
 		Alias('$ProjectName$-$CompilerName$-$ArchName$-$ConfigName$')
 		{
-			.Targets = '$ProjectName$-Objs-$CompilerName$-$ArchName$-$ConfigName$'
+			.Targets = '$ProjectName$-Lib-$CompilerName$-$ArchName$-$ConfigName$'
 		}
 		^'Targets_$CompilerName$_$ArchName$_$ConfigName$' + {'$ProjectName$-$CompilerName$-$ArchName$-$ConfigName$'}
 	}
