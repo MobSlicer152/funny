@@ -13,11 +13,11 @@
 
 		.CompilerOptions + ' -DKERNEL'
 		                 + ' -DECS_TARGET_POSIX'
-						 + ' -DFLECS_NO_SCRIPT'
-						 + ' -DFLECS_NO_CPP'
-						 + ' -DFLECS_NO_OS_API_IMPL'
-						 + ' -DFLECS_NO_HTTP'
-						 + ' -DFLECS_NO_REST'
+						 + ' -DFLECS_CUSTOM_BUILD'
+						 + ' -DFLECS_SYSTEM'
+						 + ' -DFLECS_META'
+						 + ' -DFLECS_PIPELINE'
+						 + ' -DFLECS_LOG'
 
 		Unity('$ProjectName$-Unity-Addons-$CompilerName$-$ArchName$-$ConfigName$')
 		{
@@ -35,12 +35,8 @@
 				'$ProjectPath$/src/addons/meta/rtt_lifecycle.c',
 				'$ProjectPath$/src/addons/meta/serialized.c',
 
-				'$ProjectPath$/src/addons/parser/tokenizer.c',
-
 				'$ProjectPath$/src/addons/pipeline/pipeline.c',
 				'$ProjectPath$/src/addons/pipeline/worker.c',
-
-				'$ProjectPath$/src/addons/query_dsl/parser.c',
 
 				'$ProjectPath$/src/addons/system/system.c',
 			}
@@ -105,6 +101,7 @@
 				'$ProjectPath$/src/iter.c',
 				'$ProjectPath$/src/misc.c',
 				'$ProjectPath$/src/observable.c',
+				'$ProjectPath$/src/observer.c',
 				'$ProjectPath$/src/os_api.c',
 				'$ProjectPath$/src/poly.c',
 				'$ProjectPath$/src/search.c',

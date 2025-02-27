@@ -1,3 +1,6 @@
+#include "flecs.h"
+
+#include "base/flecs_os.h"
 #include "base/fpu.h"
 #include "base/heap.h"
 #include "base/idt.h"
@@ -52,6 +55,8 @@ static void Ring(const u8* bitmap, u32 width, u32 height, u64 now, f32 factor, f
 	InitializeKeyboard();
 
 	InitializeHeap(GetKernelHeap(), HEAP_BASE);
+
+	InitializeFlecsOsApi();
 
 	u64 last = 0;
 

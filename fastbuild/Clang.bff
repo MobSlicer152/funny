@@ -16,6 +16,7 @@
 	.Linker = '$LLVMDir$/bin/ld.lld$ExeExtension$'
 	.Librarian = '$LLVMDir$/bin/llvm-ar$ExeExtension$'
 	.ObjCopy = '$LLVMDir$/bin/llvm-objcopy$ExeExtension$'
+	.Strip = '$LLVMDir$/bin/llvm-strip$ExeExtension$'
 
 	.CompilerOptions = ' "%1"' // Input
 					 + ' -o"%2"' // Output
@@ -60,6 +61,7 @@
 	.ConfigName = 'Debug'
 
 	.CompilerOptions = ' -g' // Debug info
+					 + ' -gsplit-dwarf'
 					 + ' -O0' // Disable optimization
 
 					 + ' -DDEBUG'

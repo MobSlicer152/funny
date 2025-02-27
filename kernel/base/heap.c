@@ -1,3 +1,5 @@
+#include "kernel/base/serial.h"
+
 #include "heap.h"
 #include "llist.h"
 
@@ -5,7 +7,9 @@ u32 offset = 8;
 
 Heap_t g_kernelHeap;
 
-void InitializeHeap(Heap_t *heap, long start) {
+void InitializeHeap(Heap_t *heap, uptr start) {
+    DBG("Initializing heap at 0x%X", start);
+
     Node_t *init_region = (Node_t *) start;
     init_region->hole = 1;
     init_region->size = (HEAP_INIT_SIZE) - sizeof(Node_t) - sizeof(Footer_t);

@@ -42,7 +42,7 @@ static u32 overhead = sizeof(Footer_t) + sizeof(Node_t);
 extern Heap_t g_kernelHeap;
 #define GetKernelHeap() (&g_kernelHeap)
 
-void InitializeHeap(Heap_t *heap, long start);
+void InitializeHeap(Heap_t *heap, uptr start);
 
 void *HeapAlloc(Heap_t *heap, size_t size);
 void HeapFree(Heap_t *heap, void *p);

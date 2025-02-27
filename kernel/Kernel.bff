@@ -27,6 +27,7 @@
 				'$ProjectPath$/base/arith64.c',
 				'$ProjectPath$/base/stb.c',
 				'$ProjectPath$/base/cmos.c',
+				'$ProjectPath$/base/flecs_os.c',
 				'$ProjectPath$/base/fpu.c',
 				'$ProjectPath$/base/heap.c',
 				'$ProjectPath$/base/idt.c',
@@ -65,7 +66,17 @@
 
 			.LinkerOptions + ' -T $ProjectPath$/kernel.ld'
 
-			.LinkerOutput = '$OutputDir$/$ProjectName$.elf'
+			.LinkerOutput = '$OutputDir$/$ProjectName$.dbg.elf'
+		}
+
+		Exec('$ProjectName$-Strip-$CompilerName$-$ArchName$-$ConfigName$')
+		{
+			.ExecExecutable = .Strip
+			.ExecInput = '$OutputDir$/$ProjectName$.dbg.elf'
+			.ExecOutput = '$OutputDir$/$ProjectName$.elf'
+			.ExecArguments = '"%1"'
+						   + ' -o "%2"'
+						   + ' --strip-all'
 		}
 
 		Exec('$ProjectName$-Flat-$CompilerName$-$ArchName$-$ConfigName$')
