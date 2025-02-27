@@ -2,6 +2,8 @@
 
 #define MIN(a, b)              (a) < (b) ? (a) : (b)
 #define MAX(a, b)              (a) > (b) ? (a) : (b)
+#define MIN3(a, b, c)          MIN(a, MIN(b, c))
+#define MAX3(a, b, c)          MAX(a, MAX(b, c))
 #define CLAMP(value, min, max) MAX((min), MIN((value), (max)))
 #define SWAP(a, b)                                                                                                               \
 	{                                                                                                                            \
@@ -17,7 +19,7 @@
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 
 #define ATTRIBUTE(x) __attribute__((x))
-#define FORCEINLINE ATTRIBUTE(always_inline)
+#define FORCEINLINE  ATTRIBUTE(always_inline)
 
 #define asm __asm__
 

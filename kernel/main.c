@@ -1,6 +1,3 @@
-#include "flecs.h"
-
-#include "base/flecs_os.h"
 #include "base/fpu.h"
 #include "base/heap.h"
 #include "base/idt.h"
@@ -18,10 +15,12 @@
 #include "globals/kernel.h"
 #include "globals/vars.h"
 
-#include "sprites/a.h"
-#include "sprites/sprites.h"
+#include "raster/raster.h"
+
+#include "textures/textures.h"
 
 #include "systems/camera.h"
+#include "types.h"
 
 #define FPS 30
 
@@ -37,8 +36,8 @@ static void Ring(const u8* bitmap, u32 width, u32 height, u64 now, f32 factor, f
 		f32 sinAngle = NormalizedSine(angle);
 		f32 x = (cosAngle * (SCREEN_WIDTH - width) + xShift) * reciprocal;
 		f32 y = (sinAngle * (SCREEN_HEIGHT - height) + yShift) * reciprocal;
-		Fill(x, y, x + width, y + height, 32 + cosAngle * 15.0f);
-		DrawBitmap(x, y, bitmap, width, height);
+		Fill(&P2I(x, y), &P2I(x + width, y + height), 32 + cosAngle * 15.0f);
+		DrawBitmap(&P2I(x, y), bitmap, width, height);
 	}
 }
 
@@ -56,8 +55,6 @@ static void Ring(const u8* bitmap, u32 width, u32 height, u64 now, f32 factor, f
 
 	InitializeHeap(GetKernelHeap(), HEAP_BASE);
 
-	InitializeFlecsOsApi();
-
 	u64 last = 0;
 
 	while (true)
@@ -68,10 +65,12 @@ static void Ring(const u8* bitmap, u32 width, u32 height, u64 now, f32 factor, f
 		{
 			last = now;
 
-			// so it doesn't change mid frame
 			SwapKeyboardState();
 
 			ClearScreen(0);
+
+			DrawTriangle(&P2I(64, 0), &P2I(64, 64), &P2I(0, 64), 40);
+			DrawTriangle(&P2I(0, 0), &P2I(64, 0), &P2I(0, 64), 32);
 
 			FlipScreen();
 		}

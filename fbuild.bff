@@ -15,7 +15,6 @@
 
 #include "fastbuild/Targets.bff"
 
-#include "flecs/flecs.bff"
 #include "boot/Boot.bff"
 #include "kernel/Kernel.bff"
 #include "fastbuild/BootImage.bff"

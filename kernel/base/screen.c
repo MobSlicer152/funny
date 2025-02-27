@@ -25,81 +25,73 @@ void ClearScreen(u8 color)
 	memset(BACKBUFFER, color, SCREEN_WIDTH * SCREEN_HEIGHT);
 }
 
-static void FixPoint(s32* x, s32* y)
+void FixPoint(Point2i_t* p)
 {
-	if (*x < 0)
-	{
-		*x = SCREEN_WIDTH + *x - 1;
-	}
-	if (*y < 0)
-	{
-		*y = SCREEN_HEIGHT + *y - 1;
-	}
-	if (*x >= SCREEN_WIDTH)
-	{
-		*x = SCREEN_WIDTH - 1;
-	}
-	if (*y >= SCREEN_HEIGHT)
-	{
-		*y = SCREEN_HEIGHT - 1;
-	}
+	p->x = MAX(p->x, 0);
+	p->y = MAX(p->y, 0);
+	p->x = MIN(p->x, SCREEN_WIDTH - 1);
+	p->y = MIN(p->y, SCREEN_HEIGHT - 1);
 }
 
-static void RawSetPixel(s32 x, s32 y, u8 color)
+void RawSetPixel(const Point2i_t* p, u8 color)
 {
 	if (color != TRANSPARENT_COLOR)
 	{
-		BACKBUFFER[y * SCREEN_WIDTH + x] = color;
+		BACKBUFFER[p->y * SCREEN_WIDTH + p->x] = color;
 	}
 }
 
-void SetPixel(s32 x, s32 y, u8 color)
+void SetPixel(const Point2i_t* pi, u8 color)
 {
-	FixPoint(&x, &y);
-	RawSetPixel(x, y, color);
+	Point2i_t p = *pi;
+	FixPoint(&p);
+	RawSetPixel(&p, color);
 }
 
-void Fill(s32 x1, s32 y1, s32 x2, s32 y2, u8 color)
+void Fill(const Point2i_t* p1i, const Point2i_t* p2i, u8 color)
 {
-	FixPoint(&x1, &y1);
-	FixPoint(&x2, &y2);
-	if (x1 > x2)
+	Point2i_t p1 = *p1i;
+	Point2i_t p2 = *p2i;
+
+	FixPoint(&p1);
+	FixPoint(&p2);
+	if (p1.x > p2.x)
 	{
-		SWAP(x1, x2);
+		SWAP(p1.x, p2.x);
 	}
-	if (y1 > y2)
+	if (p1.y > p2.y)
 	{
-		SWAP(y1, y2);
+		SWAP(p1.y, p2.y);
 	}
 
-	if (x1 == x2)
+	if (p1.x == p2.x)
 	{
-		for (s32 y = y1; y < y2; y++)
+		for (s32 y = p1.y; y < p2.y; y++)
 		{
-			RawSetPixel(x1, y, color);
+			RawSetPixel(&P2I(p1.x, y), color);
 		}
 	}
 	else
 	{
-		for (s32 y = y1; y < y2 && y < SCREEN_HEIGHT; y++)
+		for (s32 y = p1.y; y < p2.y && y < SCREEN_HEIGHT; y++)
 		{
-			for (s32 x = x1; x < x2 && x < SCREEN_WIDTH; x++)
+			for (s32 x = p2.x; x < p2.x && x < SCREEN_WIDTH; x++)
 			{
-				RawSetPixel(x, y, color);
+				RawSetPixel(&P2I(x, y), color);
 			}
 		}
 	}
 }
 
-void DrawBitmap(s32 x, s32 y, const u8* bitmap, s32 width, s32 height)
+void DrawBitmap(const Point2i_t* p, const u8* bitmap, s32 width, s32 height)
 {
 	for (s32 curY = 0; curY < height; curY++)
 	{
 		for (s32 curX = 0; curX < width; curX++)
 		{
-			if (x + curX < SCREEN_WIDTH && y + curY < SCREEN_HEIGHT)
+			if (p->x + curX < SCREEN_WIDTH && p->y + curY < SCREEN_HEIGHT)
 			{
-				RawSetPixel(x + curX, y + curY, bitmap[curY * width + curX]);
+				RawSetPixel(&P2I(p->x + curX, p->y + curY), bitmap[curY * width + curX]);
 			}
 		}
 	}

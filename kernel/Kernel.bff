@@ -27,7 +27,6 @@
 				'$ProjectPath$/base/arith64.c',
 				'$ProjectPath$/base/stb.c',
 				'$ProjectPath$/base/cmos.c',
-				'$ProjectPath$/base/flecs_os.c',
 				'$ProjectPath$/base/fpu.c',
 				'$ProjectPath$/base/heap.c',
 				'$ProjectPath$/base/idt.c',
@@ -42,7 +41,9 @@
 
 				'$ProjectPath$/globals/vars.c',
 
-				'$ProjectPath$/sprites/sprites.c',
+				'$ProjectPath$/raster/draw.c',
+
+				'$ProjectPath$/textures/textures.c',
 
 				'$ProjectPath$/systems/camera.c',
 
@@ -60,23 +61,12 @@
 			.Libraries =
 			{
 				'$ProjectName$-Objs-$CompilerName$-$ArchName$-$ConfigName$',
-				'flecs-$CompilerName$-$ArchName$-$ConfigName$',
 				'$ObjectDir$/$ProjectPath$/base/startup.obj'
 			}
 
 			.LinkerOptions + ' -T $ProjectPath$/kernel.ld'
 
-			.LinkerOutput = '$OutputDir$/$ProjectName$.dbg.elf'
-		}
-
-		Exec('$ProjectName$-Strip-$CompilerName$-$ArchName$-$ConfigName$')
-		{
-			.ExecExecutable = .Strip
-			.ExecInput = '$OutputDir$/$ProjectName$.dbg.elf'
-			.ExecOutput = '$OutputDir$/$ProjectName$.elf'
-			.ExecArguments = '"%1"'
-						   + ' -o "%2"'
-						   + ' --strip-all'
+			.LinkerOutput = '$OutputDir$/$ProjectName$.elf'
 		}
 
 		Exec('$ProjectName$-Flat-$CompilerName$-$ArchName$-$ConfigName$')

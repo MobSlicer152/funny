@@ -49,3 +49,35 @@ typedef uptr usize;
 
 typedef const char* cstr;
 typedef char* dstr;
+
+typedef struct Point2i
+{
+    s32 x;
+    s32 y;
+} Point2i_t;
+
+typedef struct Point2f
+{
+    f32 x;
+    f32 y;
+} Point2f_t;
+
+#define P2I(x, y) (Point2i_t){(x), (y)}
+#define P2F(x, y) (Point2f_t){(x), (y)}
+
+typedef struct Point3i
+{
+    s32 x;
+    s32 y;
+    s32 z;
+} Point3i_t;
+
+typedef struct Point3f
+{
+    f32 x;
+    f32 y;
+    f32 z;
+} Point3f_t;
+
+#define P3I(x, y, z) (Point3i_t){(x), (y), (z)}
+#define P3F(x, y, z) (Point3f_t){(x), (y), (z)}
