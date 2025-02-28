@@ -7,6 +7,7 @@
 
 typedef Vec4f_t Mat4f_t[4];
 
+// smh should be f4f
 #define M4F(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33)                                      \
 	(Mat4f_t)                                                                                                                    \
 	{                                                                                                                            \
@@ -68,6 +69,10 @@ static FORCEINLINE void Mat4MulVec4(Vec4f_t result, const Mat4f_t a, const Vec4f
 
 static FORCEINLINE void Mat4Scale(Mat4f_t result, f32 x, f32 y, f32 z)
 {
+	// x 0 0 0
+	// 0 y 0 0
+	// 0 0 z 0
+	// 0 0 0 1
 	M4F_COPY(result, M4F(x, 0, 0, 0, 0, y, 0, 0, 0, 0, z, 0, 0, 0, 0, 1));
 }
 
@@ -131,5 +136,9 @@ static FORCEINLINE void Mat4Rotate(Mat4f_t result, f32 x, f32 y, f32 z)
 
 static FORCEINLINE void Mat4Translate(Mat4f_t result, f32 x, f32 y, f32 z)
 {
-	M4F_COPY(result, M4F(0, 0, 0, x, 0, 0, 0, y, 0, 0, 0, z, 0, 0, 0, 1));
+	// 1 0 0 x
+	// 0 1 0 y
+	// 0 0 1 z
+	// 0 0 0 1
+	M4F_COPY(result, M4F(1, 0, 0, x, 0, 1, 0, y, 0, 0, 1, z, 0, 0, 0, 1));
 }

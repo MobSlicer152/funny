@@ -2,5 +2,3 @@
 
 #include "math.h"
 #include "matrix.h"
-
-
