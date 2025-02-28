@@ -1,7 +1,8 @@
 #include "libc.h"
-#include "base/math.h"
 #include "base/timer.h"
 #include "macros.h"
+#include "math/math.h"
+
 
 // rep xxxsb my beloved
 

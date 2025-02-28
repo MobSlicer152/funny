@@ -14,8 +14,7 @@ static void RenderPixel(const Vec2i_t p, s32 w0, s32 w1, s32 w2, u8 color)
 	UNUSED(w0);
 	UNUSED(w1);
 	UNUSED(w2);
-	Vec2i_t pi = {(s32)round(p[0] * SCREEN_WIDTH), (s32)round(p[1] * SCREEN_HEIGHT)};
-	RawSetPixel(pi, color);
+	RawSetPixel(p, color);
 }
 
 void DrawTriangle(const Vec2i_t v0, const Vec2i_t v1, const Vec2i_t v2, u8 color)

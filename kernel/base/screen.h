@@ -1,7 +1,7 @@
 #pragma once
 
 #include "kernel/types.h"
-#include "vector.h"
+#include "kernel/math/vector.h"
 
 extern void InitializeScreen(void);
 

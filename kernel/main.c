@@ -4,7 +4,6 @@
 #include "base/irq.h"
 #include "base/keyboard.h"
 #include "base/libc.h"
-#include "base/math.h"
 #include "base/ps2.h"
 #include "base/screen.h"
 #include "base/serial.h"
@@ -14,6 +13,10 @@
 #include "globals/consts.h"
 #include "globals/kernel.h"
 #include "globals/vars.h"
+
+#include "math/math.h"
+#include "math/matrix.h"
+#include "math/vector.h"
 
 #include "raster/raster.h"
 
@@ -57,13 +60,6 @@ static void Ring(const u8* bitmap, u32 width, u32 height, u64 now, f32 factor, f
 
 	u64 last = 0;
 
-	Vec3i_t indices[] = {
-		{0, 1, 2},
-        {2, 3, 0}
-    };
-
-	u8 colors[] = {32, 40};
-
 	while (true)
 	{
 		u64 now = GetTimer();
@@ -74,16 +70,8 @@ static void Ring(const u8* bitmap, u32 width, u32 height, u64 now, f32 factor, f
 
 			SwapKeyboardState();
 
-			ClearScreen(0);
-			f32 sine = NormalizedSine(now * TIMER_SPT * TAU);
+			ClearScreen(32);
 
-			Vec3f_t vertices[] = {
-				{0.0f, 0.0f, 0.0f},
-                {sine, 0.0f, 0.0f},
-                {sine, sine, 0.0f},
-                {0.0f, sine, 0.0f}
-            };
-			DrawMesh(vertices, indices, colors, 2);
 			FlipScreen();
 		}
 	}

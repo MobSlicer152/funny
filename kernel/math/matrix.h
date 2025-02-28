@@ -1,7 +1,7 @@
 #pragma once
 
+#include "kernel/base/libc.h"
 #include "kernel/macros.h"
-#include "libc.h"
 #include "math.h"
 #include "vector.h"
 
@@ -18,8 +18,7 @@ static FORCEINLINE void Mat3Mul(Mat3_t result, const Mat3_t a, const Mat3_t b)
 {
 	Mat3_t c = {};
 
-#define X(a, b, c, i, j)                                                                                                         \
-	(c)[i][j] = (a)[i][0] * (b)[0][j] + (a)[i][1] * (b)[1][j] + (a)[i][2] * (b)[2][j];
+#define X(a, b, c, i, j) (c)[i][j] = (a)[i][0] * (b)[0][j] + (a)[i][1] * (b)[1][j] + (a)[i][2] * (b)[2][j];
 
 	X(a, b, c, 0, 0)
 	X(a, b, c, 0, 1)
@@ -41,8 +40,7 @@ static FORCEINLINE void Mat3MulVec3(Vec3f_t result, const Mat3_t a, const Vec3f_
 {
 	Vec3f_t c = {};
 
-#define X(a, b, c, i)                                                                                                         \
-	(c)[i] = (a)[i][0] * (b)[0] + (a)[i][1] * (b)[1] + (a)[i][2] * (b)[2];
+#define X(a, b, c, i) (c)[i] = (a)[i][0] * (b)[0] + (a)[i][1] * (b)[1] + (a)[i][2] * (b)[2];
 
 	X(a, b, c, 0)
 	X(a, b, c, 1)
