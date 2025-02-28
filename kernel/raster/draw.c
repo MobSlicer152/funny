@@ -67,17 +67,25 @@ void DrawTriangle(const Vec2i_t v0, const Vec2i_t v1, const Vec2i_t v2, u8 color
 	}
 }
 
-void DrawMesh(const Vec3f_t* vertices, const Vec3i_t* indices, const u8* colors, usize triangleCount)
+void DrawMesh(const Vec4f_t* vertices, const Vec3i_t* indices, const u8* colors, usize triangleCount, const Mat4f_t view, const Mat4f_t project)
 {
 	for (usize i = 0; i < triangleCount; i++)
 	{
-		const f32* v0f = vertices[indices[i][0]];
-		const f32* v1f = vertices[indices[i][1]];
-		const f32* v2f = vertices[indices[i][2]];
+		Vec4f_t v0f = {};
+		Vec4f_t v1f = {};
+		Vec4f_t v2f = {};
 
-		Vec3i_t v0 = {v0f[0] * SCREEN_WIDTH, v0f[1] * SCREEN_HEIGHT, v0f[2]};
-		Vec3i_t v1 = {v1f[0] * SCREEN_WIDTH, v1f[1] * SCREEN_HEIGHT, v1f[2]};
-		Vec3i_t v2 = {v2f[0] * SCREEN_WIDTH, v2f[1] * SCREEN_HEIGHT, v2f[2]};
+		Mat4MulVec4(v0f, view, vertices[indices[i][0]]);
+		Mat4MulVec4(v1f, view, vertices[indices[i][1]]);
+		Mat4MulVec4(v2f, view, vertices[indices[i][2]]);
+
+		Mat4MulVec4(v0f, project, v0f);
+		Mat4MulVec4(v1f, project, v1f);
+		Mat4MulVec4(v2f, project, v2f);
+
+		Vec4i_t v0 = {v0f[0] * SCREEN_WIDTH, v0f[1] * SCREEN_HEIGHT, v0f[2], v2f[3]};
+		Vec4i_t v1 = {v1f[0] * SCREEN_WIDTH, v1f[1] * SCREEN_HEIGHT, v1f[2], v2f[3]};
+		Vec4i_t v2 = {v2f[0] * SCREEN_WIDTH, v2f[1] * SCREEN_HEIGHT, v2f[2], v2f[3]};
 
 		DrawTriangle(v0, v1, v2, colors[i]);
 	}

@@ -43,15 +43,15 @@ void RawSetPixel(const Vec2i_t p, u8 color)
 
 void SetPixel(const Vec2i_t pi, u8 color)
 {
-	Vec2i_t p = V2I_COPY(pi);
+	Vec2i_t p = V2I_DUP(pi);
 	FixPoint(p);
 	RawSetPixel(p, color);
 }
 
 void Fill(const Vec2i_t p1i, const Vec2i_t p2i, u8 color)
 {
-	Vec2i_t p1 = V2I_COPY(p1i);
-	Vec2i_t p2 = V2I_COPY(p2i);
+	Vec2i_t p1 = V2I_DUP(p1i);
+	Vec2i_t p2 = V2I_DUP(p2i);
 
 	FixPoint(p1);
 	FixPoint(p2);
