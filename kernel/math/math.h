@@ -117,14 +117,14 @@ static FORCEINLINE f32 tan(f32 x)
 
 static FORCEINLINE bool isinf(f32 x)
 {
-	u32 xi = (u32)x;
+	u32 xi = *(u32*)&x;
 	// zero fraction, max exponent
 	return (xi & 0x7f800000) == 0x7f800000 && (xi & 0x007fffff) == 0;
 }
 
 static FORCEINLINE bool isnan(f32 x)
 {
-	u32 xi = (u32)x;
+	u32 xi = *(u32*)&x;
 	// non-zero fraction, max exponent
 	return (xi & 0x7f800000) == 0x7f800000 && (xi & 0x007fffff) != 0;
 }
