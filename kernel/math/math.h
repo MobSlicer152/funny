@@ -83,6 +83,7 @@ static FORCEINLINE f32 invsqrt(f32 x)
 static FORCEINLINE f32 sqrt(f32 x)
 {
 	// as it turns out, fast inverse square root is faster than fsqrt by a lot
+	// (which is to be expected, given the name and it being made when x87 was prevalent)
 	// asm volatile ("fsqrt" : "=t"(x) : "t"(x));
 	return 1.0f / invsqrt(x);
 }
