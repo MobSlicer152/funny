@@ -7,9 +7,7 @@
 
 typedef Vec4f_t Mat4f_t[4];
 
-// smh should be f4f
-#define M4F(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33)                                      \
-	(Mat4f_t)                                                                                                                    \
+#define M4F_INLINE(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33)                               \
 	{                                                                                                                            \
 		{(m00), (m01), (m02), (m03)}, {(m10), (m11), (m12), (m13)}, {(m20), (m21), (m22), (m23)},                                \
 		{                                                                                                                        \
@@ -17,22 +15,32 @@ typedef Vec4f_t Mat4f_t[4];
 		}                                                                                                                        \
 	}
 
-#define M4F_DUP(x)                                                                                                               \
-	M4F((x)[0][0], (x)[0][1], (x)[0][2], (x)[0][3], (x)[1][0], (x)[1][1], (x)[1][2], (x)[1][3], (x)[2][0], (x)[2][1], (x)[2][2], \
-		(x)[2][3], (x)[1][3], (x)[3][0], (x)[3][1], (x)[3][2], (x)[3][3])
+// smh should be f4f
+#define M4F(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33)                                      \
+	(Mat4f_t) M4F_INLINE(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33)
+
+#define M4F_DUP_INLINE(x)                                                                                                        \
+	M4F_INLINE(                                                                                                                  \
+		(x)[0][0], (x)[0][1], (x)[0][2], (x)[0][3], (x)[1][0], (x)[1][1], (x)[1][2], (x)[1][3], (x)[2][0], (x)[2][1], (x)[2][2], \
+		(x)[2][3], (x)[3][0], (x)[3][1], (x)[3][2], (x)[3][3])
+#define M4F_DUP(x)          (Mat4f_t) M4F_DUP_INLINE(x)
 #define M4F_COPY(dest, src) memcpy((dest), (src), sizeof(Mat4f_t))
 
-#define M4F_IDENTITY() M4F(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
+#define M4F_IDENTITY_INLINE M4F_INLINE(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
+#define M4F_IDENTITY        (Mat4f_t) M4F_IDENTITY_INLINE
+#define M4F_ZERO(m)         memset((m), 0, sizeof(Mat4f_t))
 
 static FORCEINLINE void Mat4Mul(Mat4f_t result, const Mat4f_t a, const Mat4f_t b)
 {
 	Mat4f_t c = {};
 
+	// c[i][j] = dot(a[i][], b[][j])
+
 #define X(a, b, c, i, j) (c)[i][j] = (a)[i][0] * (b)[0][j] + (a)[i][1] * (b)[1][j] + (a)[i][2] * (b)[2][j];
 	X(a, b, c, 0, 0)
 	X(a, b, c, 0, 1)
 	X(a, b, c, 0, 2)
-	X(a, b, c, 0, 2)
+	X(a, b, c, 0, 3)
 
 	X(a, b, c, 1, 0)
 	X(a, b, c, 1, 1)

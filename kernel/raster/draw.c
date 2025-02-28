@@ -67,26 +67,26 @@ void DrawTriangle(const Vec2i_t v0, const Vec2i_t v1, const Vec2i_t v2, u8 color
 	}
 }
 
-void DrawMesh(const Vec4f_t* vertices, const Vec3i_t* indices, const u8* colors, usize triangleCount, const Mat4f_t view, const Mat4f_t project)
+void DrawMesh(const DrawInfo_t* info)
 {
-	for (usize i = 0; i < triangleCount; i++)
+	Mat4f_t mvp;
+	Mat4Mul(mvp, info->model, info->view);
+	Mat4Mul(mvp, mvp, info->project);
+
+	for (s32 i = 0; i < info->faceCount; i++)
 	{
 		Vec4f_t v0f = {};
 		Vec4f_t v1f = {};
 		Vec4f_t v2f = {};
 
-		Mat4MulVec4(v0f, view, vertices[indices[i][0]]);
-		Mat4MulVec4(v1f, view, vertices[indices[i][1]]);
-		Mat4MulVec4(v2f, view, vertices[indices[i][2]]);
+		Mat4MulVec4(v0f, mvp, info->vertices[info->faces[i][0][0]]);
+		Mat4MulVec4(v1f, mvp, info->vertices[info->faces[i][1][0]]);
+		Mat4MulVec4(v2f, mvp, info->vertices[info->faces[i][2][0]]);
 
-		Mat4MulVec4(v0f, project, v0f);
-		Mat4MulVec4(v1f, project, v1f);
-		Mat4MulVec4(v2f, project, v2f);
+		Vec2i_t v0 = {v0f[0] * SCREEN_WIDTH, v0f[1] * SCREEN_HEIGHT};
+		Vec2i_t v1 = {v1f[0] * SCREEN_WIDTH, v1f[1] * SCREEN_HEIGHT};
+		Vec2i_t v2 = {v2f[0] * SCREEN_WIDTH, v2f[1] * SCREEN_HEIGHT};
 
-		Vec4i_t v0 = {v0f[0] * SCREEN_WIDTH, v0f[1] * SCREEN_HEIGHT, v0f[2], v2f[3]};
-		Vec4i_t v1 = {v1f[0] * SCREEN_WIDTH, v1f[1] * SCREEN_HEIGHT, v1f[2], v2f[3]};
-		Vec4i_t v2 = {v2f[0] * SCREEN_WIDTH, v2f[1] * SCREEN_HEIGHT, v2f[2], v2f[3]};
-
-		DrawTriangle(v0, v1, v2, colors[i]);
+		DrawTriangle(v0, v1, v2, 40 + ((f32)i / info->faceCount) * 8.0f);
 	}
 }

@@ -10,6 +10,9 @@
 #define HALF_PI 1.57079632679f
 #define TAU     6.28318530718f
 
+#define DEG2RAD (TAU / 360.0f)
+#define RAD2DEG (360.0f / TAU)
+
 // a bunch of inline functions that do like 1 x87 instruction
 
 static FORCEINLINE f32 round(f32 x)

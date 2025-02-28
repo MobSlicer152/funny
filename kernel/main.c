@@ -14,15 +14,20 @@
 #include "globals/kernel.h"
 #include "globals/vars.h"
 
+#include "math/camera.h"
 #include "math/math.h"
 #include "math/matrix.h"
 #include "math/vector.h"
+
+#include "models/cube.h"
+#include "models/models.h"
 
 #include "raster/raster.h"
 
 #include "textures/textures.h"
 
 #include "systems/camera.h"
+
 #include "types.h"
 
 #define FPS 30
@@ -60,18 +65,31 @@ static void Ring(const u8* bitmap, u32 width, u32 height, u64 now, f32 factor, f
 
 	u64 last = 0;
 
+	Mat4f_t model;
+
+	Vec4f_t camera = V4F(0.0f, 0.0f, -10.0f, 1.0f);
+	Vec4f_t target = V4F(0.0f, 0.0f, 0.0f, 1.0f);
+	Mat4f_t view;
+	LookAt(view, camera, V4F_UP, target);
+
+	Mat4f_t project;
+	Perspective(project, PI / 2.0f, SCREEN_ASPECT, 0.1f, 1000.0f);
+
 	while (true)
 	{
 		u64 now = GetTimer();
 
+		// only render at framerate, do nothing otherwise
 		if ((now - last) > (TIMER_TPS / FPS))
 		{
 			last = now;
 
 			SwapKeyboardState();
 
-			ClearScreen(32);
+			Mat4RotateY(model, now * TIMER_SPT * TAU);
 
+			ClearScreen(0);
+			DrawMesh(&DRAW_INFO(CUBE_VERTICES, CUBE_TEXCOORDS, CUBE_NORMALS, CUBE_FACES, CUBE_FACE_COUNT, model, view, project));
 			FlipScreen();
 		}
 	}

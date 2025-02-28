@@ -129,8 +129,7 @@ def main(argc: int, argv: list[str]) -> int:
             else:
                 pixels += " "
 
-    pixels = pixels.strip()
-    f.write(pixels)
+    f.write(pixels.strip())
 
     f.write(f"\n" + f"}};\n" + f"#endif\n")
 
