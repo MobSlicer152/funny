@@ -57,6 +57,13 @@ static void Ring(const u8* bitmap, u32 width, u32 height, u64 now, f32 factor, f
 
 	u64 last = 0;
 
+	Vec3i_t indices[] = {
+		{0, 1, 2},
+        {2, 3, 0}
+    };
+
+	u8 colors[] = {32, 40};
+
 	while (true)
 	{
 		u64 now = GetTimer();
@@ -68,10 +75,15 @@ static void Ring(const u8* bitmap, u32 width, u32 height, u64 now, f32 factor, f
 			SwapKeyboardState();
 
 			ClearScreen(0);
+			f32 sine = NormalizedSine(now * TIMER_SPT * TAU);
 
-			DrawTriangle(V2I(64, 0), V2I(64, 64), V2I(0, 64), 40);
-			DrawTriangle(V2I(0, 0), V2I(64, 0), V2I(0, 64), 32);
-
+			Vec3f_t vertices[] = {
+				{0.0f, 0.0f, 0.0f},
+                {sine, 0.0f, 0.0f},
+                {sine, sine, 0.0f},
+                {0.0f, sine, 0.0f}
+            };
+			DrawMesh(vertices, indices, colors, 2);
 			FlipScreen();
 		}
 	}
