@@ -127,7 +127,7 @@ CheckA20:
 
 	; read boot signature at 0000:7dfe
 	mov cx, es:[7dfeh]
-	
+
 	; read other at ffff:7e0e
 	mov dx, ds:[7e0eh]
 

@@ -11,7 +11,7 @@
 #include "base/x86.h"
 
 #include "globals/consts.h"
-#include "globals/kernel.h"
+#include "globals/memmap.h"
 #include "globals/vars.h"
 
 #include "math/camera.h"
@@ -19,7 +19,6 @@
 #include "math/matrix.h"
 #include "math/vector.h"
 
-#include "models/cube.h"
 #include "models/models.h"
 
 #include "raster/raster.h"
@@ -31,23 +30,6 @@
 #include "types.h"
 
 #define FPS 30
-
-static void Ring(const u8* bitmap, u32 width, u32 height, u64 now, f32 factor, f32 count)
-{
-	f32 reciprocal = 1.0f / factor;
-	f32 xShift = SCREEN_WIDTH * ((factor - 1) * 0.5f);
-	f32 yShift = SCREEN_HEIGHT * ((factor - 1) * 0.5f);
-	for (f32 offset = 0.0f; offset < 1.0f; offset += 1.0f / count)
-	{
-		f32 angle = offset * TAU + now * TIMER_SPT;
-		f32 cosAngle = NormalizedCosine(angle);
-		f32 sinAngle = NormalizedSine(angle);
-		f32 x = (cosAngle * (SCREEN_WIDTH - width) + xShift) * reciprocal;
-		f32 y = (sinAngle * (SCREEN_HEIGHT - height) + yShift) * reciprocal;
-		Fill(V2I(x, y), V2I(x + width, y + height), 32 + cosAngle * 15.0f);
-		DrawBitmap(V2I(x, y), bitmap, width, height);
-	}
-}
 
 [[noreturn]] void KernelMain(void)
 {
@@ -66,14 +48,16 @@ static void Ring(const u8* bitmap, u32 width, u32 height, u64 now, f32 factor, f
 	u64 last = 0;
 
 	Mat4f_t model;
+	Mat4f_t rotation = M4F_IDENTITY;
+	Mat4f_t scale = M4F_IDENTITY;
 
-	Vec4f_t camera = V4F(0.0f, 0.0f, -10.0f, 1.0f);
+	Vec4f_t camera = V4F(0.0f, 5.0f, 10.0f, 1.0f);
 	Vec4f_t target = V4F(0.0f, 0.0f, 0.0f, 1.0f);
 	Mat4f_t view;
 	LookAt(view, camera, V4F_UP, target);
 
 	Mat4f_t project;
-	Perspective(project, PI / 2.0f, SCREEN_ASPECT, 0.1f, 1000.0f);
+	Perspective(project, 78.0f * DEG2RAD, SCREEN_ASPECT, 0.1f, 1000.0f);
 
 	while (true)
 	{
@@ -86,11 +70,15 @@ static void Ring(const u8* bitmap, u32 width, u32 height, u64 now, f32 factor, f
 
 			SwapKeyboardState();
 
-			Mat4RotateY(model, now * TIMER_SPT * TAU);
+			f32 theta = now * TIMER_SPT * TAU * 0.5f;
+			Mat4RotateY(rotation, theta);
+			Mat4Mul(model, rotation, scale);
 
-			ClearScreen(0);
-			DrawMesh(&DRAW_INFO(CUBE_VERTICES, CUBE_TEXCOORDS, CUBE_NORMALS, CUBE_FACES, CUBE_FACE_COUNT, model, view, project));
-			FlipScreen();
+			ClearScreen(0, 255);
+			DrawMesh(&DRAW_INFO(
+				TEAPOT_VERTICES, TEAPOT_TEXCOORDS, TEAPOT_NORMALS, TEAPOT_FACES, TEAPOT_FACE_COUNT, MISSING_DATA, MISSING_WIDTH,
+				MISSING_HEIGHT, model, view, project));
+			FlipScreen(false);
 		}
 	}
 

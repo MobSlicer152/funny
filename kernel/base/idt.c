@@ -1,4 +1,4 @@
-#include "globals/kernel.h"
+#include "globals/memmap.h"
 
 #include "idt.h"
 #include "irq.h"

@@ -115,8 +115,7 @@ static FORCEINLINE f32 NormalizedCosine(f32 x)
 
 static FORCEINLINE f32 tan(f32 x)
 {
-	asm volatile("fptan" : "=t"(x) : "t"(x));
-	return x;
+	return sin(x) / cos(x);
 }
 
 static FORCEINLINE bool isinf(f32 x)

@@ -121,25 +121,13 @@ static FORCEINLINE void Mat4RotateZ(Mat4f_t result, f32 angle)
 
 static FORCEINLINE void Mat4Rotate(Mat4f_t result, f32 x, f32 y, f32 z)
 {
-	f32 a = x;
-	f32 ca = cos(a);
-	f32 sa = sin(a);
+	f32 sx = sin(x), cx = cos(x);
+	f32 sy = sin(y), cy = cos(y);
+	f32 sz = sin(z), cz = cos(z);
 
-	f32 b = y;
-	f32 cb = cos(b);
-	f32 sb = sin(b);
-
-	f32 g = z;
-	f32 cg = cos(g);
-	f32 sg = sin(g);
-
-	//      cb*cg           -cb*sg         sb    0
-	//  sa*sb*cg+ca*sg  -sa*sb*sg+ca*cg  -sa*cb  0
-	// -ca*sb*cg+sa*sg   ca*sb*sg+sa*cg   ca*cb  0
-	//        0               0             0    1
 	M4F_COPY(
-		result, M4F(cb * cg, -cb * sg, sb, 0, sa * sb * cg + ca * sg, -sa * sb * sg + ca * cg, -sa * cb, 0,
-					-ca * sb * cg + sa * sg, ca * sb * sg + sa * cg, ca * cb, 0, 0, 0, 0, 1));
+		result, M4F(cy * cz, -cy * sz, sy, 0, cx * sz + sx * sy * cz, cx * cz - sx * sy * sz, -sx * cy, 0, sx * sz - cx * sy * cz,
+					sx * cz + cx * sy * sz, cx * cy, 0, 0, 0, 0, 1));
 }
 
 static FORCEINLINE void Mat4Translate(Mat4f_t result, f32 x, f32 y, f32 z)

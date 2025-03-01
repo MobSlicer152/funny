@@ -12,6 +12,10 @@
 		(a) = c;                                                                                                                 \
 	}
 
+#define MAKE_SELECTOR(index, rpl) ((index) << 3 | (rpl) & 0b111)
+#define KERNEL_CODE_SELECTOR      MAKE_SELECTOR(1, 0)
+#define KERNEL_DATA_SELECTOR      MAKE_SELECTOR(2, 0)
+
 #define STRINGIZE(x)         #x
 #define STRINGIZE_EXPAND(x)  STRINGIZE(x)
 #define STRINGIZE_EXPAND2(x) STRINGIZE_EXPAND(x)

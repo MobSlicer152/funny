@@ -23,6 +23,46 @@ typedef f32 Vec2f_t[2];
 #define V2I_COPY(dest, src) memcpy((dest), (src), sizeof(Vec2i_t))
 #define V2F_COPY(dest, src) memcpy((dest), (src), sizeof(Vec2f_t))
 
+static FORCEINLINE void Vec2fAdd(Vec2f_t result, const Vec2f_t a, const Vec2f_t b)
+{
+	// a0 + b0
+	// a1 + b1
+	V2F_COPY(result, V2F(a[0] + b[0], a[1] + b[1]));
+}
+
+static FORCEINLINE void Vec2fSub(Vec2f_t result, const Vec2f_t a, const Vec2f_t b)
+{
+	// a0 - b0
+	// a1 - b1
+	V2F_COPY(result, V2F(a[0] - b[0], a[1] - b[1]));
+}
+
+static FORCEINLINE void Vec2fScale(Vec2f_t result, const Vec2f_t a, f32 b)
+{
+	// a0 * b
+	// a1 * b
+	V2F_COPY(result, V2F(a[0] * b, a[1] * b));
+}
+
+static FORCEINLINE f32 Vec2fDot(const Vec2f_t a, const Vec2f_t b)
+{
+	// a0 * b0 + a1 * b1
+	return a[0] * b[0] + a[1] * b[1];
+}
+
+static FORCEINLINE f32 Vec2fLength(const Vec2f_t v)
+{
+	// sqrt(v0^2 + v1^2 + v2^2 + v3^2)
+	return sqrt(v[0] * v[0] + v[1] * v[1]);
+}
+
+static FORCEINLINE void Vec2fNormalize(Vec2f_t result, const Vec2f_t v)
+{
+	f32 length = Vec2fLength(v);
+	// v^ = v/|v|
+	Vec2fScale(result, v, 1.0f / length);
+}
+
 typedef s32 Vec3i_t[3];
 typedef f32 Vec3f_t[3];
 

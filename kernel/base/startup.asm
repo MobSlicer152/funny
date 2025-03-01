@@ -1,4 +1,4 @@
-; Loads segments and 
+; Loads segments and
 
 	BITS 32
 
@@ -13,8 +13,8 @@ Main:
 	mov fs, ax
 	mov gs, ax
 	mov ss, ax
-	
-	; new ESP, has to match STACK_END in consts/kernel.h
+
+	; new ESP, has to match STACK_END in consts/memmap.h
 	mov esp, 1be00h
 
 	; enter C code (no call cause it doesn't return)

@@ -62,7 +62,8 @@
 
 	.CompilerOptions = ' -g' // Debug info
 					 + ' -gsplit-dwarf'
-					 + ' -O0' // Disable optimization
+					 + ' -Og' // Improve debugging
+					 + ' -Os' // Disable optimization
 
 					 + ' -DDEBUG'
 
@@ -75,7 +76,7 @@
 [
 	.ConfigName = 'Release'
 
-	.CompilerOptions = ' -O2' // Optimize a bit
+	.CompilerOptions = ' -Os' // Optimize a bit
 					 + ' -Og' // Improve debugging
 					 + ' -flto=thin' // Faster incremental builds
 
