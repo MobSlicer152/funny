@@ -6,9 +6,9 @@
 
 typedef struct TriangleInfo
 {
-	Vec3i_t v0;
-	Vec3i_t v1;
-	Vec3i_t v2;
+	Vec3f_t v0;
+	Vec3f_t v1;
+	Vec3f_t v2;
 
 	Vec2f_t t0;
 	Vec2f_t t1;

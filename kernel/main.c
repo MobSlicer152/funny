@@ -74,11 +74,11 @@
 			Mat4RotateY(rotation, theta);
 			Mat4Mul(model, rotation, scale);
 
-			ClearScreen(15, 255);
+			ClearScreen(32, 255);
 			DrawMesh(&DRAW_INFO(
 				TEAPOT_VERTICES, TEAPOT_TEXCOORDS, TEAPOT_NORMALS, TEAPOT_FACES, TEAPOT_FACE_COUNT, MISSING_DATA, MISSING_WIDTH,
 				MISSING_HEIGHT, model, view, project));
-			FlipScreen(false);
+			FlipScreen(GetKey(KeyCodeZ));
 		}
 	}
 

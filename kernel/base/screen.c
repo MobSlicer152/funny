@@ -26,7 +26,7 @@ void FlipScreen(bool showZBuffer)
 		{
 			for (u32 x = 0; x < SCREEN_WIDTH; x++)
 			{
-				u8 v = 16 + ZBUFFER[y * SCREEN_WIDTH + x] / 16;
+				u8 v = 16 + (ZBUFFER[y * SCREEN_WIDTH + x] / 16.0f);
 				FRAMEBUFFER[y * SCREEN_WIDTH + x] = v;
 			}
 		}
