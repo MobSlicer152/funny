@@ -11,12 +11,12 @@ typedef f32 Vec2f_t[2];
 #define V2I(x, y)                                                                                                                \
 	(Vec2i_t)                                                                                                                    \
 	{                                                                                                                            \
-		(x), (y)                                                                                                                 \
+		(s32)(x), (s32)(y)                                                                                                       \
 	}
 #define V2F(x, y)                                                                                                                \
 	(Vec2f_t)                                                                                                                    \
 	{                                                                                                                            \
-		(x), (y)                                                                                                                 \
+		(f32)(x), (f32)(y)                                                                                                       \
 	}
 #define V2I_DUP(x)          V2I((x)[0], (x)[1])
 #define V2F_DUP(x)          V2F((x)[0], (x)[1])
@@ -69,12 +69,12 @@ typedef f32 Vec3f_t[3];
 #define V3I(x, y, z)                                                                                                             \
 	(Vec3i_t)                                                                                                                    \
 	{                                                                                                                            \
-		(x), (y), (z)                                                                                                            \
+		(s32)(x), (s32)(y), (s32)(z)                                                                                             \
 	}
 #define V3F(x, y, z)                                                                                                             \
 	(Vec3f_t)                                                                                                                    \
 	{                                                                                                                            \
-		(x), (y), (z)                                                                                                            \
+		(f32)(x), (f32)(y), (f32)(z)                                                                                             \
 	}
 #define V3I_DUP(x)          V3I((x)[0], (x)[1], (x)[2])
 #define V3F_DUP(x)          V3F((x)[0], (x)[1], (x)[2])
@@ -87,12 +87,12 @@ typedef f32 Vec4f_t[4];
 #define V4I(x, y, z, w)                                                                                                          \
 	(Vec4i_t)                                                                                                                    \
 	{                                                                                                                            \
-		(x), (y), (z), (w)                                                                                                       \
+		(s32)(x), (s32)(y), (s32)(z), (s32)(w)                                                                                   \
 	}
 #define V4F(x, y, z, w)                                                                                                          \
 	(Vec4f_t)                                                                                                                    \
 	{                                                                                                                            \
-		(x), (y), (z), (w)                                                                                                       \
+		(f32)(x), (f32)(y), (f32)(z), (f32)(w)                                                                                   \
 	}
 #define V4I_DUP(x)          V4I((x)[0], (x)[1], (x)[2], (x)[3])
 #define V4F_DUP(x)          V4F((x)[0], (x)[1], (x)[2], (x)[3])

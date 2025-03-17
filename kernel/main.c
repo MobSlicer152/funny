@@ -47,7 +47,8 @@
 
 	u64 last = 0;
 
-	Mat4f_t model;
+	Mat4f_t model = M4F_IDENTITY;
+	Mat4f_t translation = M4F_IDENTITY;
 	Mat4f_t rotation = M4F_IDENTITY;
 	Mat4f_t scale = M4F_IDENTITY;
 
@@ -71,8 +72,14 @@
 			SwapKeyboardState();
 
 			f32 theta = now * TIMER_SPT * TAU * 0.5f;
+
+			camera[1] = sin(theta) * 2.5f;
+			LookAt(view, camera, V4F_UP, target);
+
+			Mat4Translate(translation, cos(theta) * 1.5f, 0.0f, 0.0f);
 			Mat4RotateY(rotation, theta);
-			Mat4Mul(model, rotation, scale);
+			Mat4Mul(model, translation, rotation);
+			Mat4Mul(model, model, scale);
 
 			ClearScreen(32, 255);
 			DrawMesh(&DRAW_INFO(

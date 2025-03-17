@@ -4,6 +4,7 @@
 #include "kernel/types.h"
 
 #include "cmos.h"
+#include "timer.h"
 
 #define SERIAL_115200_BAUD 1
 #define SERIAL_57600_BAUD  2
@@ -18,7 +19,7 @@ extern void DebugPrint(cstr msg, ...);
 extern void VDebugPrint(cstr msg, va_list args);
 
 #ifdef DEBUG
-#define DBG(msg, ...) DebugPrint("[%s] [%s:%d] " msg "\n", GetTimeString(), __FILE__, __LINE__ __VA_OPT__(, ) __VA_ARGS__)
+#define DBG(msg, ...) DebugPrint("[%s] [%d] [%s:%d] " msg "\n", GetTimeString(), GetTimer(), __FILE__, __LINE__ __VA_OPT__(, ) __VA_ARGS__)
 #else
 #define DBG(...)
 #endif
