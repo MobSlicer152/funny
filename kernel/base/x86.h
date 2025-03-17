@@ -1,5 +1,6 @@
 #pragma once
 
+#include "base/fpu.h"
 #include "kernel/macros.h"
 #include "kernel/types.h"
 
@@ -80,6 +81,11 @@ static FORCEINLINE u16 GetX87Status(void)
 static FORCEINLINE void SetX87Control(u16 value)
 {
 	asm volatile("fldcw %0" : : "m"(value));
+}
+
+static FORCEINLINE void SetRoundingMode(u16 mode)
+{
+	SetX87Control((FPU_CONTROL & ~(FPU_ROUND_TRUNC)) | mode);
 }
 
 static FORCEINLINE void ResetX87Control(void)

@@ -1,5 +1,8 @@
 #pragma once
 
+#include "base/fpu.h"
+#include "base/x86.h"
+
 #include "kernel/macros.h"
 #include "kernel/types.h"
 
@@ -19,6 +22,22 @@ static FORCEINLINE f32 round(f32 x)
 {
 	asm volatile("frndint" : "=t"(x) : "t"(x));
 	return x;
+}
+
+static FORCEINLINE f32 floor(f32 x)
+{
+	SetRoundingMode(FPU_ROUND_DOWN);
+	f32 result = round(x);
+	SetRoundingMode(FPU_ROUND_NEAREST);
+	return result;
+}
+
+static FORCEINLINE f32 ceil(f32 x)
+{
+	SetRoundingMode(FPU_ROUND_UP);
+	f32 result = round(x);
+	SetRoundingMode(FPU_ROUND_NEAREST);
+	return result;
 }
 
 static FORCEINLINE s32 abs(s32 x)

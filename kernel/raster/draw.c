@@ -29,12 +29,14 @@ static FORCEINLINE void RenderPixel(
 {
 	f32 z = 1.0f / (p[2] / 255.0f);
 
-	f32 u = fmod(Interpolate(tu, w) * z, 1.0f);
-	f32 v = fmod(Interpolate(tv, w) * z, 1.0f);
+	f32 u = Interpolate(tu, w) * z;
+	u = u - floor(u);
+	f32 v = Interpolate(tv, w) * z;
+	v = ceil(v) - v;
 
 	Vec2i_t tp;
-	tp[0] = CLAMP(u, 0.0f, 1.0f) * (textureWidth - 1);
-	tp[1] = CLAMP(v, 0.0f, 1.0f) * (textureHeight - 1);
+	tp[0] = MIN(u * textureWidth, textureWidth - 1);
+	tp[1] = MIN(v * textureHeight, textureHeight - 1);
 	RawSetPixel(p, texture[(u32)(tp[1] * textureWidth + tp[0])]);
 	WriteZBuffer(p, p[2]);
 }
