@@ -51,6 +51,7 @@
 	Mat4f_t translation = M4F_IDENTITY;
 	Mat4f_t rotation = M4F_IDENTITY;
 	Mat4f_t scale = M4F_IDENTITY;
+	Mat4Scale(scale, 0.5f, 0.5f, 0.5f);
 
 	Vec4f_t camera = V4F(0.0f, 5.0f, 10.0f, 1.0f);
 	Vec4f_t target = V4F(0.0f, 0.0f, 0.0f, 1.0f);
@@ -73,8 +74,8 @@
 
 			f32 theta = now * TIMER_SPT * TAU * 0.5f;
 
-			camera[1] = sin(theta) * 2.5f;
-			LookAt(view, camera, V4F_UP, target);
+			//camera[1] = sin(theta) * 2.5f;
+			//LookAt(view, camera, V4F_UP, target);
 
 			Mat4Translate(translation, cos(theta) * 1.5f, 0.0f, 0.0f);
 			Mat4RotateY(rotation, theta);
@@ -83,7 +84,7 @@
 
 			ClearScreen(32, 255);
 			DrawMesh(&DRAW_INFO(
-				TEAPOT_VERTICES, TEAPOT_TEXCOORDS, TEAPOT_NORMALS, TEAPOT_FACES, TEAPOT_FACE_COUNT, MISSING_DATA, MISSING_WIDTH,
+				CUBE_VERTICES, CUBE_TEXCOORDS, CUBE_NORMALS, CUBE_FACES, CUBE_FACE_COUNT, MISSING_DATA, MISSING_WIDTH,
 				MISSING_HEIGHT, model, view, project));
 			FlipScreen(GetKey(KeyCodeZ));
 		}

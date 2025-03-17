@@ -29,8 +29,8 @@ static FORCEINLINE void RenderPixel(
 {
 	f32 z = 1.0f / (p[2] / 255.0f);
 
-	f32 u = Interpolate(tu, w) * z;
-	f32 v = Interpolate(tv, w) * z;
+	f32 u = fmod(Interpolate(tu, w) * z, 1.0f);
+	f32 v = fmod(Interpolate(tv, w) * z, 1.0f);
 
 	Vec2i_t tp;
 	tp[0] = CLAMP(u, 0.0f, 1.0f) * (textureWidth - 1);
@@ -43,6 +43,7 @@ void DrawTriangle(const TriangleInfo_t* t)
 {
 	Vec2f_t min = V2F(MIN3(t->v0[0], t->v1[0], t->v2[0]), MIN3(t->v0[1], t->v1[1], t->v2[1]));
 	Vec2f_t max = V2F(MAX3(t->v0[0], t->v1[0], t->v2[0]), MAX3(t->v0[1], t->v1[1], t->v2[1]));
+	
 	f32 areaDenom = 1.0f / Edge(t->v0, t->v1, t->v2);
 
 	f32 e01r = Edge(t->v0, t->v1, min);
@@ -67,9 +68,9 @@ void DrawTriangle(const TriangleInfo_t* t)
 			if (e01 >= 0 && e12 >= 0 && e20 >= 0)
 			{
 				Vec3f_t w;
-				w[0] = e01 * areaDenom;
-				w[1] = e12 * areaDenom;
-				w[2] = e20 * areaDenom;
+				w[0] = e12 * areaDenom;
+				w[1] = e20 * areaDenom;
+				w[2] = e01 * areaDenom;
 
 				f32 z = Interpolate(V3F(t->v0[2], t->v1[2], t->v2[2]), w) * 255;
 				if (z <= ReadZBuffer(V2I(x, y)))
