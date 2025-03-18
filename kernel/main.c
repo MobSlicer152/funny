@@ -23,6 +23,7 @@
 
 #include "raster/raster.h"
 
+#include "textures/cobblestone.h"
 #include "textures/textures.h"
 
 #include "systems/camera.h"
@@ -74,8 +75,8 @@
 
 			f32 theta = now * TIMER_SPT * TAU * 0.5f;
 
-			//camera[1] = sin(theta) * 2.5f;
-			//LookAt(view, camera, V4F_UP, target);
+			// camera[1] = sin(theta) * 2.5f;
+			// LookAt(view, camera, V4F_UP, target);
 
 			Mat4Translate(translation, cos(theta) * 1.5f, 0.0f, 0.0f);
 			Mat4RotateY(rotation, theta);
@@ -84,8 +85,8 @@
 
 			ClearScreen(32, 1.0f);
 			DrawMesh(&DRAW_INFO(
-				CUBE_VERTICES, CUBE_TEXCOORDS, CUBE_NORMALS, CUBE_FACES, CUBE_FACE_COUNT, MISSING_DATA, MISSING_WIDTH,
-				MISSING_HEIGHT, model, view, project));
+				CUBE_VERTICES, CUBE_TEXCOORDS, CUBE_NORMALS, CUBE_FACES, CUBE_FACE_COUNT, COBBLESTONE_DATA, COBBLESTONE_WIDTH,
+				COBBLESTONE_HEIGHT, model, view, project));
 			FlipScreen(GetKey(KeyCodeZ));
 		}
 	}
