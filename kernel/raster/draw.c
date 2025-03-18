@@ -5,6 +5,7 @@
 #include "globals/consts.h"
 
 #include "macros.h"
+#include "math/matrix.h"
 #include "math/vector.h"
 #include "raster.h"
 #include "types.h"
@@ -24,30 +25,38 @@ static FORCEINLINE f32 Interpolate(const Vec3f_t a, const Vec3f_t w)
 	return a[0] * w[0] + a[1] * w[1] + a[2] * w[2];
 }
 
-static FORCEINLINE void RenderPixel(
-	const Vec3f_t p, const Vec3f_t w, const Vec3f_t tu, const Vec3f_t tv, const u8* texture, const u32 textureWidth,
-	const u32 textureHeight)
+static FORCEINLINE f32 InterpolatePersp(const Vec3f_t a, const Vec3f_t w, const Vec3f_t z)
 {
-	f32 z = p[2];
+	return Interpolate(V3F(a[0] / z[0], a[1] / z[1], a[2] / z[2]), w);
+}
 
-	f32 u = Interpolate(tu, w) * z;
-	u -= floor(u);
-	f32 v = Interpolate(tv, w) * z;
-	v -= floor(v);
+static FORCEINLINE void RenderPixel(
+	const Vec3f_t p, const Vec3f_t z, const Vec3f_t w, const Vec3f_t tu, const Vec3f_t tv, const u8* texture,
+	const u32 textureWidth, const u32 textureHeight)
+{
+	f32 u = InterpolatePersp(tu, w, z) * p[2];
+	f32 v = InterpolatePersp(tv, w, z) * p[2];
+
+	u = u - floor(u);
+	v = v - floor(v);
 
 	Vec2i_t tp;
-	tp[0] = MIN(u * textureWidth, textureWidth - 1);
-	tp[1] = MIN(v * textureHeight, textureHeight - 1);
+	tp[0] = (u * textureWidth);
+	tp[1] = (v * textureHeight);
+
+	tp[0] = MIN((u32)tp[0], textureWidth - 1);
+	tp[1] = MIN((u32)tp[1], textureHeight - 1);
+
 	RawSetPixel(V2I_DUP(p), texture[(u32)(tp[1] * textureWidth + tp[0])]);
 
-	WriteZBuffer(V2I_DUP(p), z);
+	WriteZBuffer(V2I_DUP(p), p[2]);
 }
 
 void DrawTriangle(const TriangleInfo_t* t)
 {
 	Vec2f_t min = V2F(MIN3(t->v0[0], t->v1[0], t->v2[0]), MIN3(t->v0[1], t->v1[1], t->v2[1]));
 	Vec2f_t max = V2F(MAX3(t->v0[0], t->v1[0], t->v2[0]), MAX3(t->v0[1], t->v1[1], t->v2[1]));
-	
+
 	f32 areaDenom = 1.0f / Edge(t->v0, t->v1, t->v2);
 
 	f32 e01r = Edge(t->v0, t->v1, min);
@@ -81,8 +90,8 @@ void DrawTriangle(const TriangleInfo_t* t)
 				if (z < ReadZBuffer(V2I(x, y)))
 				{
 					RenderPixel(
-						V3F(x, y, z), w, V3F(t->t0[0], t->t1[0], t->t2[0]), V3F(t->t0[1], t->t1[1], t->t2[1]), t->texture, t->tw,
-						t->th);
+						V3F(x, y, z), V3F(t->v0[2], t->v1[2], t->v2[2]), w, V3F(t->t0[0], t->t1[0], t->t2[0]),
+						V3F(t->t0[1], t->t1[1], t->t2[1]), t->texture, t->tw, t->th);
 				}
 			}
 
@@ -141,10 +150,6 @@ void DrawMesh(const DrawInfo_t* info)
 		V3F_COPY(
 			t.v2, V3F((faces[i][2][0] + 1.0f) * 0.5f * (SCREEN_WIDTH - 1), (faces[i][2][1] + 1.0f) * 0.5f * (SCREEN_HEIGHT - 1),
 					  (faces[i][2][2] + 1.0f) * 0.5f));
-
-		Vec2fScale(t.t0, info->texCoords[info->faces[i][1][0]], 1.0f / t.v0[2]);
-		Vec2fScale(t.t1, info->texCoords[info->faces[i][1][1]], 1.0f / t.v1[2]);
-		Vec2fScale(t.t2, info->texCoords[info->faces[i][1][2]], 1.0f / t.v2[2]);
 
 		t.texture = info->texture;
 		t.tw = info->textureWidth;
