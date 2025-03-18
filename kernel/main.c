@@ -82,7 +82,7 @@
 			Mat4Mul(model, translation, rotation);
 			Mat4Mul(model, model, scale);
 
-			ClearScreen(32, 255);
+			ClearScreen(32, 1.0f);
 			DrawMesh(&DRAW_INFO(
 				CUBE_VERTICES, CUBE_TEXCOORDS, CUBE_NORMALS, CUBE_FACES, CUBE_FACE_COUNT, MISSING_DATA, MISSING_WIDTH,
 				MISSING_HEIGHT, model, view, project));

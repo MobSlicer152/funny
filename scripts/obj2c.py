@@ -180,7 +180,7 @@ def main(argc: int, argv: list[str]) -> int:
     write_data(f, f"float {symbol}_VERTICES[][4]", f"unsigned int {symbol}_VERTEX_COUNT", obj.vertices, 3, lambda v: f"{{{v[0]}, {v[1]}, {v[2]}, {v[3]}}}")
     write_data(f, f"float {symbol}_TEXCOORDS[][2]", f"unsigned int {symbol}_TEXCOORD_COUNT", obj.texcoords, 3, lambda t: f"{{{t[0]}, {t[1]}}}")
     write_data(f, f"float {symbol}_NORMALS[][3]", f"unsigned int {symbol}_NORMAL_COUNT", obj.vertices, 3, lambda n: f"{{{n[0]}, {n[1]}, {n[1]}}}")
-    write_data(f, f"int {symbol}_FACES[][3][3]", f"unsigned int {symbol}_FACE_COUNT", obj.faces, 3, lambda f: f"{{{{{f[0][0]}, {f[0][1]}, {f[0][2]}}}, {{{f[1][0]}, {f[1][1]}, {f[1][2]}}}, {{{f[2][0]}, {f[2][1]}, {f[2][2]}}}}}")
+    write_data(f, f"int {symbol}_FACES[][3][3]", f"unsigned int {symbol}_FACE_COUNT", obj.faces, 3, lambda f: f"{{{{{f[2][0]}, {f[2][1]}, {f[2][2]}}}, {{{f[1][0]}, {f[1][1]}, {f[1][2]}}}, {{{f[0][0]}, {f[0][1]}, {f[0][2]}}}}}")
 
     f.write(f"#endif\n")
     f.close()

@@ -4,11 +4,12 @@
 #include "libc.h"
 #include "screen.h"
 #include "serial.h"
+#include "types.h"
 
 
 static volatile u8* const FRAMEBUFFER = (volatile u8* const)0xA0000;
 static u8* const BACKBUFFER = (u8* const)(BACKBUFFER_BASE);
-static u8* const ZBUFFER = (u8* const)(ZBUFFER_BASE);
+static Depth_t* const ZBUFFER = (Depth_t* const)(ZBUFFER_BASE);
 
 void InitializeScreen(void)
 {
@@ -26,7 +27,7 @@ void FlipScreen(bool showZBuffer)
 		{
 			for (u32 x = 0; x < SCREEN_WIDTH; x++)
 			{
-				u8 v = 16 + (ZBUFFER[y * SCREEN_WIDTH + x] / 16.0f);
+				u8 v = 16 + (ZBUFFER[y * SCREEN_WIDTH + x] / ((f32)(DEPTH_MAX + 1) / 16.0f));
 				FRAMEBUFFER[y * SCREEN_WIDTH + x] = v;
 			}
 		}
@@ -37,10 +38,16 @@ void FlipScreen(bool showZBuffer)
 	}
 }
 
-void ClearScreen(u8 color, u8 depth)
+void ClearScreen(u8 color, f32 depth)
 {
 	memset(BACKBUFFER, color, SCREEN_WIDTH * SCREEN_HEIGHT);
-	memset(ZBUFFER, depth, SCREEN_WIDTH * SCREEN_HEIGHT);
+	for (s32 y = 0; y < SCREEN_HEIGHT; y++)
+	{
+		for (s32 x = 0; x < SCREEN_WIDTH; x++)
+		{
+			WriteZBuffer(V2I(x, y), depth);
+		}
+	}
 }
 
 void FixPoint(Vec2i_t p)
@@ -59,14 +66,14 @@ void RawSetPixel(const Vec2i_t p, u8 color)
 	}
 }
 
-void WriteZBuffer(const Vec2i_t p, u8 value)
+void WriteZBuffer(const Vec2i_t p, f32 value)
 {
-	ZBUFFER[p[1] * SCREEN_WIDTH + p[0]] = value;
+	ZBUFFER[p[1] * SCREEN_WIDTH + p[0]] = (Depth_t)(value * DEPTH_MAX);
 }
 
-u8 ReadZBuffer(const Vec2i_t p)
+f32 ReadZBuffer(const Vec2i_t p)
 {
-	return ZBUFFER[p[1] * SCREEN_WIDTH + p[0]];
+	return (f32)(ZBUFFER[p[1] * SCREEN_WIDTH + p[0]]) / DEPTH_MAX;
 }
 
 void SetPixel(const Vec2i_t pi, u8 color)

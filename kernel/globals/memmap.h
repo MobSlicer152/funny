@@ -21,7 +21,8 @@
 
 // z buffer
 #define ZBUFFER_BASE         BACKBUFFER_END
-#define ZBUFFER_SIZE         0xfa00
+// fa00 * sizeof(Depth_t)
+#define ZBUFFER_SIZE         0x1f400
 #define ZBUFFER_END          (ZBUFFER_BASE + ZBUFFER_SIZE)
 
 // isr stack

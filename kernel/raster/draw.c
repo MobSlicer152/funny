@@ -7,6 +7,7 @@
 #include "macros.h"
 #include "math/vector.h"
 #include "raster.h"
+#include "types.h"
 
 static FORCEINLINE f32 Edge(const Vec2f_t v0, const Vec2f_t v1, const Vec2f_t v2)
 {
@@ -24,21 +25,22 @@ static FORCEINLINE f32 Interpolate(const Vec3f_t a, const Vec3f_t w)
 }
 
 static FORCEINLINE void RenderPixel(
-	const Vec3i_t p, const Vec3f_t w, const Vec3f_t tu, const Vec3f_t tv, const u8* texture, const u32 textureWidth,
+	const Vec3f_t p, const Vec3f_t w, const Vec3f_t tu, const Vec3f_t tv, const u8* texture, const u32 textureWidth,
 	const u32 textureHeight)
 {
-	f32 z = 1.0f / (p[2] / 255.0f);
+	f32 z = p[2];
 
 	f32 u = Interpolate(tu, w) * z;
-	u = u - floor(u);
+	u -= floor(u);
 	f32 v = Interpolate(tv, w) * z;
-	v = ceil(v) - v;
+	v -= floor(v);
 
 	Vec2i_t tp;
 	tp[0] = MIN(u * textureWidth, textureWidth - 1);
 	tp[1] = MIN(v * textureHeight, textureHeight - 1);
-	RawSetPixel(p, texture[(u32)(tp[1] * textureWidth + tp[0])]);
-	WriteZBuffer(p, p[2]);
+	RawSetPixel(V2I_DUP(p), texture[(u32)(tp[1] * textureWidth + tp[0])]);
+
+	WriteZBuffer(V2I_DUP(p), z);
 }
 
 void DrawTriangle(const TriangleInfo_t* t)
@@ -67,18 +69,19 @@ void DrawTriangle(const TriangleInfo_t* t)
 		f32 e20 = e20r;
 		for (f32 x = min[0]; x < max[0]; x++)
 		{
-			if (e01 >= 0 && e12 >= 0 && e20 >= 0)
+			if (e01 > 0 && e12 > 0 && e20 > 0)
 			{
 				Vec3f_t w;
 				w[0] = e12 * areaDenom;
 				w[1] = e20 * areaDenom;
 				w[2] = e01 * areaDenom;
 
-				f32 z = Interpolate(V3F(t->v0[2], t->v1[2], t->v2[2]), w) * 255;
-				if (z <= ReadZBuffer(V2I(x, y)))
+				// interpolating between the un-inversed ones isn't allowed
+				f32 z = 1.0f / Interpolate(V3F(1.0f / t->v0[2], 1.0f / t->v1[2], 1.0f / t->v2[2]), w);
+				if (z < ReadZBuffer(V2I(x, y)))
 				{
 					RenderPixel(
-						V3I(x, y, z), w, V3F(t->t0[0], t->t1[0], t->t2[0]), V3F(t->t0[1], t->t1[1], t->t2[1]), t->texture, t->tw,
+						V3F(x, y, z), w, V3F(t->t0[0], t->t1[0], t->t2[0]), V3F(t->t0[1], t->t1[1], t->t2[1]), t->texture, t->tw,
 						t->th);
 				}
 			}

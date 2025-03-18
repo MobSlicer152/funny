@@ -49,3 +49,7 @@ typedef uptr usize;
 
 typedef const char* cstr;
 typedef char* dstr;
+
+typedef u8 Depth_t;
+#define DEPTH_MIN UINT8_MIN
+#define DEPTH_MAX UINT8_MAX
