@@ -6,16 +6,18 @@ import sys
 from typing import Any, Callable
 
 
-Vertex = tuple[float, float, float, float]
+ObjVertex = tuple[float, float, float, float]
 TextureCoordinate = tuple[float, float, float]
 Normal = tuple[float, float, float]
-Face = tuple[tuple[int, int, int], tuple[int, int, int], tuple[int, int, int]]
+ObjFace = tuple[tuple[int, int, int], tuple[int, int, int], tuple[int, int, int]]
+Vertex = tuple[ObjVertex, TextureCoordinate, Normal]
+Face = tuple[Vertex, Vertex, Vertex]
 
 
 class OBJ:
     def __interpret(
         self, line: list[str]
-    ) -> Vertex | TextureCoordinate | Normal | Face:
+    ) -> ObjVertex | TextureCoordinate | Normal | ObjFace:
         match line[0]:
             case "v":
                 self.vertices.append(OBJ.__vertex(line))
@@ -32,7 +34,7 @@ class OBJ:
 
     # TODO: make less redundant?
 
-    def __vertex(line: list[str]) -> Vertex:
+    def __vertex(line: list[str]) -> ObjVertex:
         match len(line):
             case 4:
                 return (float(line[1]), float(line[2]), float(line[3]), 1)
@@ -59,7 +61,7 @@ class OBJ:
             case _:
                 raise f"malformed vn entry {line}"
 
-    def __faces(line: list[str]) -> Face:
+    def __faces(line: list[str]) -> ObjFace:
         match len(line):
             case 4:
                 # vertices start at 1
@@ -97,7 +99,14 @@ def clean_name(name: str) -> str:
     return "".join(filter(str.isidentifier, name))
 
 
-def write_data(f: io.TextIOWrapper, list_var: str, count_var: str | None, data: list[Any], line_length: int, format: Callable[[Any], str]):
+def write_data(
+    f: io.TextIOWrapper,
+    list_var: str,
+    count_var: str | None,
+    data: list[Any],
+    line_length: int,
+    format: Callable[[Any], str],
+):
     f.write(
         (f"const {count_var} = {len(data)};\n" if count_var else f"")
         + f"const {list_var} =\n"
@@ -111,18 +120,14 @@ def write_data(f: io.TextIOWrapper, list_var: str, count_var: str | None, data: 
         current_length += 1
         text += f"{format(datum)},"
         if current_length >= line_length:
-            text += "\n\t"
+            text += "\n"
             current_length = 0
         else:
             text += " "
-    
+
     f.write(text.strip())
 
-    f.write(
-        f"\n"
-        + f"}};\n"
-        + f"\n"
-    )
+    f.write(f"\n" + f"}};\n" + f"\n")
 
 
 def main(argc: int, argv: list[str]) -> int:
@@ -159,28 +164,55 @@ def main(argc: int, argv: list[str]) -> int:
 
     obj = OBJ(mesh)
 
+    faces = []
+    for face in obj.faces:
+        faces.append(
+            (
+                (
+                    obj.vertices[face[0][0]],
+                    obj.texcoords[face[0][1]],
+                    obj.normals[face[0][2]],
+                ),
+                (
+                    obj.vertices[face[1][0]],
+                    obj.texcoords[face[1][1]],
+                    obj.normals[face[1][2]],
+                ),
+                (
+                    obj.vertices[face[2][0]],
+                    obj.texcoords[face[2][1]],
+                    obj.normals[face[2][2]],
+                ),
+            )
+        )
+
     f = open(output, "w")
     f.write(
         f"/* generated from {mesh} by bmp2c.py */\n"
         + f"\n"
         + f"#pragma once\n"
         + f"\n"
+        + f'#include "kernel/math/vector.h"\n'
+        + f'#include "kernel/raster/raster.h"\n'
+        + f"\n"
         + f"#ifdef {symbol}_DEFINE_DATA\n"
-        + f"extern const unsigned int {symbol}_VERTEX_COUNT;\n"
-        + f"extern const float {symbol}_VERTICES[][4];\n"
-        + f"extern const unsigned int {symbol}_TEXCOORD_COUNT;\n"
-        + f"extern const float {symbol}_TEXCOORDS[][2];\n"
-        + f"extern const unsigned int {symbol}_NORMAL_COUNT;\n"
-        + f"extern const float {symbol}_NORMALS[][3];\n"
-        + f"extern unsigned int {symbol}_FACE_COUNT;\n"
-        + f"extern int {symbol}_FACES[][3][3];\n"
+        + f"extern const unsigned int {symbol}_FACE_COUNT;\n"
+        + f"extern const Face_t {symbol}_FACE[];\n"
         + f"#else\n"
     )
 
-    write_data(f, f"float {symbol}_VERTICES[][4]", f"unsigned int {symbol}_VERTEX_COUNT", obj.vertices, 3, lambda v: f"{{{v[0]}, {v[1]}, {v[2]}, {v[3]}}}")
-    write_data(f, f"float {symbol}_TEXCOORDS[][2]", f"unsigned int {symbol}_TEXCOORD_COUNT", obj.texcoords, 3, lambda t: f"{{{t[0]}, {t[1]}}}")
-    write_data(f, f"float {symbol}_NORMALS[][3]", f"unsigned int {symbol}_NORMAL_COUNT", obj.vertices, 3, lambda n: f"{{{n[0]}, {n[1]}, {n[1]}}}")
-    write_data(f, f"int {symbol}_FACES[][3][3]", f"unsigned int {symbol}_FACE_COUNT", obj.faces, 3, lambda f: f"{{{{{f[2][0]}, {f[2][1]}, {f[2][2]}}}, {{{f[1][0]}, {f[1][1]}, {f[1][2]}}}, {{{f[0][0]}, {f[0][1]}, {f[0][2]}}}}}")
+    write_data(
+        f,
+        f"Face_t {symbol}_FACES[]",
+        f"unsigned int {symbol}_FACE_COUNT",
+        faces,
+        1,
+        lambda f: f"\t{{\n"
+        + f"\t\t[0] = {{.pos = {{{f[0][0][0]}, {f[0][0][1]}, {f[0][0][2]}, {f[0][0][3]}}}, .uv = {{{f[0][1][0]}, {f[0][1][1]}}}, .nrm = {{{f[0][2][0]}, {f[0][2][1]}, {f[0][2][2]}}}}},\n"
+        + f"\t\t[1] = {{.pos = {{{f[1][0][0]}, {f[1][0][1]}, {f[1][0][2]}, {f[1][0][3]}}}, .uv = {{{f[1][1][0]}, {f[1][1][1]}}}, .nrm = {{{f[1][2][0]}, {f[1][2][1]}, {f[1][2][2]}}}}},\n"
+        + f"\t\t[2] = {{.pos = {{{f[2][0][0]}, {f[2][0][1]}, {f[2][0][2]}, {f[2][0][3]}}}, .uv = {{{f[2][1][0]}, {f[2][1][1]}}}, .nrm = {{{f[2][2][0]}, {f[2][2][1]}, {f[2][2][2]}}}}},\n"
+        + f"\t}}",
+    )
 
     f.write(f"#endif\n")
     f.close()

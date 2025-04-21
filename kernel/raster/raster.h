@@ -21,14 +21,16 @@ typedef struct TriangleInfo
 
 extern void DrawTriangle(const TriangleInfo_t* t);
 
-typedef Vec3i_t Face_t[3];
+typedef struct Vertex
+{
+	Vec4f_t pos;
+	Vec2f_t uv;
+	Vec3f_t nrm;
+} Vertex_t;
+typedef Vertex_t Face_t[3];
 
 typedef struct DrawInfo
 {
-	const Vec4f_t* vertices;
-	const Vec2f_t* texCoords;
-	const Vec3f_t* normals;
-
 	const Face_t* faces;
 	s32 faceCount;
 
@@ -41,12 +43,11 @@ typedef struct DrawInfo
 	const Mat4f_t project;
 } DrawInfo_t;
 
-#define DRAW_INFO(vt, tc, n, f, fc, t, tw, th, m, v, p)                                                                          \
+#define DRAW_INFO(f, fc, t, tw, th, m, v, p)                                                                                     \
 	(DrawInfo_t)                                                                                                                 \
 	{                                                                                                                            \
-		.vertices = (vt), .texCoords = (tc), .normals = (n), .faces = (f), .faceCount = (fc), .texture = (t),                    \
-		.textureWidth = (tw), .textureHeight = (th), .model = M4F_DUP_INLINE(m), .view = M4F_DUP_INLINE(v),                      \
-		.project = M4F_DUP_INLINE(p)                                                                                             \
+		.faces = (f), .faceCount = (fc), .texture = (t), .textureWidth = (tw), .textureHeight = (th),                            \
+		.model = M4F_DUP_INLINE(m), .view = M4F_DUP_INLINE(v), .project = M4F_DUP_INLINE(p)                                      \
 	}
 
 extern void DrawMesh(const DrawInfo_t* info);

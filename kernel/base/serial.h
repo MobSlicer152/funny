@@ -19,7 +19,8 @@ extern void DebugPrint(cstr msg, ...);
 extern void VDebugPrint(cstr msg, va_list args);
 
 #ifdef DEBUG
-#define DBG(msg, ...) DebugPrint("[%s] [%d] [%s:%d] " msg "\n", GetTimeString(), GetTimer(), __FILE__, __LINE__ __VA_OPT__(, ) __VA_ARGS__)
+#define DBG2(file, line, msg, ...)  DebugPrint("[%s] [%d] [" file ":" STRINGIZE(line) "] " msg "\n", GetTimeString(), GetTimer() __VA_OPT__(, ) __VA_ARGS__)
+#define DBG(msg, ...) DBG2(__FILE__, __LINE__, msg __VA_OPT__(,) __VA_ARGS__)
 #else
 #define DBG(...)
 #endif
